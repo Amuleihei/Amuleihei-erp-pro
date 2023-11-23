@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "员工管理", tags = "员工管理", modelName = "基础模块")
+@Api(value = "员工管理", tags = "员工管理", modelName = "员工管理")
 public class SysEveUserStaffController {
 
     @Autowired
@@ -114,17 +114,6 @@ public class SysEveUserStaffController {
     @RequestMapping("/post/SysEveUserStaffController/editSysUserStaffState")
     public void editSysUserStaffState(InputObject inputObject, OutputObject outputObject) {
         sysEveUserStaffService.editSysUserStaffState(inputObject, outputObject);
-    }
-
-    /**
-     * 普通员工转教职工
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserStaffController/editTurnTeacher")
-    public void editTurnTeacher(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.editTurnTeacher(inputObject, outputObject);
     }
 
     /**

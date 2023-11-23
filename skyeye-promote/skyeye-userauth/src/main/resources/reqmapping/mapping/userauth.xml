@@ -152,10 +152,6 @@
 	<!-- 自定义菜单结束 -->
 	
 	<!-- 员工操作开始 -->
-	<url id="staff007" path="/post/SysEveUserStaffController/editTurnTeacher" val="普通员工转教职工" allUse="1" groupName="员工操作">
-	    <property id="staffId" name="staffId" ref="required" var="员工id"/>
-	    <property id="schoolId" name="schoolId" ref="required" var="学校id"/>
-	</url>
 	<url id="staff009" path="/post/SysEveUserStaffController/querySysUserStaffListByIds" val="根据员工ids获取员工信息" allUse="2" method="POST" groupName="员工操作">
 		<property id="ids" name="ids" ref="required" var="员工ids，逗号隔开" />
 	</url>

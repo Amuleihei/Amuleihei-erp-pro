@@ -5,10 +5,10 @@
 package com.skyeye.personnel.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
@@ -22,13 +22,11 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.dao.WagesFieldTypeDao;
 import com.skyeye.eve.entity.userauth.user.SysUserStaffQueryDo;
 import com.skyeye.exception.CustomException;
-import com.skyeye.jedis.JedisClientService;
 import com.skyeye.organization.service.ICompanyJobScoreService;
 import com.skyeye.organization.service.ICompanyJobService;
 import com.skyeye.organization.service.ICompanyService;
 import com.skyeye.organization.service.IDepmentService;
 import com.skyeye.personnel.classenum.UserLockState;
-import com.skyeye.personnel.classenum.UserStaffType;
 import com.skyeye.personnel.dao.SysEveUserDao;
 import com.skyeye.personnel.dao.SysEveUserStaffDao;
 import com.skyeye.personnel.entity.SysEveUserStaff;
@@ -52,6 +50,7 @@ import java.util.stream.Collectors;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
+@SkyeyeService(name = "员工管理", groupName = "员工管理")
 public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserStaffDao, SysEveUserStaff> implements SysEveUserStaffService {
 
     @Autowired
@@ -62,9 +61,6 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
 
     @Autowired
     private SysEveUserService sysEveUserService;
-
-    @Autowired
-    public JedisClientService jedisClient;
 
     @Autowired
     private WagesFieldTypeDao wagesFieldTypeDao;
@@ -109,7 +105,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void insertSysUserStaffMation(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         String userIdCard = map.get("userIdCard").toString();
@@ -274,7 +270,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserStaffById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         String staffId = map.get("id").toString();
@@ -293,9 +289,9 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         // 1.编辑员工信息
         sysEveUserStaffDao.editSysUserStaffById(map);
         // 2.删除员工所在部门的缓存
-        jedisClient.delKeys(Constants.getSysTalkGroupUserListMationById(userMation.get("departmentId").toString()) + "*");
+        jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(userMation.get("departmentId").toString()) + "*");
         // 2.1删除用户在redis中存储的好友组信息
-        jedisClient.delKeys(Constants.getSysTalkGroupUserListMationById(map.get("departmentId").toString()) + "*");
+        jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(map.get("departmentId").toString()) + "*");
         // 3.删除员工考勤时间段信息再重新添加
         sysEveUserStaffDao.deleteStaffCheckWorkTimeRelationByStaffId(staffId);
         // 3.1.新增员工考勤时间段
@@ -337,7 +333,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserStaffState(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         map.put("state", UserStaffState.QUIT.getKey());
@@ -348,7 +344,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         if (!ToolUtil.isBlank(userId)) {
             String departmentId = staffMation.get("departmentId").toString();
             // 删除redis中缓存的单位下的用户
-            jedisClient.delKeys(Constants.getSysTalkGroupUserListMationById(departmentId) + "*");
+            jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(departmentId) + "*");
             // 锁定帐号
             sysEveUserDao.editSysUserLock(userId, UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
             // 退出登录
@@ -357,40 +353,17 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     }
 
     /**
-     * 普通员工转教职工
+     * 修改员工类型
      *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
+     * @param id   员工id
+     * @param type 参考#UserStaffType
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editTurnTeacher(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String staffId = map.get("staffId").toString();
-
-        // 员工类型判断
-        SysEveUserStaff userStaff = selectById(staffId);
-        if (ObjectUtil.isNotEmpty(userStaff)) {
-            // 如果是普通员工，则允许转教职工
-            if (userStaff.getType() == UserStaffType.SIMPLE_STAFF.getKey()) {
-                // 修改员工类型
-                UpdateWrapper<SysEveUserStaff> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq(CommonConstants.ID, staffId);
-                updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), UserStaffType.TEACHER.getKey());
-                update(updateWrapper);
-
-                // 添加教职工学校绑定信息
-                Map<String, Object> schoolStaff = new HashMap<>();
-                schoolStaff.put("id", ToolUtil.getSurFaceId());
-                schoolStaff.put("staffId", staffId);
-                schoolStaff.put("schoolId", map.get("schoolId"));
-                sysEveUserStaffDao.insertSchoolStaffMation(schoolStaff);
-            } else {
-                outputObject.setreturnMessage("该员工无法转教职工。");
-            }
-        } else {
-            outputObject.setreturnMessage("The data does not exist");
-        }
+    public void updateStaffType(String id, Integer type) {
+        UpdateWrapper<SysEveUserStaff> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), type);
+        update(updateWrapper);
     }
 
     /**

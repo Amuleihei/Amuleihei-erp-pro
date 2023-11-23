@@ -33,7 +33,7 @@ public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUser
 
     void editSysUserStaffState(InputObject inputObject, OutputObject outputObject);
 
-    void editTurnTeacher(InputObject inputObject, OutputObject outputObject);
+    void updateStaffType(String id, Integer type);
 
     void insertNewUserMation(Map<String, Object> map);
 
