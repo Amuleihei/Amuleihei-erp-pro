@@ -10,10 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
-import com.skyeye.annotation.cache.RedisCacheField;
-import com.skyeye.common.constans.CacheConstants;
-import com.skyeye.common.constans.RedisConstants;
-import com.skyeye.common.entity.CommonInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 /**
@@ -28,7 +25,7 @@ import lombok.Data;
 //@RedisCacheField(name = CacheConstants.SYS_USER_STAFF_CACHE_KEY, cacheTime = RedisConstants.A_YEAR_SECONDS)
 @TableName(value = "sys_eve_user_staff")
 @ApiModel("员工管理实体类")
-public class SysEveUserStaff extends CommonInfo {
+public class SysEveUserStaff extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")

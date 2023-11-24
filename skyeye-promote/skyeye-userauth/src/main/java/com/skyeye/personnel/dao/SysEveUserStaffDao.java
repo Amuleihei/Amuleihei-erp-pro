@@ -4,8 +4,8 @@
 
 package com.skyeye.personnel.dao;
 
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.eve.entity.userauth.user.SysUserStaffQueryDo;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public interface SysEveUserStaffDao extends SkyeyeBaseMapper<SysEveUserStaff> {
 
-    List<Map<String, Object>> querySysUserStaffList(SysUserStaffQueryDo sysUserStaffQuery);
+    List<Map<String, Object>> querySysUserStaffList(CommonPageInfo commonPageInfo);
 
     Map<String, Object> querySysUserStaffMationByIdCard(Map<String, Object> map);
 

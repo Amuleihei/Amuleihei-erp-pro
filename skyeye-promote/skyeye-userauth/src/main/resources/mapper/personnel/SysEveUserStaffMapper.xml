@@ -20,10 +20,12 @@
 			a.department_id departmentId,
 			a.job_id jobId,
 			a.`type` staffType,
-		    COUNT(b.check_work_time_id) workTimeNum
+			a.create_id createId,
+			CONVERT(a.create_time, char) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, char) lastUpdateTime
 		FROM
 			sys_eve_user_staff a
-		    LEFT JOIN sys_eve_user_staff_time b ON a.id = b.staff_id
 		<where>
 			<if test="sqlExtract != '' and sqlExtract != null">
 				${sqlExtract}
@@ -32,8 +34,7 @@
 				AND (a.user_name like '%${keyword}%' OR a.job_number like '%${keyword}%')
 			</if>
 		</where>
-		GROUP BY a.id
-		ORDER BY a.state ASC, a.entry_time DESC
+		ORDER BY a.create_time DESC
 	</select>
 	
 	<select id="querySysUserStaffMationByIdCard" parameterType="java.util.Map" resultType="java.util.Map">

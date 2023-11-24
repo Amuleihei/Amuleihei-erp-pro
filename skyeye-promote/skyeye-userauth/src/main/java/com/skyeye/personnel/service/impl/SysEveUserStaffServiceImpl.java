@@ -13,6 +13,7 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.Constants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -20,7 +21,6 @@ import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.dao.WagesFieldTypeDao;
-import com.skyeye.eve.entity.userauth.user.SysUserStaffQueryDo;
 import com.skyeye.exception.CustomException;
 import com.skyeye.organization.service.ICompanyJobScoreService;
 import com.skyeye.organization.service.ICompanyJobService;
@@ -80,22 +80,14 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     @Autowired
     private ICompanyJobScoreService iCompanyJobScoreService;
 
-    /**
-     * 查出所有员工列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void querySysUserStaffList(InputObject inputObject, OutputObject outputObject) {
-        SysUserStaffQueryDo sysUserStaffQuery = inputObject.getParams(SysUserStaffQueryDo.class);
-        Page pages = PageHelper.startPage(sysUserStaffQuery.getPage(), sysUserStaffQuery.getLimit());
-        List<Map<String, Object>> beans = sysEveUserStaffDao.querySysUserStaffList(sysUserStaffQuery);
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.querySysUserStaffList(commonPageInfo);
         iCompanyService.setNameForMap(beans, "companyId", "companyName");
         iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
         iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
+        return beans;
     }
 
     /**

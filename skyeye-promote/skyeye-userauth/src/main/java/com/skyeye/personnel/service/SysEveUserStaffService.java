@@ -21,8 +21,6 @@ import java.util.Map;
  */
 public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUserStaff> {
 
-    void querySysUserStaffList(InputObject inputObject, OutputObject outputObject);
-
     void insertSysUserStaffMation(InputObject inputObject, OutputObject outputObject);
 
     void querySysUserStaffById(InputObject inputObject, OutputObject outputObject);
