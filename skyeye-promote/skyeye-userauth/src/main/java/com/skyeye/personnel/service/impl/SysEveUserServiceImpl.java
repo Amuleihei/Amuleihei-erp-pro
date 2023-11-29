@@ -98,6 +98,9 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         iCompanyService.setNameForMap(beans, "companyId", "companyName");
         iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
         iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
+        beans.forEach(bean -> {
+            bean.put("staffServiceClassName", SysEveUserStaffServiceImpl.class.getName());
+        });
         outputObject.setBeans(beans);
         outputObject.settotal(pages.getTotal());
     }
