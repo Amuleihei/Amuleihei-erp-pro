@@ -432,7 +432,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
     }
 
     /**
-     * 获取全部菜单列表
+     * 获取当前登录用户的所有菜单列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
