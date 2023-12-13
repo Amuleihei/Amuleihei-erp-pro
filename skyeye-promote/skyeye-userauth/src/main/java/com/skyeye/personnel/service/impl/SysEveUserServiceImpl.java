@@ -913,7 +913,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                     jedisClient.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
                     jedisClient.set("authPointsMation:" + appUserId, roleIds);
                     // 获取用户权限点返回给前台
-                    List<Map<String, Object>> authPoints = sysAuthorityService.getRoleHasMenuPointListByRoleIds(roleIds, userId);
+                    List<Map<String, Object>> authPoints = sysAuthorityService.getRoleHasMenuPointListByRoleIds(roleIds, appUserId);
                     outputObject.setBean(userMation);
                     outputObject.setBeans(authPoints);
                 }
