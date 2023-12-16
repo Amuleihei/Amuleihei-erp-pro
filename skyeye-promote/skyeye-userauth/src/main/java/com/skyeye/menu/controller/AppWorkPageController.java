@@ -42,7 +42,7 @@ public class AppWorkPageController {
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/AppWorkPageController/queryAppWorkPageList")
     public void queryAppWorkPageList(InputObject inputObject, OutputObject outputObject) {
-        appWorkPageService.queryPageList(inputObject, outputObject);
+        appWorkPageService.queryList(inputObject, outputObject);
     }
 
     /**
