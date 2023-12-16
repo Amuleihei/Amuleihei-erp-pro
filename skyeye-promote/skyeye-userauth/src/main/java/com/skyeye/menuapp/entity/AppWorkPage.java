@@ -4,17 +4,19 @@
 
 package com.skyeye.menuapp.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.win.entity.SysDesktop;
 import lombok.Data;
 
 /**
- * @ClassName: AppWorkPageMation
+ * @ClassName: AppWorkPage
  * @Description: APP菜单实体类
  * @author: skyeye云系列--卫志强
  * @date: 2022/7/24 21:33
@@ -24,20 +26,14 @@ import lombok.Data;
 @Data
 @TableName(value = "app_workbench_page")
 @ApiModel("APP菜单实体类")
-public class AppWorkPageMation extends OperatorUserInfo {
+public class AppWorkPage extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
-    @TableField("title")
+    @TableField("`name`")
     @ApiModelProperty(value = "菜单/目录名称", required = "required")
-    private String title;
-
-    /**
-     * 和title含义一样，用做前台下拉框加载
-     */
-    @TableField(exist = false)
     private String name;
 
     @TableField("logo")
@@ -49,25 +45,31 @@ public class AppWorkPageMation extends OperatorUserInfo {
     private String url;
 
     @TableField("url_type")
-    @ApiModelProperty(value = "菜单类型  1.外部系统菜单  2.自身系统菜单", required = "required,num", defaultValue = "2")
+    @ApiModelProperty(value = "APP菜单URL类型，参考#UrlType", required = "num")
     private Integer urlType;
 
-    /**
-     * 排序，值越大越往后
-     */
     @TableField("order_by")
+    @ApiModelProperty(value = "排序，值越大越往后", required = "required,num")
     private Integer orderBy;
 
-    @TableField(value = "type", fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "页面类型  1.目录  2.页面【不可修改】", required = "required,num")
+    @TableField(value = "type", updateStrategy = FieldStrategy.NEVER)
+    @Property(value = "菜单类型，参考#MenuType")
     private Integer type;
 
     @TableField(value = "parent_id")
-    @ApiModelProperty(value = "所属目录id", required = "required")
+    @ApiModelProperty(value = "所属目录id", defaultValue = "0")
     private String parentId;
+
+    @TableField(exist = false)
+    @Property(value = "所属目录信息")
+    private AppWorkPage parentMation;
 
     @TableField(value = "desktop_id")
     @ApiModelProperty(value = "所属桌面id", required = "required")
     private String desktopId;
+
+    @TableField(exist = false)
+    @Property(value = "菜单所属桌面")
+    private SysDesktop desktopMation;
 
 }

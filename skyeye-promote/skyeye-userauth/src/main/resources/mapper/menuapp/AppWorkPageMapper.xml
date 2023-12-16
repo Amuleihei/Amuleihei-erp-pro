@@ -2,86 +2,54 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.menuapp.dao.AppWorkPageDao">
 
-	<select id="queryAppWorkPageMaxOrderBumByParentId" resultType="java.lang.Integer">
-		SELECT
-			(IFNULL(a.order_by, 0) + 1) orderBy
-		FROM
-			app_workbench_page a
-		WHERE a.parent_id = #{parentId}
-		ORDER BY a.order_by DESC
-		LIMIT 1
-	</select>
-	
 	<select id="queryAppWorkPageList" resultType="java.util.Map">
 		SELECT
-			a.id,
-			a.title,
-			a.logo,
-			a.url,
-			a.type,
-			a.parent_id parentId,
-			b.title parentTitle,
-			a.order_by orderBy,
-			a.desktop_id deskTopId,
-			(SELECT COUNT(1) FROM app_workbench_page d WHERE a.id = d.parent_id) childNum,
-			a.create_id createId,
-			CONVERT(a.create_time, char) createTime,
-			a.last_update_id lastUpdateId,
-			CONVERT(a.last_update_time, char) lastUpdateTime
+			a.id
 		FROM
 			app_workbench_page a
-			LEFT JOIN app_workbench_page b ON a.parent_id = b.id
 		<where>
 			<if test="sqlExtract != '' and sqlExtract != null">
 				${sqlExtract}
 			</if>
-			<if test="keyword != null and keyword != ''">
-				AND a.title LIKE '%${keyword}%'
-			</if>
+			<choose>
+				<when test="keyword != null and keyword != ''">
+					AND a.`name` LIKE '%${keyword}%'
+				</when>
+				<otherwise>
+					AND a.parent_id = '0'
+				</otherwise>
+			</choose>
 		</where>
-		ORDER BY a.create_time DESC
+		ORDER BY a.order_by ASC
 	</select>
 	
-	<select id="queryAppWorkPageISTopByThisId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			b.id,
-			b.order_by orderBy,
-			a.order_by thisOrderBy
-		FROM
-			app_workbench_page a,
-			app_workbench_page b
-		WHERE
-			a.id = #{id}
-		AND a.order_by > b.order_by
-		AND a.type = 2 AND b.type = 2
-		AND a.parent_id = #{parentId} AND b.parent_id = #{parentId}
-		ORDER BY b.order_by DESC LIMIT 1
+	<select id="queryAllChildIdsByParentId" resultType="java.lang.String">
+		<foreach collection="ids" item="id" index="idx" separator="UNION">
+			SELECT
+				d.id
+			FROM
+				(
+					SELECT
+						@ids${idx} AS _ids,
+						(
+							SELECT
+								@ids${idx} := GROUP_CONCAT(id)
+							FROM
+								app_workbench_page
+							WHERE FIND_IN_SET(parent_id, @ids${idx})
+						) AS cids,
+						@l${idx} := @l${idx} + 1 AS level
+					FROM
+						app_workbench_page,
+						(
+							SELECT
+								@ids${idx} := #{id},
+								@l${idx} := 0
+						) b
+					WHERE @ids${idx} IS NOT NULL
+				) i,
+				app_workbench_page d
+			WHERE FIND_IN_SET(d.id, i._ids)
+		</foreach>
 	</select>
-	
-	<update id="editAppWorkPageSortById" parameterType="java.util.Map">
-		UPDATE app_workbench_page
-		<set>
-			order_by = #{orderBy},
-			last_update_id = #{lastUpdateId},
-			last_update_time = #{lastUpdateTime},
-		</set>
-		WHERE id = #{id}
-	</update>
-	
-	<select id="queryAppWorkPageISLowerByThisId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			b.id,
-			b.order_by orderBy,
-			a.order_by thisOrderBy
-		FROM
-			app_workbench_page a,
-			app_workbench_page b
-		WHERE
-			a.id = #{id}
-		AND b.order_by > a.order_by
-		AND a.type = 2 AND b.type = 2
-		AND a.parent_id = #{parentId} AND b.parent_id = #{parentId}
-		ORDER BY b.order_by ASC LIMIT 1
-	</select>
-
 </mapper>

@@ -83,7 +83,7 @@
         FROM
         (SELECT
             a.id,
-            a.title name,
+            a.`name`,
 			CASE a.parent_id WHEN '0' THEN a.desktop_id ELSE a.parent_id END pId,
 			c.`name` sysName,
 			CASE (select parent_id from app_workbench_page where a.id = id) WHEN '0' THEN '目录' ELSE '页面' END pageType,

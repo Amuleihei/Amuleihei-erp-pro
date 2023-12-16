@@ -9,7 +9,7 @@ import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.menuapp.entity.AppWorkPageAuthPointMation;
+import com.skyeye.menuapp.entity.AppWorkPageAuthPoint;
 import com.skyeye.menuapp.service.AppWorkPageAuthPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +40,7 @@ public class AppWorkPageAuthPointController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "writeAppWorkPageAuthPointMation", value = "新增/编辑APP菜单权限点", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = AppWorkPageAuthPointMation.class)
+    @ApiImplicitParams(classBean = AppWorkPageAuthPoint.class)
     @RequestMapping("/post/AppWorkPageAuthPointController/writeAppWorkPageAuthPointMation")
     public void writeAppWorkPageAuthPointMation(InputObject inputObject, OutputObject outputObject) {
         appWorkPageAuthPointService.writeAppWorkPageAuthPointMation(inputObject, outputObject);

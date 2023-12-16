@@ -14,7 +14,7 @@ import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.service.IAuthUserService;
 import com.skyeye.menuapp.dao.AppWorkPageAuthPointDao;
-import com.skyeye.menuapp.entity.AppWorkPageAuthPointMation;
+import com.skyeye.menuapp.entity.AppWorkPageAuthPoint;
 import com.skyeye.menuapp.service.AppWorkPageAuthPointService;
 import com.skyeye.menupc.classenum.MenuPointType;
 import org.apache.commons.lang3.StringUtils;
@@ -75,17 +75,17 @@ public class AppWorkPageAuthPointServiceImpl implements AppWorkPageAuthPointServ
     @Override
     @Transactional(value = "transactionManager", rollbackFor = Exception.class)
     public void writeAppWorkPageAuthPointMation(InputObject inputObject, OutputObject outputObject) {
-        AppWorkPageAuthPointMation appWorkPageAuthPointMation = inputObject.getParams(AppWorkPageAuthPointMation.class);
+        AppWorkPageAuthPoint appWorkPageAuthPointMation = inputObject.getParams(AppWorkPageAuthPoint.class);
         // 1.根据条件进行校验
-        QueryWrapper<AppWorkPageAuthPointMation> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<AppWorkPageAuthPoint> queryWrapper = new QueryWrapper<>();
         queryWrapper.and(wrapper ->
-            wrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPointMation::getTitle), appWorkPageAuthPointMation.getTitle())
-                .or().eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPointMation::getAuthMenu), appWorkPageAuthPointMation.getAuthMenu()));
-        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPointMation::getMenuId), appWorkPageAuthPointMation.getMenuId());
+            wrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPoint::getTitle), appWorkPageAuthPointMation.getTitle())
+                .or().eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPoint::getAuthMenu), appWorkPageAuthPointMation.getAuthMenu()));
+        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageAuthPoint::getMenuId), appWorkPageAuthPointMation.getMenuId());
         if (StringUtils.isNotEmpty(appWorkPageAuthPointMation.getId())) {
             queryWrapper.ne(CommonConstants.ID, appWorkPageAuthPointMation.getId());
         }
-        AppWorkPageAuthPointMation checkAppWorkPageAuthPoint = appWorkPageAuthPointDao.selectOne(queryWrapper);
+        AppWorkPageAuthPoint checkAppWorkPageAuthPoint = appWorkPageAuthPointDao.selectOne(queryWrapper);
 
         if (ObjectUtils.isEmpty(checkAppWorkPageAuthPoint)) {
             // 2.新增/编辑数据
@@ -113,7 +113,7 @@ public class AppWorkPageAuthPointServiceImpl implements AppWorkPageAuthPointServ
     public void queryAppWorkPageAuthPointMationToEditById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         String id = map.get("id").toString();
-        AppWorkPageAuthPointMation appWorkPageAuthPointMation = appWorkPageAuthPointDao.selectById(id);
+        AppWorkPageAuthPoint appWorkPageAuthPointMation = appWorkPageAuthPointDao.selectById(id);
         outputObject.setBean(appWorkPageAuthPointMation);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }

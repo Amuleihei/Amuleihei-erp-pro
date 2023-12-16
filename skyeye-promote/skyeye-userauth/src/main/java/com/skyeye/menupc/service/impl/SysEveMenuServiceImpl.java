@@ -6,7 +6,6 @@ package com.skyeye.menupc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
@@ -25,8 +24,6 @@ import com.skyeye.menupc.entity.SysMenuQueryDo;
 import com.skyeye.menupc.service.SysEveMenuService;
 import com.skyeye.server.entity.ServiceBeanCustom;
 import com.skyeye.server.service.ServiceBeanCustomService;
-import com.skyeye.win.entity.SysDesktop;
-import com.skyeye.win.entity.SysWin;
 import com.skyeye.win.service.SysEveDesktopService;
 import com.skyeye.win.service.SysEveWinService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,35 +181,17 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         Map<String, Object> map = inputObject.getParams();
         List<Map<String, Object>> beans = sysEveMenuDao.querySysMenuMationBySimpleLevel(map);
         // 桌面信息
-        List<String> desktopIdList = beans.stream()
-            .filter(bean -> StrUtil.isNotEmpty(bean.get("desktopId").toString())).map(bean -> bean.get("desktopId").toString()).distinct().collect(Collectors.toList());
-        if (CollectionUtil.isNotEmpty(desktopIdList)) {
-            Map<String, SysDesktop> sysDesktopMap = sysEveDesktopService.selectMapByIds(desktopIdList);
-            beans.forEach(sysMenu -> {
-                if (StrUtil.isNotEmpty(sysMenu.get("desktopId").toString())) {
-                    sysMenu.put("sysDesktop", sysDesktopMap.get(sysMenu.get("desktopId").toString()));
-                }
-            });
-        }
+        sysEveDesktopService.setMationForMap(beans, "desktopId", "desktopMation");
         outputObject.setBeans(beans);
         outputObject.settotal(beans.size());
     }
 
-    /**
-     * 根据id查询数据
-     *
-     * @param id
-     * @return
-     */
     @Override
     public SysMenu selectById(String id) {
         SysMenu sysMenu = super.selectById(id);
 
-        SysDesktop sysDesktop = sysEveDesktopService.selectById(sysMenu.getDesktopId());
-        sysMenu.setSysDesktop(sysDesktop);
-
-        SysWin sysWin = sysEveWinService.selectById(sysMenu.getSysWinId());
-        sysMenu.setSysWin(sysWin);
+        sysEveDesktopService.setDataMation(sysMenu, SysMenu::getDesktopId);
+        sysEveWinService.setDataMation(sysMenu, SysMenu::getSysWinId);
 
         if (!sysMenu.getPageType()) {
             // 表单布局
@@ -227,37 +206,13 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         return sysMenu;
     }
 
-    /**
-     * 根据id批量查询数据
-     *
-     * @param ids
-     * @return
-     */
     @Override
     public List<SysMenu> selectByIds(String... ids) {
         List<SysMenu> sysMenuList = super.selectByIds(ids);
         // 桌面信息
-        List<String> desktopIdList = sysMenuList.stream()
-            .filter(bean -> StrUtil.isNotEmpty(bean.getDesktopId())).map(SysMenu::getDesktopId).distinct().collect(Collectors.toList());
-        if (CollectionUtil.isNotEmpty(desktopIdList)) {
-            Map<String, SysDesktop> sysDesktopMap = sysEveDesktopService.selectMapByIds(desktopIdList);
-            sysMenuList.forEach(sysMenu -> {
-                if (StrUtil.isNotEmpty(sysMenu.getDesktopId())) {
-                    sysMenu.setSysDesktop(sysDesktopMap.get(sysMenu.getDesktopId()));
-                }
-            });
-        }
+        sysEveDesktopService.setDataMation(sysMenuList, SysMenu::getDesktopId);
         // 服务信息
-        List<String> sysWinList = sysMenuList.stream()
-            .filter(bean -> StrUtil.isNotEmpty(bean.getSysWinId())).map(SysMenu::getSysWinId).distinct().collect(Collectors.toList());
-        if (CollectionUtil.isNotEmpty(sysWinList)) {
-            Map<String, SysWin> sysWinMap = sysEveWinService.selectMapByIds(sysWinList);
-            sysMenuList.forEach(sysMenu -> {
-                if (StrUtil.isNotEmpty(sysMenu.getSysWinId())) {
-                    sysMenu.setSysWin(sysWinMap.get(sysMenu.getSysWinId()));
-                }
-            });
-        }
+        sysEveWinService.setDataMation(sysMenuList, SysMenu::getSysWinId);
         return sysMenuList;
     }
 

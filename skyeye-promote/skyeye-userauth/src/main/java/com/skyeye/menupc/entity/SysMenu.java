@@ -89,7 +89,7 @@ public class SysMenu extends IconOrImgInfo {
 
     @TableField(exist = false)
     @Property(value = "菜单所属系统")
-    private SysWin sysWin;
+    private SysWin sysWinMation;
 
     @TableField("is_share")
     @ApiModelProperty(value = "是否同步共享", required = "required,num")
@@ -101,6 +101,6 @@ public class SysMenu extends IconOrImgInfo {
 
     @TableField(exist = false)
     @Property(value = "菜单所属桌面")
-    private SysDesktop sysDesktop;
+    private SysDesktop desktopMation;
 
 }

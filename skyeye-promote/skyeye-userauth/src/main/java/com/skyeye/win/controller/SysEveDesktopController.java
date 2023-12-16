@@ -116,7 +116,7 @@ public class SysEveDesktopController {
     }
 
     /**
-     * 获取全部的桌面用于系统菜单
+     * 获取全部的桌面用于系统菜单（组件中使用）
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象

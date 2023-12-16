@@ -10,11 +10,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 /**
- * @ClassName: AppWorkPageAuthPointMation
+ * @ClassName: AppWorkPageAuthPoint
  * @Description: 手机端菜单权限点实体类
  * @author: skyeye云系列--卫志强
  * @date: 2022/7/26 22:45
@@ -24,7 +25,7 @@ import lombok.Data;
 @Data
 @TableName(value = "app_workbench_page_auth")
 @ApiModel("手机端菜单权限点实体类")
-public class AppWorkPageAuthPointMation extends OperatorUserInfo {
+public class AppWorkPageAuthPoint extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
@@ -42,9 +43,7 @@ public class AppWorkPageAuthPointMation extends OperatorUserInfo {
     @ApiModelProperty(value = "接口id/分组标识/数据权限表达式", required = "required")
     private String authMenu;
 
-    /**
-     * 菜单数字码
-     */
+    @Property("菜单数字码")
     @TableField("auth_num")
     private String menuNum;
 

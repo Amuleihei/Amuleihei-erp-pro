@@ -4,32 +4,29 @@
 
 package com.skyeye.menuapp.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.skyeye.common.constans.CommonConstants;
-import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.common.util.DataCommonUtil;
-import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.menuapp.classenum.MenuType;
 import com.skyeye.menuapp.dao.AppWorkPageDao;
-import com.skyeye.menuapp.entity.AppWorkPageMation;
+import com.skyeye.menuapp.entity.AppWorkPage;
 import com.skyeye.menuapp.service.AppWorkPageService;
-import com.skyeye.eve.service.IAuthUserService;
 import com.skyeye.win.service.SysEveDesktopService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: AppWorkPageServiceImpl
@@ -40,159 +37,68 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目
  */
 @Service
-public class AppWorkPageServiceImpl implements AppWorkPageService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppWorkPageServiceImpl.class);
-
-    @Autowired
-    private AppWorkPageDao appWorkPageDao;
-
-    @Autowired
-    private IAuthUserService iAuthUserService;
+@SkyeyeService(name = "手机端菜单管理", groupName = "手机端菜单管理")
+public class AppWorkPageServiceImpl extends SkyeyeBusinessServiceImpl<AppWorkPageDao, AppWorkPage> implements AppWorkPageService {
 
     @Autowired
     private SysEveDesktopService sysEveDesktopService;
 
-    /**
-     * 获取菜单列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void queryAppWorkPageList(InputObject inputObject, OutputObject outputObject) {
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
-        List<Map<String, Object>> beans = appWorkPageDao.queryAppWorkPageList(commonPageInfo);
-        iAuthUserService.setNameForMap(beans, "createId", "createName");
-        iAuthUserService.setNameForMap(beans, "lastUpdateId", "lastUpdateName");
-        sysEveDesktopService.setMationForMap(beans, "deskTopId", "deskTopMation");
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryAppWorkPageList(commonPageInfo);
+        List<String> ids = beans.stream().map(bean -> bean.get("id").toString()).collect(Collectors.toList());
+        if (CollectionUtil.isEmpty(ids)) {
+            return beans;
+        }
+        // 查询子节点信息(包含当前节点)
+        List<String> childIds = skyeyeBaseMapper.queryAllChildIdsByParentId(ids);
+        beans = selectMapByIds(childIds).values().stream().map(bean -> BeanUtil.beanToMap(bean)).collect(Collectors.toList());
+        beans = beans.stream()
+            .sorted(Comparator.comparing(bean -> Integer.parseInt(bean.get("orderBy").toString()))).collect(Collectors.toList());
+        beans.forEach(bean -> {
+            bean.put("lay_is_open", true);
+        });
+        return beans;
     }
 
-    /**
-     * 新增/编辑手机端菜单
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void writeAppWorkPageMation(InputObject inputObject, OutputObject outputObject) {
-        AppWorkPageMation appWorkPageMation = inputObject.getParams(AppWorkPageMation.class);
-        // 1.根据条件进行校验
-        QueryWrapper<AppWorkPageMation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageMation::getParentId), appWorkPageMation.getParentId());
-        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageMation::getTitle), appWorkPageMation.getTitle());
-        if (StringUtils.isNotEmpty(appWorkPageMation.getId())) {
-            queryWrapper.ne(CommonConstants.ID, appWorkPageMation.getId());
-        }
-        AppWorkPageMation checkAppWorkPage = appWorkPageDao.selectOne(queryWrapper);
-
-        if (ObjectUtils.isEmpty(checkAppWorkPage)) {
-            // 2.新增/编辑数据
-            if (StringUtils.isNotEmpty(appWorkPageMation.getId())) {
-                // 判断parentId是否发生变化，如果发生变化，则需要重新获取orderBy排序字段
-                AppWorkPageMation appWorkPage = appWorkPageDao.selectById(appWorkPageMation.getId());
-                if (!appWorkPage.getParentId().equals(appWorkPageMation.getParentId())) {
-                    Integer nextOrderBy = appWorkPageDao.queryAppWorkPageMaxOrderBumByParentId(appWorkPageMation.getParentId());
-                    appWorkPageMation.setOrderBy(nextOrderBy);
-                }
-                LOGGER.info("update app work page data, id is {}", appWorkPageMation.getId());
-                appWorkPageDao.updateById(appWorkPageMation);
-            } else {
-                Integer nextOrderBy = appWorkPageDao.queryAppWorkPageMaxOrderBumByParentId(appWorkPageMation.getParentId());
-                appWorkPageMation.setOrderBy(nextOrderBy);
-                DataCommonUtil.setId(appWorkPageMation);
-                LOGGER.info("insert app work page data, id is {}", appWorkPageMation.getId());
-                appWorkPageDao.insert(appWorkPageMation);
-            }
+    protected void createPrepose(AppWorkPage entity) {
+        if (StrUtil.isNotEmpty(entity.getUrl())) {
+            entity.setType(MenuType.PAGE.getKey());
         } else {
-            outputObject.setreturnMessage("存在相同的菜单，请进行更改.");
+            entity.setType(MenuType.FOLDER.getKey());
         }
     }
 
-    /**
-     * 获取菜单信息进行回显
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void queryAppWorkPageMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String id = map.get("id").toString();
-        AppWorkPageMation appWorkPageMation = appWorkPageDao.selectById(id);
-        outputObject.setBean(appWorkPageMation);
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
-    }
-
-    private void setUpdateUserMation(InputObject inputObject, Map<String, Object> map) {
-        map.put("last_update_id", inputObject.getLogParams().get("id"));
-        map.put("last_update_time", DateUtil.getTimeAndToString());
-    }
-
-    /**
-     * 删除菜单
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteAppWorkPageMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String id = map.get("id").toString();
-        appWorkPageDao.deleteById(id);
-    }
-
-    /**
-     * 菜单上移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editAppWorkPageSortTopById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 根据同一级排序获取这条数据的上一条数据
-        Map<String, Object> topBean = appWorkPageDao.queryAppWorkPageISTopByThisId(map);
-        if (topBean == null) {
-            outputObject.setreturnMessage("已经是最靠前的菜单，无法移动。");
-        } else {
-            map.put("orderBy", topBean.get("orderBy"));
-            topBean.put("orderBy", topBean.get("thisOrderBy"));
-            setUpdateUserMation(inputObject, map);
-            appWorkPageDao.editAppWorkPageSortById(map);
-            setUpdateUserMation(inputObject, topBean);
-            appWorkPageDao.editAppWorkPageSortById(topBean);
+    public AppWorkPage selectById(String id) {
+        AppWorkPage appWorkPage = super.selectById(id);
+        sysEveDesktopService.setDataMation(appWorkPage, AppWorkPage::getDesktopId);
+        if (!appWorkPage.getParentId().equals("0")) {
+            appWorkPage.setParentMation(selectById(appWorkPage.getParentId()));
         }
+        return appWorkPage;
     }
 
-    /**
-     * 菜单下移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editAppWorkPageSortLowerById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 根据同一级排序获取这条数据的下一条数据
-        Map<String, Object> topBean = appWorkPageDao.queryAppWorkPageISLowerByThisId(map);
-        if (topBean == null) {
-            outputObject.setreturnMessage("已经是最靠后的菜单，无法移动。");
-        } else {
-            map.put("orderBy", topBean.get("orderBy"));
-            topBean.put("orderBy", topBean.get("thisOrderBy"));
-            setUpdateUserMation(inputObject, map);
-            appWorkPageDao.editAppWorkPageSortById(map);
-            setUpdateUserMation(inputObject, topBean);
-            appWorkPageDao.editAppWorkPageSortById(topBean);
-        }
+    public List<AppWorkPage> selectByIds(String... ids) {
+        List<AppWorkPage> appWorkPages = super.selectByIds(ids);
+        // 桌面信息
+        sysEveDesktopService.setDataMation(appWorkPages, AppWorkPage::getDesktopId);
+        return appWorkPages;
+    }
+
+    @Override
+    public void deletePostpose(String id) {
+        // 删除子菜单
+        deleteByParentId(id);
+    }
+
+    private void deleteByParentId(String parentId) {
+        QueryWrapper<AppWorkPage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(AppWorkPage::getParentId), parentId);
+        remove(queryWrapper);
     }
 
     /**
@@ -202,19 +108,16 @@ public class AppWorkPageServiceImpl implements AppWorkPageService {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    public void queryAppWorkPageListByParentId(InputObject inputObject, OutputObject outputObject) {
+    public void queryAppWorkPageListByDesktopId(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        String parentId = map.get("parentId").toString();
         String desktopId = map.get("desktopId").toString();
-        QueryWrapper<AppWorkPageMation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageMation::getParentId), parentId);
-        if (StringUtils.isNotEmpty(desktopId)) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPageMation::getDesktopId), desktopId);
+        if (StringUtils.isEmpty(desktopId)) {
+            return;
         }
-        List<AppWorkPageMation> appWorkPageMationList = appWorkPageDao.selectList(queryWrapper);
-        appWorkPageMationList.forEach(bean -> {
-            bean.setName(bean.getTitle());
-        });
+        QueryWrapper<AppWorkPage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPage::getDesktopId), desktopId);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(AppWorkPage::getType), MenuType.FOLDER.getKey());
+        List<AppWorkPage> appWorkPageMationList = list(queryWrapper);
         outputObject.setBeans(appWorkPageMationList);
         outputObject.settotal(appWorkPageMationList.size());
     }

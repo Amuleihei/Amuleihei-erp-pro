@@ -6,8 +6,7 @@ package com.skyeye.menuapp.dao;
 
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.menuapp.entity.AppWorkPageMation;
-import org.apache.ibatis.annotations.Param;
+import com.skyeye.menuapp.entity.AppWorkPage;
 
 import java.util.List;
 import java.util.Map;
@@ -20,16 +19,9 @@ import java.util.Map;
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目
  */
-public interface AppWorkPageDao extends SkyeyeBaseMapper<AppWorkPageMation> {
-
-    Integer queryAppWorkPageMaxOrderBumByParentId(@Param("parentId") String parentId);
+public interface AppWorkPageDao extends SkyeyeBaseMapper<AppWorkPage> {
 
     List<Map<String, Object>> queryAppWorkPageList(CommonPageInfo commonPageInfo);
 
-    Map<String, Object> queryAppWorkPageISTopByThisId(Map<String, Object> map);
-
-    int editAppWorkPageSortById(Map<String, Object> map);
-
-    Map<String, Object> queryAppWorkPageISLowerByThisId(Map<String, Object> map);
-
+    List<String> queryAllChildIdsByParentId(List<String> ids);
 }
