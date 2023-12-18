@@ -123,7 +123,7 @@ public class SysEveUserController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "login002", value = "登录", method = "POST", allUse = "2")
+    @ApiOperation(id = "login002", value = "从session中获取用户信息", method = "POST", allUse = "2")
     @RequestMapping("/post/SysEveUserController/queryUserMationBySession")
     public void queryUserMationBySession(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.queryUserMationBySession(inputObject, outputObject);

@@ -381,6 +381,11 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         jedisClient.del(ObjectConstant.getDeskTopsCacheKey(userId));
         jedisClient.del(ObjectConstant.getAllMenuCacheKey(userId));
         jedisClient.del("authPointsMation:" + userId);
+        if (userId.lastIndexOf(SysUserAuthConstants.APP_IDENTIFYING) < 0) {
+            // PC端用户登录信息
+        } else {
+            // 手机端用户登录信息
+        }
     }
 
     /**
