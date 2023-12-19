@@ -44,7 +44,7 @@ public class AppWorkPageServiceImpl extends SkyeyeBusinessServiceImpl<AppWorkPag
     private SysEveDesktopService sysEveDesktopService;
 
     @Override
-    public List<Map<String, Object>> queryDataList(InputObject inputObject) {
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
         List<Map<String, Object>> beans = skyeyeBaseMapper.queryAppWorkPageList(commonPageInfo);
         List<String> ids = beans.stream().map(bean -> bean.get("id").toString()).collect(Collectors.toList());
