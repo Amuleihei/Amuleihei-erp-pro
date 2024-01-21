@@ -71,7 +71,7 @@ public class ServiceBeanCustomServiceImpl extends SkyeyeBusinessServiceImpl<Serv
         queryWrapper.and(wrapper ->
             wrapper.eq(MybatisPlusUtil.toColumns(ServiceBeanCustom::getClassName), className)
                 .or().eq(CommonConstants.ID, className));
-        ServiceBeanCustom serviceBeanCustom = getOne(queryWrapper);
+        ServiceBeanCustom serviceBeanCustom = getOne(queryWrapper, false);
         return serviceBeanCustom;
     }
 
