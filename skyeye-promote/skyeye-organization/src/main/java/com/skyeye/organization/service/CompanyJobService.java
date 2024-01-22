@@ -7,7 +7,7 @@ package com.skyeye.organization.service;
 import com.skyeye.base.business.service.SkyeyeBusinessService;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.eve.entity.organization.job.CompanyJob;
+import com.skyeye.organization.entity.CompanyJob;
 
 import java.util.List;
 import java.util.Map;

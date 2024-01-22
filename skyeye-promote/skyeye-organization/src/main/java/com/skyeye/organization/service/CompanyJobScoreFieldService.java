@@ -5,7 +5,7 @@
 package com.skyeye.organization.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
-import com.skyeye.eve.entity.organization.jobscore.JobScoreField;
+import com.skyeye.organization.entity.JobScoreField;
 
 import java.util.List;
 

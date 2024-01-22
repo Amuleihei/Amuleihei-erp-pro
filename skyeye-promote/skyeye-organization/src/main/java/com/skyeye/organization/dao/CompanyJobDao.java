@@ -6,7 +6,7 @@ package com.skyeye.organization.dao;
 
 import com.skyeye.common.entity.search.TableSelectInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.eve.entity.organization.job.CompanyJob;
+import com.skyeye.organization.entity.CompanyJob;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

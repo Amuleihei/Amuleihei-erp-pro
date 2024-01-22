@@ -56,19 +56,6 @@
 		WHERE a.company_id = #{id}
 	</select>
 	
-	<select id="queryOverAllCompanyMationList" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.`name`
-		FROM
-			company_mation a
-		WHERE a.p_id = '0'
-		<if test="notId != '' and notId != null">
-			AND a.id != #{notId}
-		</if>
-		ORDER BY a.create_time DESC
-	</select>
-	
 	<select id="queryCompanyMationListTree" parameterType="java.util.Map" resultType="java.util.Map">
 		SELECT
 			a.id,

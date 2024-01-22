@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.eve.entity.organization.jobscore.JobScoreField;
+import com.skyeye.organization.entity.JobScoreField;
 import com.skyeye.organization.dao.CompanyJobScoreFieldDao;
 import com.skyeye.organization.service.CompanyJobScoreFieldService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,23 +5,32 @@
 package com.skyeye.organization.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.ToolUtil;
-import com.skyeye.eve.entity.organization.company.Company;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.service.IAreaService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.organization.dao.CompanyDepartmentDao;
 import com.skyeye.organization.dao.CompanyJobDao;
 import com.skyeye.organization.dao.CompanyMationDao;
-import com.skyeye.organization.dao.CompanyTaxRateDao;
+import com.skyeye.organization.entity.Company;
+import com.skyeye.organization.entity.CompanyTaxRate;
 import com.skyeye.organization.service.CompanyMationService;
+import com.skyeye.organization.service.CompanyTaxRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: CompanyMationServiceImpl
@@ -32,10 +41,8 @@ import java.util.stream.Collectors;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
+@SkyeyeService(name = "企业管理", groupName = "组织模块")
 public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyMationDao, Company> implements CompanyMationService {
-
-    @Autowired
-    private CompanyMationDao companyMationDao;
 
     @Autowired
     private CompanyDepartmentDao companyDepartmentDao;
@@ -44,15 +51,15 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     private CompanyJobDao companyJobDao;
 
     @Autowired
-    private CompanyTaxRateDao companyTaxRateDao;
+    private IAreaService iAreaService;
 
     @Autowired
-    private IAreaService iAreaService;
+    private CompanyTaxRateService companyTaxRateService;
 
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = companyMationDao.queryCompanyMationList(map);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryCompanyMationList(map);
         iAreaService.setNameForMap(beans, "provinceId", "provinceName");
         iAreaService.setNameForMap(beans, "cityId", "cityName");
         iAreaService.setNameForMap(beans, "areaId", "areaName");
@@ -63,41 +70,23 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     @Override
     public void writePostpose(Company entity, String userId) {
         super.writePostpose(entity, userId);
-        dealTaxRate(entity);
-    }
-
-    /**
-     * 处理个人所得税税率信息
-     *
-     * @param entity
-     */
-    private void dealTaxRate(Company entity) {
-        companyTaxRateDao.deleteCompanyTaxRateByCompanyId(entity.getId());
-        List<Map<String, Object>> beans = entity.getTaxRate();
-        beans.forEach(bean -> {
-            bean.put("id", ToolUtil.getSurFaceId());
-            bean.put("companyId", entity.getId());
-        });
-        if (CollectionUtil.isEmpty(beans)) {
-            return;
-        }
-        companyTaxRateDao.insertCompanyTaxRate(beans);
+        companyTaxRateService.saveCompanyTaxRate(entity.getId(), entity.getTaxRate());
     }
 
     @Override
     public void deletePreExecution(String id) {
         // 判断是否有子公司
-        Map<String, Object> bean = companyMationDao.queryCompanyMationById(id);
+        Map<String, Object> bean = skyeyeBaseMapper.queryCompanyMationById(id);
         if (Integer.parseInt(bean.get("childsNum").toString()) > 0) {
             throw new CustomException("该公司下存在子公司，无法直接删除。");
         }
         // 判断是否有部门
-        bean = companyMationDao.queryCompanyDepartMentNumMationById(id);
+        bean = skyeyeBaseMapper.queryCompanyDepartMentNumMationById(id);
         if (Integer.parseInt(bean.get("departmentNum").toString()) > 0) {
             throw new CustomException("该公司下存在部门，无法直接删除。");
         }
         // 判断是否有员工
-        bean = companyMationDao.queryCompanyUserNumMationById(id);
+        bean = skyeyeBaseMapper.queryCompanyUserNumMationById(id);
         if (Integer.parseInt(bean.get("companyUserNum").toString()) > 0) {
             throw new CustomException("该公司下存在员工，无法直接删除。");
         }
@@ -106,14 +95,14 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     @Override
     public void deletePostpose(String id) {
         // 删除完成后的后置执行事件，根据公司id删除该公司拥有的个人所得税税率信息
-        companyTaxRateDao.deleteCompanyTaxRateByCompanyId(id);
+        companyTaxRateService.deleteCompanyTaxRateByPId(id);
     }
 
     @Override
     public Company getDataFromDb(String id) {
         Company company = super.getDataFromDb(id);
         // 个人所得税税率信息
-        company.setTaxRate(companyTaxRateDao.queryCompanyTaxRateByCompanyId(Arrays.asList(id)));
+        company.setTaxRate(companyTaxRateService.queryCompanyTaxRateByPId(id));
         return company;
     }
 
@@ -123,11 +112,9 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
         if (CollectionUtil.isEmpty(companyList)) {
             return new ArrayList<>();
         }
-        List<Map<String, Object>> taxRateList = companyTaxRateDao.queryCompanyTaxRateByCompanyId(ids);
-        Map<String, List<Map<String, Object>>> taxRateMap = taxRateList.stream()
-            .collect(Collectors.groupingBy(bean -> bean.get("companyId").toString()));
+        Map<String, List<CompanyTaxRate>> companyTaxRateMap = companyTaxRateService.queryCompanyTaxRateByPId(ids);
         companyList.forEach(company -> {
-            company.setTaxRate(taxRateMap.get(company.getId()));
+            company.setTaxRate(companyTaxRateMap.get(company.getId()));
         });
         return companyList;
     }
@@ -141,11 +128,15 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     @Override
     public void queryOverAllCompanyMationList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = companyMationDao.queryOverAllCompanyMationList(map);
-        if (!beans.isEmpty()) {
-            outputObject.setBeans(beans);
-            outputObject.settotal(beans.size());
+        String notId = map.get("notId").toString();
+        QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Company::getpId), CommonNumConstants.NUM_ZERO.toString());
+        if (StrUtil.isNotEmpty(notId)) {
+            queryWrapper.ne(CommonConstants.ID, notId);
         }
+        List<Company> companyList = list(queryWrapper);
+        outputObject.setBeans(companyList);
+        outputObject.settotal(companyList.size());
     }
 
     /**
@@ -157,7 +148,7 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     @Override
     public void queryCompanyMationListTree(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = companyMationDao.queryCompanyMationListTree(map);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryCompanyMationListTree(map);
         String[] s;
         for (Map<String, Object> bean : beans) {
             s = bean.get("parentId").toString().split(",");
@@ -185,7 +176,7 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
     @Override
     public void queryCompanyListToSelect(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = companyMationDao.queryCompanyListToSelect(map);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryCompanyListToSelect(map);
         outputObject.setBeans(beans);
         outputObject.settotal(beans.size());
     }
@@ -201,7 +192,7 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
         Map<String, Object> map = inputObject.getParams();
         List<Map<String, Object>> beans = new ArrayList<>();
         // 1.获取企业
-        List<Map<String, Object>> company = companyMationDao.queryCompanyListToSelect(map);
+        List<Map<String, Object>> company = skyeyeBaseMapper.queryCompanyListToSelect(map);
         beans.addAll(company);
         // 2.获取部门
         List<Map<String, Object>> department = companyDepartmentDao.queryCompanyDepartmentOrganization(map);
@@ -246,7 +237,7 @@ public class CompanyMationServiceImpl extends SkyeyeBusinessServiceImpl<CompanyM
 
     @Override
     public List<Map<String, Object>> queryCompanyList(String companyId) {
-        List<Map<String, Object>> beans = companyMationDao.queryCompanyList(companyId);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryCompanyList(companyId);
         return CollectionUtil.isNotEmpty(beans) ? beans : new ArrayList<>();
     }
 

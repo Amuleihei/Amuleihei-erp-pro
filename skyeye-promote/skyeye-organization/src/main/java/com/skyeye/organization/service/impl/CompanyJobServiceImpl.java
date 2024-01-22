@@ -10,7 +10,7 @@ import com.skyeye.common.entity.search.TableSelectInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.ToolUtil;
-import com.skyeye.eve.entity.organization.job.CompanyJob;
+import com.skyeye.organization.entity.CompanyJob;
 import com.skyeye.organization.dao.CompanyJobDao;
 import com.skyeye.organization.service.CompanyJobScoreService;
 import com.skyeye.organization.service.CompanyJobService;

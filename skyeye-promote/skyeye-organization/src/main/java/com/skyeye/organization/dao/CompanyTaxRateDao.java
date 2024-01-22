@@ -4,23 +4,17 @@
 
 package com.skyeye.organization.dao;
 
-import org.apache.ibatis.annotations.Param;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
+import com.skyeye.organization.entity.CompanyTaxRate;
 
-import java.util.List;
-import java.util.Map;
-
-public interface CompanyTaxRateDao {
-
-    int insertCompanyTaxRate(@Param("list") List<Map<String, Object>> beans);
-
-    /**
-     * 根据公司id删除该公司拥有的个人所得税税率信息
-     *
-     * @param companyId 公司id
-     * @return
-     */
-    int deleteCompanyTaxRateByCompanyId(@Param("companyId") String companyId);
-
-    List<Map<String, Object>> queryCompanyTaxRateByCompanyId(@Param("companyIds") List<String> companyIds);
+/**
+ * @ClassName: CompanyTaxRateDao
+ * @Description: 公司个人所得税税率信息数据接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/1/22 15:47
+ * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目
+ */
+public interface CompanyTaxRateDao extends SkyeyeBaseMapper<CompanyTaxRate> {
 
 }

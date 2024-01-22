@@ -6,7 +6,7 @@ package com.skyeye.organization.dao;
 
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.eve.entity.organization.department.Department;
+import com.skyeye.organization.entity.Department;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

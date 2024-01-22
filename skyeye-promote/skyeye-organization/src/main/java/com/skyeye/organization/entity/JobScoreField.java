@@ -2,13 +2,14 @@
  * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
  ******************************************************************************/
 
-package com.skyeye.eve.entity.organization.jobscore;
+package com.skyeye.organization.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
@@ -31,20 +32,16 @@ public class JobScoreField extends OperatorUserInfo {
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
-    /**
-     * 职位定级id
-     */
     @TableField("job_score_id")
+    @Property("职位定级id")
     private String jobScoreId;
 
     @TableField("field_key")
     @ApiModelProperty(value = "薪资字段key", required = "required")
     private String fieldKey;
 
-    /**
-     * 薪资字段名称
-     */
     @TableField(exist = false)
+    @Property("薪资字段名称")
     private String fieldName;
 
     @TableField("min_money")

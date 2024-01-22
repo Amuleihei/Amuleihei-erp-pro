@@ -13,7 +13,7 @@ import com.skyeye.common.enumeration.OvertimeSettlementType;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.ToolUtil;
-import com.skyeye.eve.entity.organization.department.Department;
+import com.skyeye.organization.entity.Department;
 import com.skyeye.exception.CustomException;
 import com.skyeye.organization.dao.CompanyDepartmentDao;
 import com.skyeye.organization.service.CompanyDepartmentService;

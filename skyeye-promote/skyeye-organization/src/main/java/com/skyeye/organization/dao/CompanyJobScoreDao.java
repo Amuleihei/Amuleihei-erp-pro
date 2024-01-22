@@ -5,9 +5,8 @@
 package com.skyeye.organization.dao;
 
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.eve.entity.organization.jobscore.JobScore;
-import com.skyeye.eve.entity.organization.jobscore.JobScoreQueryDo;
-import org.apache.ibatis.annotations.Param;
+import com.skyeye.organization.entity.JobScore;
+import com.skyeye.organization.entity.JobScoreQueryDo;
 
 import java.util.List;
 import java.util.Map;
