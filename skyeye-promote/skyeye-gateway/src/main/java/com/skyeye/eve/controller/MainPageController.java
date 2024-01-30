@@ -29,17 +29,6 @@ public class MainPageController {
     }
 
     /**
-     * 获取公告类型以及前八条内容
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/MainPageController/queryNoticeContentListByUserId")
-    public void queryNoticeContentListByUserId(InputObject inputObject, OutputObject outputObject) {
-        mainPageService.queryNoticeContentListByUserId(inputObject, outputObject);
-    }
-
-    /**
      * 获取前八条热门论坛帖
      *
      * @param inputObject  入参以及用户信息等获取对象

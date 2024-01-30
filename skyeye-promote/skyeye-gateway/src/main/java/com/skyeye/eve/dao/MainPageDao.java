@@ -17,10 +17,6 @@ public interface MainPageDao {
 
     String queryForumNumByUserId(@Param("userId") String userId);
 
-    List<Map<String, Object>> queryFirstSysNoticeTypeUpStateList();
-
-    List<Map<String, Object>> queryNoticeContentListByUserIdAndTypeId(@Param("userId") String userId, @Param("typeId") String typeId);
-
     List<Map<String, Object>> queryHotForumList(Map<String, Object> map);
 
 }

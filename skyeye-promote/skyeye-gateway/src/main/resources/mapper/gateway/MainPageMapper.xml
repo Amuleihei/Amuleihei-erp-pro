@@ -31,58 +31,6 @@
 			a.create_id = #{userId}
 	</select>
 	
-	<select id="queryFirstSysNoticeTypeUpStateList" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.type_name name
-		FROM
-			sys_notice_type a
-		WHERE 
-			a.state = 2
-		AND a.parent_id = '0'
-		ORDER BY a.order_by ASC
-	</select>
-	
-	<select id="queryNoticeContentListByUserIdAndTypeId" resultType="java.util.Map">
-		SELECT
-			*
-		FROM
-				(SELECT
-					a.id,
-					a.title,
-					CONVERT (a.real_lines_time, CHAR) linesTime,
-					a.create_id createId,
-					d.type_name typeName
-				FROM
-					sys_notice a,
-					sys_notice_user c,
-					sys_notice_type d
-				WHERE
-					c.user_id = #{userId}
-				AND c.notice_id = a.id
-				AND a.second_type_id = d.id
-				AND a.state = 2
-				AND a.send_type = 2
-				AND a.type_id = #{typeId}
-			UNION ALL
-				SELECT
-					a.id,
-					a.title,
-					CONVERT (a.real_lines_time, CHAR) linesTime,
-					a.create_id createId,
-					d.type_name typeName
-				FROM
-					sys_notice a,
-					sys_notice_type d
-				WHERE
-				a.second_type_id = d.id
-				AND a.state = 2
-				AND a.send_type = 1
-				AND a.type_id = #{typeId}) a
-		ORDER BY a.linesTime DESC
-		LIMIT 8		
-	</select>
-	
 	<select id="queryHotForumList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
             a.id,

@@ -4,36 +4,29 @@
 
 package com.skyeye.eve.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import com.skyeye.common.constans.ForumConstants;
-import com.skyeye.common.constans.MessageConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.eve.dao.MainPageDao;
-import com.skyeye.eve.service.IAuthUserService;
 import com.skyeye.eve.service.MainPageService;
 import com.skyeye.jedis.JedisClientService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class MainPageServiceImpl implements MainPageService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainPageServiceImpl.class);
 
     @Autowired
     private MainPageDao mainPageDao;
 
     @Autowired
     public JedisClientService jedisClient;
-
-    @Autowired
-    private IAuthUserService iAuthUserService;
 
     /**
      * 获取本月考勤天数，我的文件数，我的论坛帖数
@@ -55,35 +48,6 @@ public class MainPageServiceImpl implements MainPageService {
         map.put("diskCloudFileNum", diskCloudFileNum);
         map.put("forumNum", forumNum);
         outputObject.setBean(map);
-    }
-
-    /**
-     * 获取公告类型以及前八条内容
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void queryNoticeContentListByUserId(InputObject inputObject, OutputObject outputObject) {
-        String userId = inputObject.getLogParams().get("id").toString();
-        List<Map<String, Object>> beans = new ArrayList<>();
-        if (ToolUtil.isBlank(jedisClient.get(MessageConstants.sysSecondNoticeTypeUpStateList("")))) {
-            //若缓存中无值
-            beans = mainPageDao.queryFirstSysNoticeTypeUpStateList();
-            jedisClient.set(MessageConstants.sysSecondNoticeTypeUpStateList(""), JSONUtil.toJsonStr(beans));
-        } else {
-            beans = JSONUtil.toList(jedisClient.get(MessageConstants.sysSecondNoticeTypeUpStateList("")), null);
-        }
-        beans.forEach(bean -> {
-            try {
-                List<Map<String, Object>> content = mainPageDao.queryNoticeContentListByUserIdAndTypeId(userId, bean.get("id").toString());
-                iAuthUserService.setNameForMap(content, "createId", "createName");
-                bean.put("content", content);
-            } catch (Exception e) {
-                LOGGER.warn("queryNoticeContentListByUserId failed, reason is {}.", e);
-            }
-        });
-        outputObject.setBeans(beans);
     }
 
     /**

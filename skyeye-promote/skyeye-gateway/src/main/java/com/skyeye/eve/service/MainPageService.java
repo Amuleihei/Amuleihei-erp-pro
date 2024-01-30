@@ -11,8 +11,6 @@ public interface MainPageService {
 
     void queryFourNumListByUserId(InputObject inputObject, OutputObject outputObject);
 
-    void queryNoticeContentListByUserId(InputObject inputObject, OutputObject outputObject);
-
     void queryHotForumList(InputObject inputObject, OutputObject outputObject);
 
 }
