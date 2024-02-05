@@ -6,11 +6,11 @@ package com.skyeye.ueditor.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.skyeye.common.constans.FileConstants;
 import com.skyeye.common.constans.SysUserAuthConstants;
 import com.skyeye.common.object.GetUserToken;
 import com.skyeye.common.util.DataCommonUtil;
-import com.skyeye.common.util.DateUtil;
-import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.FileUtil;
 import com.skyeye.eve.dao.EditUploadDao;
 import com.skyeye.jedis.JedisClientService;
 import com.skyeye.ueditor.service.EditUploadService;
@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -49,9 +50,9 @@ public class EditUploadServiceImpl implements EditUploadService {
     @Override
     public Map<String, Object> uploadContentPic(HttpServletRequest req) {
         Map<String, Object> rs = new HashMap<>();
-        MultipartHttpServletRequest mReq = null;
-        MultipartFile file = null;
-        String fileName = "";
+        MultipartHttpServletRequest mReq;
+        MultipartFile file;
+        String fileName;
         // 原始文件名   UEDITOR创建页面元素时的alt和title属性
         String originalFileName = "";
         try {
@@ -65,19 +66,17 @@ public class EditUploadServiceImpl implements EditUploadService {
             rs.put("state", "SUCCESS");// UEDITOR的规则:不为SUCCESS则显示state的内容
             rs.put("title", originalFileName);
             rs.put("original", originalFileName);
-            File dirname = new File(tPath + "\\upload\\ueditor");
-            if (!dirname.isDirectory()) { //目录不存在
-                dirname.mkdirs(); //创建目录
-            }
-            // 项目在容器中实际发布运行的根路径
-            String realPath = tPath + "\\upload\\ueditor\\";
+            String basePath = tPath + FileConstants.FileUploadPath.getSavePath(FileConstants.FileUploadPath.UEDITOR.getType()[0]);
+            FileUtil.createDirs(basePath);
+
+            // 得到文件扩展名
+            String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
             // 自定义的文件名称
-            String type = fileName.indexOf(".") != -1 ? fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()) : null;
-            String trueFileName = String.valueOf(System.currentTimeMillis()) + "." + type;
-            String path = realPath + trueFileName;
+            String newFileName = String.format(Locale.ROOT, "%s.%s", System.currentTimeMillis(), fileExtName);
+            String path = basePath + "/" + newFileName;
             file.transferTo(new File(path));
-            //能访问到你现在图片的路径
-            String filePath = "/images/upload/ueditor/" + trueFileName;
+            // 能访问到你现在图片的路径
+            String filePath = FileConstants.FileUploadPath.getVisitPath(FileConstants.FileUploadPath.UEDITOR.getType()[0]) + newFileName;
             rs.put("url", filePath);
             Map<String, Object> bean = new HashMap<>();
             bean.put("imgPath", filePath);
@@ -101,13 +100,12 @@ public class EditUploadServiceImpl implements EditUploadService {
      * 回显富文本图片
      */
     @Override
-    public Map<String, Object> downloadContentPic(HttpServletRequest req) {
+    public Map<String, Object> downloadContentPic(HttpServletRequest req, String userId) {
         Map<String, Object> rs = new HashMap<>();
         rs.put("state", "SUCCESS");// UEDITOR的规则:不为SUCCESS则显示state的内容
         Map<String, Object> bean = new HashMap<>();
         // 用户信息
-        Map<String, Object> userMation = SysUserAuthConstants.getUserLoginRedisCache(GetUserToken.getUserTokenUserId(req));
-        bean.put("createId", userMation.get("id"));
+        bean.put("createId", userId);
         bean.put("url", "");
         int page = Integer.parseInt(req.getParameter("start")) / Integer.parseInt(req.getParameter("size"));
         page++;

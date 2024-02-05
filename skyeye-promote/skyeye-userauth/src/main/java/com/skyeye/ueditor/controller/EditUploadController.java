@@ -39,8 +39,8 @@ public class EditUploadController {
      * @return
      */
     @RequestMapping("/upload/editUploadController/downloadContentPic")
-    public String downloadContentPic(HttpServletRequest req, @RequestParam("callback") String callback) {
-        return callback + "(" + JSONObject.toJSONString(editUploadService.downloadContentPic(req)) + ")";
+    public String downloadContentPic(HttpServletRequest req, @RequestParam("callback") String callback, @RequestParam("userId") String userId) {
+        return callback + "(" + JSONObject.toJSONString(editUploadService.downloadContentPic(req, userId)) + ")";
     }
 
     @RequestMapping("/upload/editUploadController/ueeditorConif")

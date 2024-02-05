@@ -11,6 +11,6 @@ public interface EditUploadService {
 
     Map<String, Object> uploadContentPic(HttpServletRequest req);
 
-    Map<String, Object> downloadContentPic(HttpServletRequest req);
+    Map<String, Object> downloadContentPic(HttpServletRequest req, String userId);
 
 }
