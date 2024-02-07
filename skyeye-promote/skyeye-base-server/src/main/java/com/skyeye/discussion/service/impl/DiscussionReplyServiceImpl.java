@@ -8,6 +8,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
@@ -63,9 +64,9 @@ public class DiscussionReplyServiceImpl extends SkyeyeBusinessServiceImpl<Discus
                 tree.putExtra("createTime", treeNode.get("createTime").toString());
                 tree.putExtra("createMation", treeNode.get("createMation"));
             });
-        outputObject.setBeans(treeNodes);
-        outputObject.settotal(treeNodes.size());
-        return true;
+        beans.clear();
+        beans.addAll(JSONUtil.toList(JSONUtil.toJsonStr(treeNodes), null));
+        return false;
     }
 
     @Override
