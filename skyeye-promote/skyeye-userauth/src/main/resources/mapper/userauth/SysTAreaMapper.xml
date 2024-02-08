@@ -38,7 +38,7 @@
 			a.parent_code_id parentCodeId
 		FROM
 			t_area a
-		WHERE 3 > a.`level`
+		WHERE 4 > a.`level`
 		ORDER BY a.`level` ASC
 	</select>
 	
