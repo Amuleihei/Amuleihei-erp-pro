@@ -27,4 +27,6 @@ public interface SkyeyeClassEnumService extends IService<SkyeyeClassEnumMation> 
     void getEnumDataByClassName(InputObject inputObject, OutputObject outputObject);
 
     List<Map<String, Object>> queryEnumDataList(String className, String filterKey, String filterValue);
+
+    void getEnumDataMapByClassName(InputObject inputObject, OutputObject outputObject);
 }

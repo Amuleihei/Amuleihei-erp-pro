@@ -4,6 +4,8 @@
 
 package com.skyeye.clazz.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.skyeye.clazz.dao.SkyeyeClassEnumDao;
@@ -12,6 +14,7 @@ import com.skyeye.clazz.entity.classenum.SkyeyeClassEnumMation;
 import com.skyeye.clazz.service.SkyeyeClassEnumService;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DataCommonUtil;
@@ -21,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +112,26 @@ public class SkyeyeClassEnumServiceImpl extends ServiceImpl<SkyeyeClassEnumDao, 
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void getEnumDataMapByClassName(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        List<String> classNameList = JSONUtil.toList(params.get("classNameList").toString(), null);
+
+        QueryWrapper<SkyeyeClassEnumMation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(SkyeyeClassEnumMation::getClassName), classNameList);
+        List<SkyeyeClassEnumMation> enumMationList = skyeyeClassEnumDao.selectList(queryWrapper);
+        // 只加载可以展示的数据
+        Map<String, List<Map<String, Object>>> result = new HashMap<>();
+        enumMationList.forEach(enumMation -> {
+            List<Map<String, Object>> skyeyeEnumDtoList = enumMation.getValueList()
+                .stream().filter(bean -> filterSkyeyeEnumDto(bean, StrUtil.EMPTY, StrUtil.EMPTY)).collect(Collectors.toList());
+            result.put(enumMation.getClassName(), skyeyeEnumDtoList);
+        });
+
+        outputObject.setBean(result);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
 }

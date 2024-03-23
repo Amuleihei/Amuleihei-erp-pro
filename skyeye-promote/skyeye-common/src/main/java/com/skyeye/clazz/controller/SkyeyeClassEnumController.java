@@ -60,4 +60,18 @@ public class SkyeyeClassEnumController {
         skyeyeClassEnumService.getEnumDataByClassName(inputObject, outputObject);
     }
 
+    /**
+     * 根据className获取可以展示在界面上的枚举数据信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "getEnumDataMapByClassName", value = "根据className获取可以展示在界面上的枚举数据信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "classNameList", name = "classNameList", value = "className的集合", required = "required")})
+    @RequestMapping("/post/SkyeyeClassEnumController/getEnumDataMapByClassName")
+    public void getEnumDataMapByClassName(InputObject inputObject, OutputObject outputObject) {
+        skyeyeClassEnumService.getEnumDataMapByClassName(inputObject, outputObject);
+    }
+
 }
