@@ -59,6 +59,7 @@ public class AuthPointServiceImpl extends SkyeyeBusinessServiceImpl<AuthPointDao
             wrapper.eq(MybatisPlusUtil.toColumns(AuthPoint::getName), entity.getName())
                 .or().eq(MybatisPlusUtil.toColumns(AuthPoint::getAuthMenu), entity.getAuthMenu()));
         queryWrapper.eq(MybatisPlusUtil.toColumns(AuthPoint::getObjectId), entity.getObjectId());
+        queryWrapper.eq(MybatisPlusUtil.toColumns(AuthPoint::getParentId), entity.getParentId());
         if (StringUtils.isNotEmpty(entity.getId())) {
             queryWrapper.ne(CommonConstants.ID, entity.getId());
         }
