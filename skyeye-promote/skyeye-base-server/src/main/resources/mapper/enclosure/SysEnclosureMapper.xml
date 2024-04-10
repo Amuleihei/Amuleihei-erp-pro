@@ -31,7 +31,9 @@
 		SELECT
 			id,
 			`name`,
-			path fileAddress
+			path fileAddress,
+			`type`,
+			`size`
 		FROM
 			sys_enclosure
 		WHERE instr(concat(',', #{enclosure},','), concat(',', id, ','));
