@@ -69,4 +69,8 @@ public class TableColumn extends OperatorUserInfo {
     @Property("表单布局id")
     private String pageId;
 
+    @TableField("page_key")
+    @ApiModelProperty("布局类型")
+    private String pageKey;
+
 }

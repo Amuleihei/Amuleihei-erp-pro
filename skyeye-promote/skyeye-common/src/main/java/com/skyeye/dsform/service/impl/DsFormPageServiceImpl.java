@@ -137,7 +137,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
             dsFormPageContentService.deleteDsFormContentByPageId(dsFormPage.getId());
         } else {
             // 删除表单布局(表格类型关联的列信息)
-            tableColumnService.deleteByPageId(dsFormPage.getId());
+            tableColumnService.deleteByPageId(dsFormPage.getId(), getServiceClassName());
         }
     }
 
@@ -185,7 +185,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
     }
 
     private void selectTableColumn(DsFormPage dsFormPage) {
-        List<TableColumn> tableColumnList = tableColumnService.getTableColumnByPageId(dsFormPage.getId());
+        List<TableColumn> tableColumnList = tableColumnService.getTableColumnByPageId(dsFormPage.getId(), getServiceClassName());
         // 获取属性信息
         List<String> attrKeys = tableColumnList.stream().map(TableColumn::getAttrKey).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(attrKeys)) {
@@ -231,7 +231,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
     public void writeDsFormPageTable(InputObject inputObject, OutputObject outputObject) {
         TableColumnVo tableColumnVo = inputObject.getParams(TableColumnVo.class);
         String userId = inputObject.getLogParams().get("id").toString();
-        tableColumnService.createList(tableColumnVo.getTableColumnList(), userId, tableColumnVo.getPageId());
+        tableColumnService.createList(tableColumnVo.getTableColumnList(), userId, tableColumnVo.getPageId(), getServiceClassName());
     }
 
     /**

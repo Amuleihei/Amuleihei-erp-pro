@@ -19,11 +19,11 @@ import java.util.List;
  */
 public interface TableColumnService extends SkyeyeBusinessService<TableColumn> {
 
-    List<TableColumn> getTableColumnByPageId(String pageId);
+    List<TableColumn> getTableColumnByPageId(String pageId, String pageKey);
 
-    void createList(List<TableColumn> entitys, String userId, String pageId);
+    void createList(List<TableColumn> entitys, String userId, String pageId, String pageKey);
 
 
-    void deleteByPageId(String pageId);
+    void deleteByPageId(String pageId, String pageKey);
 
 }
