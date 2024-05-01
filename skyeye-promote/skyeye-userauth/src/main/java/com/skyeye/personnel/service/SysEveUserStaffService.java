@@ -35,10 +35,6 @@ public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUser
 
     void insertNewUserMation(Map<String, Object> map);
 
-    void querySysUserStaffListToTable(InputObject inputObject, OutputObject outputObject);
-
-    void querySysUserStaffListByIds(InputObject inputObject, OutputObject outputObject);
-
     void querySysUserStaffLogin(InputObject inputObject, OutputObject outputObject);
 
     void queryUserMationList(InputObject inputObject, OutputObject outputObject);

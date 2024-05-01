@@ -38,7 +38,7 @@ public class SysEveUserStaffController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "staff001", value = "查看所有员工列表", method = "POST", allUse = "1")
+    @ApiOperation(id = "staff001", value = "查看所有员工列表", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffList")
     public void querySysUserStaffList(InputObject inputObject, OutputObject outputObject) {
@@ -114,38 +114,6 @@ public class SysEveUserStaffController {
     @RequestMapping("/post/SysEveUserStaffController/editSysUserStaffState")
     public void editSysUserStaffState(InputObject inputObject, OutputObject outputObject) {
         sysEveUserStaffService.editSysUserStaffState(inputObject, outputObject);
-    }
-
-    /**
-     * 查看所有员工列表展示为表格供其他选择
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "staff008", value = "查看所有员工列表展示为表格供其他选择", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "limit", name = "limit", value = "分页参数,每页多少条数据", required = "required,num"),
-        @ApiImplicitParam(id = "page", name = "page", value = "分页参数,第几页", required = "required,num"),
-        @ApiImplicitParam(id = "userName", name = "userName", value = "员工姓名"),
-        @ApiImplicitParam(id = "userIdCard", name = "userIdCard", value = "身份证"),
-        @ApiImplicitParam(id = "userSex", name = "userSex", value = "员工性别  0保密   1男  2女"),
-        @ApiImplicitParam(id = "companyName", name = "companyName", value = "公司"),
-        @ApiImplicitParam(id = "departmentName", name = "departmentName", value = "部门"),
-        @ApiImplicitParam(id = "jobName", name = "jobName", value = "职位")})
-    @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffListToTable")
-    public void querySysUserStaffListToTable(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.querySysUserStaffListToTable(inputObject, outputObject);
-    }
-
-    /**
-     * 根据员工ids获取员工信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffListByIds")
-    public void querySysUserStaffListByIds(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.querySysUserStaffListByIds(inputObject, outputObject);
     }
 
     /**

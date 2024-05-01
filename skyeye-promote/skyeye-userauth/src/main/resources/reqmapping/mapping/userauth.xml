@@ -151,12 +151,6 @@
 	</url>
 	<!-- 自定义菜单结束 -->
 	
-	<!-- 员工操作开始 -->
-	<url id="staff009" path="/post/SysEveUserStaffController/querySysUserStaffListByIds" val="根据员工ids获取员工信息" allUse="2" method="POST" groupName="员工操作">
-		<property id="ids" name="ids" ref="required" var="员工ids，逗号隔开" />
-	</url>
-	<!-- 员工操作结束 -->
-	
     <!-- 系统管理开始 -->
 	<url id="sys019" path="/post/SysEveUserController/queryRoleAndBindRoleByUserId" val="获取角色和当前已经绑定的角色信息" allUse="2" groupName="角色管理">
 		<property id="rowId" name="id" ref="required" var="账号ID" />

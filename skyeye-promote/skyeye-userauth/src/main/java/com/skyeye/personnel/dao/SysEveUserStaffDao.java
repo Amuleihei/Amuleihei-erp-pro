@@ -48,10 +48,6 @@ public interface SysEveUserStaffDao extends SkyeyeBaseMapper<SysEveUserStaff> {
 
     List<Map<String, Object>> queryUserMationList(@Param("userIds") String userIds, @Param("staffIds") String staffIds);
 
-    List<Map<String, Object>> queryStaffNameListByIdList(@Param("list") List<String> userIds);
-
-    List<Map<String, Object>> querySysUserStaffListToTable(Map<String, Object> map);
-
     int insertStaffCheckWorkTimeRelation(List<Map<String, Object>> staffTimeMation);
 
     List<Map<String, Object>> queryStaffCheckWorkTimeRelationByStaffId(@Param("staffId") String staffId);

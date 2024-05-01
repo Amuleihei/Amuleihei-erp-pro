@@ -87,6 +87,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         iCompanyService.setNameForMap(beans, "companyId", "companyName");
         iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
         iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
+        iCompanyJobScoreService.setNameForMap(beans, "jobScoreId", "jobScoreName");
         return beans;
     }
 
@@ -356,45 +357,6 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         updateWrapper.eq(CommonConstants.ID, id);
         updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), type);
         update(updateWrapper);
-    }
-
-    /**
-     * 查看所有员工列表展示为表格供其他选择
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void querySysUserStaffListToTable(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Page pages = PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
-        List<Map<String, Object>> beans = sysEveUserStaffDao.querySysUserStaffListToTable(map);
-        iCompanyService.setNameForMap(beans, "companyId", "companyName");
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
-        iCompanyJobScoreService.setNameForMap(beans, "jobScoreId", "jobScoreName");
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
-    }
-
-    /**
-     * 根据员工ids获取员工信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void querySysUserStaffListByIds(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        List<String> idsList = Arrays.asList(map.get("ids").toString().split(","));
-        List<Map<String, Object>> beans = new ArrayList<>();
-        if (!idsList.isEmpty()) {
-            beans = sysEveUserStaffDao.queryStaffNameListByIdList(idsList);
-            outputObject.setBeans(beans);
-            outputObject.settotal(beans.size());
-        } else {
-            outputObject.setBeans(beans);
-        }
     }
 
     /**

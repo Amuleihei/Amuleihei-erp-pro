@@ -7,6 +7,7 @@
 			a.id,
 			a.job_number jobNumber,
 			a.user_name userName,
+			CONCAT_WS('_', a.job_number, a.user_name) `name`,
 			a.user_photo userPhoto,
 			a.user_idcard userIdCard,
 			a.user_sex userSex,
@@ -19,6 +20,7 @@
 			a.company_id companyId,
 			a.department_id departmentId,
 			a.job_id jobId,
+			a.job_score_id jobScoreId,
 			a.`type` staffType,
 			a.create_id createId,
 			CONVERT(a.create_time, char) createTime,
@@ -222,50 +224,6 @@
 		</where>
 	</select>
 	
-	<select id="querySysUserStaffListToTable" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.job_number jobNumber,
-			a.user_name userName,
-			CONCAT_WS('_', a.job_number, a.user_name) `name`,
-			a.user_photo userPhoto,
-			a.user_idcard userIdCard,
-			a.user_sex userSex,
-			a.email,
-			a.phone,
-			a.home_phone homePhone,
-			a.qq,
-			a.state,
-		    a.company_id companyId,
-		    a.department_id departmentId,
-		    a.job_id jobId,
-		    a.job_score_id jobScoreId,
-			a.`type` staffType
-		FROM
-			sys_eve_user_staff a
-		<where>
-			<if test="userName != '' and userName != null">
-				AND a.user_name LIKE '%${userName}%'
-			</if>
-			<if test="userIdCard != '' and userIdCard != null">
-				AND a.user_idcard LIKE '%${userIdCard}%'
-			</if>
-			<if test="userSex != '' and userSex != null">
-				AND a.user_sex = #{userSex}
-			</if>
-			<if test="companyName != '' and companyName != null">
-				AND a.company_id = #{companyName}
-			</if>
-			<if test="departmentName != '' and departmentName != null">
-				AND a.department_id = #{departmentName}
-			</if>
-			<if test="jobName != '' and jobName != null">
-				AND a.job_id = #{jobName}
-			</if>
-		</where>
-			ORDER BY a.state ASC, a.entry_time DESC
-	</select>
-	
 	<insert id="insertStaffCheckWorkTimeRelation" parameterType="java.util.Map">
 	     INSERT INTO sys_eve_user_staff_time
 	     (staff_id, check_work_time_id)
@@ -336,19 +294,6 @@
 			<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
 	            #{item}
 	        </foreach>
-	</select>
-
-	<select id="queryStaffNameListByIdList" resultType="java.util.Map">
-		SELECT
-			a.id,
-			CONCAT_WS('_', a.job_number, a.user_name) `name`,
-			a.email
-		FROM
-			sys_eve_user_staff a
-		WHERE a.id IN
-		<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
-			#{item}
-		</foreach>
 	</select>
 
 	<select id="queryAllSysUserStaffListByState" resultType="java.util.Map">
