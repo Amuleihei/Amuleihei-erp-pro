@@ -25,11 +25,12 @@ import java.util.List;
 @AllArgsConstructor
 public enum TeamObjectTypeEnum implements SkyeyeEnumClass {
 
-    CUSTOMER(1, "客户团队", Arrays.asList("crmContractAuthEnum", "contactsAuthEnum", "crmOpportunityAuthEnum", "crmDocumentaryAuthEnum", "documentAuthEnum", "disCussionAuthEnum"), true, true),
+    CUSTOMER(1, "客户团队", Arrays.asList("crmContractAuthEnum", "contactsAuthEnum", "crmOpportunityAuthEnum", "crmDocumentaryAuthEnum", "documentAuthEnum",
+        "disCussionAuthEnum", "crmFollowUpAuthEnum"), true, true),
     SUPPLIER(2, "供应商团队", Arrays.asList("supplierContractAuthEnum", "contactsAuthEnum", "documentAuthEnum"), true, false),
     PROJECT(3, "项目团队", Arrays.asList("taskAuthEnum", "documentAuthEnum", "disCussionAuthEnum"), true, false),
-    PRO_PROJECT(4, "产品项目团队", Arrays.asList("documentAuthEnum", "bugAuthEnum", "autoDataBaseAuthEnum", "moduleAuthEnum", "autoEnvironmentAuthEnum", "autoMicroserviceAuthEnum", "autoServerAuthEnum",
-        "autoApiAuthEnum", "autoVariableAuthEnum", "autoVersionAuthEnum"), true, false);
+    PRO_PROJECT(4, "产品项目团队", Arrays.asList("documentAuthEnum", "bugAuthEnum", "autoDataBaseAuthEnum", "moduleAuthEnum", "autoEnvironmentAuthEnum",
+        "autoMicroserviceAuthEnum", "autoServerAuthEnum", "autoApiAuthEnum", "autoVariableAuthEnum", "autoVersionAuthEnum"), true, false);
 
     private Integer key;
 
