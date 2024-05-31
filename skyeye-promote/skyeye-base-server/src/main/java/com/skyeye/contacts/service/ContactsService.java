@@ -21,4 +21,5 @@ public interface ContactsService extends SkyeyeTeamAuthService<Contacts> {
 
     void queryContactsListByObject(InputObject inputObject, OutputObject outputObject);
 
+    void queryContactsListByObjectIds(InputObject inputObject, OutputObject outputObject);
 }

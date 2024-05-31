@@ -100,4 +100,18 @@ public class ContactsController {
         contactsService.queryContactsListByObject(inputObject, outputObject);
     }
 
+    /**
+     * 根据业务数据id批量获取联系人列表
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryContactsListByObjectIds", value = "根据业务数据id批量获取联系人列表", method = "POST", allUse = "2")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "objectIds", name = "objectIds", value = "业务数据id集合", required = "json")})
+    @RequestMapping("/post/ContactsController/queryContactsListByObjectIds")
+    public void queryContactsListByObjectIds(InputObject inputObject, OutputObject outputObject) {
+        contactsService.queryContactsListByObjectIds(inputObject, outputObject);
+    }
+
 }

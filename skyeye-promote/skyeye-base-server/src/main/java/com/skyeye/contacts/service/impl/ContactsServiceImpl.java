@@ -4,9 +4,12 @@
 
 package com.skyeye.contacts.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeTeamAuthServiceImpl;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.DeleteFlagEnum;
 import com.skyeye.common.enumeration.IsDefaultEnum;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: ContactsServiceImpl
@@ -82,5 +86,22 @@ public class ContactsServiceImpl extends SkyeyeTeamAuthServiceImpl<ContactsDao, 
         List<Contacts> contactsList = list(queryWrapper);
         outputObject.setBeans(contactsList);
         outputObject.settotal(contactsList.size());
+    }
+
+    @Override
+    public void queryContactsListByObjectIds(InputObject inputObject, OutputObject outputObject) {
+        String objectIdsStr = inputObject.getParams().get("objectIds").toString();
+        List<String> objectIds = JSONUtil.toList(objectIdsStr, null);
+        if (CollectionUtil.isEmpty(objectIds)) {
+            return;
+        }
+        objectIds = objectIds.stream().distinct().collect(Collectors.toList());
+        QueryWrapper<Contacts> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(Contacts::getObjectId), objectIds);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Contacts::getDeleteFlag), DeleteFlagEnum.NOT_DELETE.getKey());
+        List<Contacts> contactsList = list(queryWrapper);
+        Map<String, List<Contacts>> result = contactsList.stream().collect(Collectors.groupingBy(Contacts::getObjectId));
+        outputObject.setBean(result);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 }
