@@ -5,11 +5,12 @@
 package com.skyeye.eve.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
+import com.skyeye.common.util.FileUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.dao.BarCodeDao;
 import com.skyeye.eve.entity.barcode.BarCodeApiMation;
@@ -18,6 +19,7 @@ import com.skyeye.eve.service.BarCodeService;
 import com.skyeye.sdk.data.service.IDataService;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-public class BarCodeServiceImpl extends ServiceImpl<BarCodeDao, BarCodeMation> implements BarCodeService {
+public class BarCodeServiceImpl extends SkyeyeBusinessServiceImpl<BarCodeDao, BarCodeMation> implements BarCodeService {
 
     @Autowired
     private BarCodeDao barCodeDao;
@@ -47,6 +49,9 @@ public class BarCodeServiceImpl extends ServiceImpl<BarCodeDao, BarCodeMation> i
     @Autowired
     private DiscoveryClient discoveryClient;
 
+    @Value("${IMAGES_PATH}")
+    private String tPath;
+
     /**
      * 批量新增条形码
      *
@@ -54,7 +59,7 @@ public class BarCodeServiceImpl extends ServiceImpl<BarCodeDao, BarCodeMation> i
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void writeBarCode(InputObject inputObject, OutputObject outputObject) {
         BarCodeApiMation barCodeApiMation = inputObject.getParams(BarCodeApiMation.class);
         List<BarCodeMation> barCodeList = barCodeApiMation.getBarCodeList();
@@ -113,5 +118,18 @@ public class BarCodeServiceImpl extends ServiceImpl<BarCodeDao, BarCodeMation> i
         List<BarCodeMation> barCodeMationList = super.list(queryWrapper);
         outputObject.setBeans(barCodeMationList);
         outputObject.settotal(barCodeMationList.size());
+    }
+
+    @Override
+    public void deleteBarCodeByObjectId(InputObject inputObject, OutputObject outputObject) {
+        String objectId = inputObject.getParams().get("objectId").toString();
+        QueryWrapper<BarCodeMation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(BarCodeMation::getObjectId), objectId);
+        BarCodeMation barCodeMation = getOne(queryWrapper, false);
+        // 删除图片路径
+        String basePath = tPath + barCodeMation.getImagePath().replace("/images/", "");
+        FileUtil.deleteFile(basePath);
+        // 删除数据
+        deleteById(barCodeMation.getId());
     }
 }

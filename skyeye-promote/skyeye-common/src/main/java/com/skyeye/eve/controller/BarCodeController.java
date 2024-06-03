@@ -74,4 +74,18 @@ public class BarCodeController {
         barCodeService.queryBarCodeByObjectIds(inputObject, outputObject);
     }
 
+    /**
+     * 根据业务数据id删除条形码数据
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "deleteBarCodeByObjectId", value = "根据业务数据id删除条形码数据", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "objectId", name = "objectId", value = "业务数据id", required = "required")})
+    @RequestMapping("/post/BarCodeController/deleteBarCodeByObjectId")
+    public void deleteBarCodeByObjectId(InputObject inputObject, OutputObject outputObject) {
+        barCodeService.deleteBarCodeByObjectId(inputObject, outputObject);
+    }
+
 }
