@@ -37,7 +37,7 @@ public class ServiceBeanCustomController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryServiceBeanCustom", value = "获取服务信息", method = "GET", allUse = "2")
+    @ApiOperation(id = "queryServiceBeanCustom", value = "获取服务信息", method = "GET", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required")})
     @RequestMapping("/post/ServiceBeanCustomController/queryServiceBeanCustom")
