@@ -156,7 +156,7 @@ public class TeamBusinessServiceImpl extends AbstractTeamServiceImpl<TeamBusines
         QueryWrapper<TeamBusiness> queryWrapper = new QueryWrapper<>();
         queryWrapper.select(MybatisPlusUtil.toColumns(TeamBusiness::getTeamTemplateId));
         queryWrapper.and(wrapper -> {
-            wrapper.eq(MybatisPlusUtil.toColumns(TeamBusiness::getTeamTemplateId), userId);
+            wrapper.eq(MybatisPlusUtil.toColumns(TeamBusiness::getChargeUser), userId);
             if (CollectionUtil.isNotEmpty(teamIds)) {
                 wrapper.or().in(CommonConstants.ID, teamIds);
             }
