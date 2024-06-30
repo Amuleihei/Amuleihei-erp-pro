@@ -4,25 +4,29 @@
 
 package com.skyeye.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
+import com.skyeye.common.client.ExecuteFeignClient;
 import com.skyeye.common.constans.ApiConstants;
-import com.skyeye.common.constans.RedisConstants;
-import com.skyeye.common.constans.RequestConstants;
 import com.skyeye.common.enumeration.VerificationParamsEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.eve.entity.api.ApiMation;
 import com.skyeye.eve.entity.search.SearchMation;
 import com.skyeye.eve.service.SearchConfigService;
+import com.skyeye.exception.CustomException;
 import com.skyeye.jedis.JedisClientService;
+import com.skyeye.rest.IServiceApiRest;
 import com.skyeye.service.ApiMationService;
 import com.skyeye.service.ApiService;
-import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,12 @@ public class ApiServiceImpl implements ApiService {
     @Autowired
     private ApiMationService apiMationService;
 
+    @Autowired
+    private IServiceApiRest iServiceApiRest;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     /**
      * 获取接口列表
      *
@@ -50,33 +60,26 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public void queryAllSysEveReqMapping(InputObject inputObject, OutputObject outputObject) {
         String appId = inputObject.getParams().get("appId").toString();
-        List<Map<String, Object>> beans = new ArrayList<>();
-        // xml方式
-        String xmlCacheKey = String.format(Locale.ROOT, "%s:%s:%s", appId, env, RequestConstants.SYS_EVE_MAIN_XML_REQMAPPING_KEY);
-        List<String> xmlApiIds = JSONArray.fromObject(jedisClientService.get(xmlCacheKey));
-        // 注解方式
-        String annoCacheKey = String.format(Locale.ROOT, "%s:%s:%s", appId, env, ApiConstants.SYS_EVE_MAIN_ANNO_REQMAPPING_KEY);
-        List<String> annoApiIds = JSONArray.fromObject(jedisClientService.get(annoCacheKey));
-        List<String> apiIds = new ArrayList<>();
-        apiIds.addAll(xmlApiIds);
-        apiIds.addAll(annoApiIds);
-        for (String apiId : apiIds) {
-            Map<String, Object> apiMation = RedisConstants.getApiMationByUrlId(apiId, appId);
-            Map<String, Object> bean = new HashMap<>();
-            // url地址作为id
-            bean.put("id", apiId);
+        String key = ApiConstants.getApiMicroservicesRedisCacheKey(appId, env);
+        Map<String, Object> microservices = JSONUtil.toBean(jedisClientService.get(key), null);
+        URI uri = getUri(microservices.get("springApplicationName").toString());
+
+        List<Map<String, Object>> beans = ExecuteFeignClient.get(() -> iServiceApiRest.queryAllServiceApiList(uri)).getRows();
+        beans.forEach(bean -> {
             // 注释作为标题
-            bean.put("title", apiMation.get("val"));
-            // 请求方式
-            bean.put("method", apiMation.get("method"));
-            // 分组
-            bean.put("groupName", apiMation.get("groupName"));
-            // 工程模块
-            bean.put("modelName", apiMation.get("modelName"));
-            beans.add(bean);
-        }
+            bean.put("title", bean.get("val"));
+        });
         outputObject.setBeans(beans);
         outputObject.settotal(beans.size());
+    }
+
+    private URI getUri(String springApplicationName) {
+        // 根据服务名获取服务实例
+        List<ServiceInstance> allInstances = discoveryClient.getInstances(springApplicationName);
+        if (CollectionUtils.isEmpty(allInstances)) {
+            throw new CustomException(String.format(Locale.ROOT, "this service[%s] has no instance.", springApplicationName));
+        }
+        return RandomUtil.randomEle(allInstances).getUri();
     }
 
     /**
@@ -90,10 +93,14 @@ public class ApiServiceImpl implements ApiService {
         Map<String, Object> map = inputObject.getParams();
         String appId = map.get("appId").toString();
         String apiId = map.get("id").toString();
-        Map<String, Object> apiMation = RedisConstants.getApiMationByUrlId(apiId, appId);
+        String key = ApiConstants.getApiMicroservicesRedisCacheKey(appId, env);
+        Map<String, Object> microservices = JSONUtil.toBean(jedisClientService.get(key), null);
+        URI uri = getUri(microservices.get("springApplicationName").toString());
+
+        Map<String, Object> apiMation = ExecuteFeignClient.get(() -> iServiceApiRest.queryServiceApiById(uri, apiId)).getBean();
         if (apiMation != null && !apiMation.isEmpty()) {
             String allUse = apiMation.get("allUse").toString();
-            String s = "";
+            String s;
             if ("0".equals(allUse)) {
                 s = "无需登录，无需授权即可访问。";
             } else if ("1".equals(allUse)) {
