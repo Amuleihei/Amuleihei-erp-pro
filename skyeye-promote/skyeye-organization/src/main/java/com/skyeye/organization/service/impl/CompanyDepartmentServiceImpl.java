@@ -130,8 +130,10 @@ public class CompanyDepartmentServiceImpl extends SkyeyeBusinessServiceImpl<Comp
      */
     @Override
     public void queryDepartmentListByCurrentUserBelong(InputObject inputObject, OutputObject outputObject) {
-        String companyId = inputObject.getLogParams().get("companyId").toString();
+        Map<String, Object> user = inputObject.getLogParams();
+        String companyId = user.get("companyId").toString();
         List<Map<String, Object>> list = queryDepartmentList(Arrays.asList(companyId), new ArrayList<>());
+        outputObject.setBean(user);
         outputObject.setBeans(list);
         outputObject.settotal(list.size());
     }

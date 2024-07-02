@@ -358,6 +358,7 @@ public class SysEveUserController {
 
     /**
      * 人员选择获取所有公司和人
+     * --公司为空的不显示
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象

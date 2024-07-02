@@ -428,6 +428,7 @@
 			<if test="hasEmail != null and hasEmail != ''">
 				AND LENGTH(a.email) > 0 AND a.email != ''
 			</if>
+			AND (LENGTH(a.company_id) > 0 AND a.company_id != '' AND a.company_id != '-')
 		</where>
 	</select>
 
