@@ -26,6 +26,7 @@ import com.skyeye.server.entity.ServiceBeanApi;
 import com.skyeye.server.service.ServiceBeanService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,8 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     @Autowired
     private AttrDefinitionService attrDefinitionService;
 
+    @Value("${spring.profiles.active}")
+    private String springProfilesActive;
 
     /**
      * 服务类注册
@@ -141,6 +144,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
         // 查询服务类信息
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getManageShow), true);
+        wrapper.likeLeft(MybatisPlusUtil.toColumns(ServiceBean::getSpringApplicationName), springProfilesActive);
         List<Map<String, Object>> serviceClass = super.list(wrapper)
             .stream().map(bean -> BeanUtil.beanToMap(bean)).collect(Collectors.toList());
         List<Map<String, Object>> result = buildResult(serviceClass);
@@ -220,6 +224,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     public ServiceBean queryServiceClass(String className) {
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getClassName), className);
+        wrapper.likeLeft(MybatisPlusUtil.toColumns(ServiceBean::getSpringApplicationName), springProfilesActive);
         ServiceBean skyeyeClassServiceBean = getOne(wrapper);
         return skyeyeClassServiceBean;
     }
