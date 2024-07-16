@@ -178,8 +178,6 @@
 	<url id="sys030" path="/post/SysEveUserController/editUserInstallLoadMenuIconById" val="自定义设置窗口下面展示的是图标还是图标+文字" allUse="2" groupName="系统管理">
 		<property id="loadBottomMenuIcon" name="loadBottomMenuIcon" ref="required,num" var="是否只展示图标，1是  0否" />
 	</url>
-	<url id="sys032" path="/post/SysEveUserController/queryUserDetailsMationByUserId" val="修改个人信息时获取数据回显" allUse="2" groupName="系统管理">
-	</url>
 	<url id="sys033" path="/post/SysEveUserController/editUserDetailsMationByUserId" val="修改个人信息" allUse="2" groupName="系统管理">
 		<property id="userSex" name="userSex" ref="required,num" var="性别" />
 		<property id="userIdCard" name="userIdCard" ref="idcard" var="身份证" />

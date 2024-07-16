@@ -4,10 +4,12 @@
 
 package com.skyeye.personnel.service;
 
+import com.skyeye.base.business.service.SkyeyeBusinessService;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.personnel.entity.SysEveUser;
 
-public interface SysEveUserService {
+public interface SysEveUserService extends SkyeyeBusinessService<SysEveUser> {
 
     void querySysUserList(InputObject inputObject, OutputObject outputObject);
 
@@ -88,4 +90,7 @@ public interface SysEveUserService {
 
     void insertUserMationByOpenId(InputObject inputObject, OutputObject outputObject);
 
+    void editUserLockState(String id, Integer userLock);
+
+    void resetUserEffectiveDate(InputObject inputObject, OutputObject outputObject);
 }

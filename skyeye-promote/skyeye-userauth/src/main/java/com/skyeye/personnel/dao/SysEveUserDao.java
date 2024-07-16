@@ -4,30 +4,18 @@
 
 package com.skyeye.personnel.dao;
 
-import com.skyeye.eve.entity.userauth.user.SysUserQueryDo;
+import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.eve.entity.userauth.user.UserTreeQueryDo;
+import com.skyeye.personnel.entity.SysEveUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
-public interface SysEveUserDao {
+public interface SysEveUserDao extends SkyeyeBaseMapper<SysEveUser> {
 
-    List<Map<String, Object>> querySysUserList(SysUserQueryDo sysUserQuery);
-
-    Map<String, Object> querySysUserLockStateById(Map<String, Object> map);
-
-    int editSysUserLockStateToLockById(Map<String, Object> map);
-
-    int editSysUserLockStateToUnLockById(Map<String, Object> map);
-
-    /**
-     * 重置密码
-     *
-     * @param map
-     * @return
-     */
-    int editSysUserPasswordMationById(Map<String, Object> map);
+    List<Map<String, Object>> querySysUserList(CommonPageInfo pageInfo);
 
     Map<String, Object> queryMationByUserCode(@Param("userCode") String userCode);
 
@@ -47,13 +35,7 @@ public interface SysEveUserDao {
 
     int editUserInstallWinTaskPosition(Map<String, Object> map);
 
-    Map<String, Object> querySysUserCodeByMation(Map<String, Object> map);
-
-    int insertSysUserMation(Map<String, Object> map);
-
     int insertSysUserInstallMation(Map<String, Object> map);
-
-    int editUserPassword(Map<String, Object> bean);
 
     int editUserInstallVagueBgSrc(Map<String, Object> map);
 
@@ -65,20 +47,9 @@ public interface SysEveUserDao {
 
     List<Map<String, Object>> querySysUserListByUserName(Map<String, Object> map);
 
-    int editSysUserStaffBindUserId(Map<String, Object> map);
-
     List<Map<String, Object>> querySysDeskTopByUserId(Map<String, Object> user);
 
     Map<String, Object> queryUserSchoolMationByUserId(@Param("userId") String userId);
-
-    /**
-     * 修改用户状态
-     *
-     * @param userId    用户id
-     * @param lockState 锁定状态
-     * @return
-     */
-    int editSysUserLock(@Param("userId") String userId, @Param("lockState") Integer lockState);
 
     List<Map<String, Object>> queryUserStaffToTree(UserTreeQueryDo queryDo);
 

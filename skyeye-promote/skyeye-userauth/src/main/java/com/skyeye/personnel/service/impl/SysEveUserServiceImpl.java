@@ -5,26 +5,29 @@
 package com.skyeye.personnel.service.impl;
 
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.constans.Constants;
-import com.skyeye.common.constans.SysUserAuthConstants;
-import com.skyeye.common.constans.WxchatUtil;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.*;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.*;
 import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.authority.service.SysAuthorityService;
-import com.skyeye.eve.entity.userauth.user.SysUserQueryDo;
 import com.skyeye.eve.entity.userauth.user.UserTreeQueryDo;
-import com.skyeye.jedis.JedisClientService;
 import com.skyeye.organization.service.*;
 import com.skyeye.personnel.classenum.UserLockState;
 import com.skyeye.personnel.dao.SysEveUserDao;
 import com.skyeye.personnel.dao.SysEveUserStaffDao;
+import com.skyeye.personnel.entity.SysEveUser;
 import com.skyeye.personnel.service.SysEveUserService;
+import com.skyeye.personnel.service.SysEveUserStaffService;
 import com.skyeye.role.service.SysEveRoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,7 +47,8 @@ import java.util.*;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-public class SysEveUserServiceImpl implements SysEveUserService {
+@SkyeyeService(name = "用户管理", groupName = "用户管理")
+public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserDao, SysEveUser> implements SysEveUserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SysEveUserServiceImpl.class);
 
@@ -56,9 +60,6 @@ public class SysEveUserServiceImpl implements SysEveUserService {
 
     @Autowired
     private SysEveUserStaffDao sysEveUserStaffDao;
-
-    @Autowired
-    private JedisClientService jedisClient;
 
     @Autowired
     private SysAuthorityService sysAuthorityService;
@@ -84,6 +85,9 @@ public class SysEveUserServiceImpl implements SysEveUserService {
     @Autowired
     private ICompanyJobScoreService iCompanyJobScoreService;
 
+    @Autowired
+    private SysEveUserStaffService sysEveUserStaffService;
+
     /**
      * 获取管理员用户列表
      *
@@ -92,56 +96,43 @@ public class SysEveUserServiceImpl implements SysEveUserService {
      */
     @Override
     public void querySysUserList(InputObject inputObject, OutputObject outputObject) {
-        SysUserQueryDo sysUserQuery = inputObject.getParams(SysUserQueryDo.class);
-        Page pages = PageHelper.startPage(sysUserQuery.getPage(), sysUserQuery.getLimit());
-        List<Map<String, Object>> beans = sysEveUserDao.querySysUserList(sysUserQuery);
+        CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page pages = PageHelper.startPage(pageInfo.getPage(), pageInfo.getLimit());
+        List<Map<String, Object>> beans = sysEveUserDao.querySysUserList(pageInfo);
         iCompanyService.setNameForMap(beans, "companyId", "companyName");
         iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
         iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
         beans.forEach(bean -> {
-            bean.put("staffServiceClassName", SysEveUserStaffServiceImpl.class.getName());
+            bean.put("staffServiceClassName", sysEveUserStaffService.getServiceClassName());
         });
+        iAuthUserService.setNameForMap(beans, "createId", "createName");
         outputObject.setBeans(beans);
         outputObject.settotal(pages.getTotal());
     }
 
-    /**
-     * 锁定账号
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserLockStateToLockById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveUserDao.querySysUserLockStateById(map);
-        int userLock = Integer.parseInt(bean.get("userLock").toString());
-        if (UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey() == userLock) {
+        String id = map.get("id").toString();
+        SysEveUser sysEveUser = selectById(id);
+        if (UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey() == sysEveUser.getUserLock()) {
             // 未锁定，设置为锁定
-            map.put("userLock", UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
-            sysEveUserDao.editSysUserLockStateToLockById(map);
+            editUserLockState(id, UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
         } else {
             outputObject.setreturnMessage("该账号已被锁定，请刷新页面.");
         }
     }
 
-    /**
-     * 解锁账号
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserLockStateToUnLockById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveUserDao.querySysUserLockStateById(map);
-        int userLock = Integer.parseInt(bean.get("userLock").toString());
-        if (UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey() == userLock) {
+        String id = map.get("id").toString();
+        SysEveUser sysEveUser = selectById(id);
+        if (UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey() == sysEveUser.getUserLock()) {
             // 锁定，设置为解锁
-            map.put("userLock", UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey());
-            sysEveUserDao.editSysUserLockStateToUnLockById(map);
+            editUserLockState(id, UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey());
         } else {
             outputObject.setreturnMessage("该账号已解锁，请刷新页面.");
         }
@@ -154,45 +145,35 @@ public class SysEveUserServiceImpl implements SysEveUserService {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void insertSysUserMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> userCode = sysEveUserDao.querySysUserCodeByMation(map);
-        if (userCode == null) {
-            String userId, createId;
-            Map<String, Object> user = inputObject.getLogParams();
-            userId = ToolUtil.getSurFaceId();
-            createId = user.get("id").toString();
+        SysEveUser sysEveUser = inputObject.getParams(SysEveUser.class);
+        // 判断账号是否存在
+        QueryWrapper<SysEveUser> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(SysEveUser::getUserCode), sysEveUser.getUserCode());
+        long count = count(wrapper);
+        if (count == 0) {
+            String currentUserId = inputObject.getLogParams().get("id").toString();
             int pwdNum = (int) (Math.random() * 100);
-            String password = map.get("password").toString();
-            Map<String, Object> newUser = new HashMap<>();
-            newUser.put("id", userId);
-            newUser.put("password", getCalcPaswword(password, pwdNum));
-            newUser.put("pwdNum", pwdNum);
-            newUser.put("userLock", 0);
-            newUser.put("isTermOfValidity", map.get("isTermOfValidity"));
-            newUser.put("source", map.get("source"));
-            newUser.put("createId", createId);
-            newUser.put("userCode", map.get("userCode"));
-            newUser.put("createTime", DateUtil.getTimeAndToString());
+            sysEveUser.setPwdNumEnc(pwdNum);
+            sysEveUser.setPassword(getCalcPaswword(sysEveUser.getPassword(), pwdNum));
+            sysEveUser.setUserLock(UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey());
 
             // 根据员工id获取员工所属部门
-            String staffId = map.get("staffId").toString();
-            Map<String, Object> staffMation = sysEveUserStaffDao.querySysUserStaffById(staffId);
+            Map<String, Object> staffMation = sysEveUserStaffDao.querySysUserStaffById(sysEveUser.getStaffId());
             if (staffMation != null && !staffMation.isEmpty()) {
                 // 删除redis中缓存的单位下的用户
-                jedisClient.delKeys(Constants.getSysTalkGroupUserListMationById(staffMation.get("departmentId").toString()) + "*");
+                jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(staffMation.get("departmentId").toString()) + "*");
             } else {
                 outputObject.setreturnMessage("员工信息不存在.");
                 return;
             }
             // 1.新增用户信息
-            sysEveUserDao.insertSysUserMation(newUser);
+            String id = createEntity(sysEveUser, currentUserId);
             // 2.新增用户设置信息
-            setUserBaseInstall(userId, createId);
+            setUserBaseInstall(id);
             // 3.修改员工与账号的关系
-            map.put("userId", userId);
-            sysEveUserDao.editSysUserStaffBindUserId(map);
+            sysEveUserStaffService.editSysUserStaffBindUserId(sysEveUser.getStaffId(), id);
         } else {
             outputObject.setreturnMessage("该账号已存在，请更换！");
         }
@@ -205,13 +186,20 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         return password;
     }
 
+    @Override
+    public SysEveUser selectById(String id) {
+        SysEveUser sysEveUser = super.selectById(id);
+        sysEveUser.setPassword(null);
+        sysEveUser.setPwdNumEnc(null);
+        return sysEveUser;
+    }
+
     /**
      * 设置用户基础配置信息
      *
-     * @param userId   用户id
-     * @param createId 创建人id
+     * @param userId 用户id
      */
-    private void setUserBaseInstall(String userId, String createId) {
+    private void setUserBaseInstall(String userId) {
         Map<String, Object> bean = new HashMap<>();
         bean.put("userId", userId);
         bean.put("winBgPicUrl", "/images/upload/winbgpic/default.jpg");
@@ -230,14 +218,18 @@ public class SysEveUserServiceImpl implements SysEveUserService {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserPasswordMationById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
+        String id = map.get("id").toString();
         int pwdNum = (int) (Math.random() * 100);
         String password = map.get("password").toString();
-        map.put("password", getCalcPaswword(password, pwdNum));
-        map.put("pwdNum", pwdNum);
-        sysEveUserDao.editSysUserPasswordMationById(map);
+        // 更新数据库中的密码
+        UpdateWrapper<SysEveUser> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getPassword), getCalcPaswword(password, pwdNum));
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getPwdNumEnc), pwdNum);
+        update(updateWrapper);
     }
 
     /**
@@ -309,9 +301,9 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         List<Map<String, Object>> authPoints = sysAuthorityService.getRoleHasMenuPointListByRoleIds(roleIds, userId);
 
         LOGGER.info("set menu and auth mation to redis cache start.");
-        jedisClient.set(ObjectConstant.getDeskTopsCacheKey(userId), JSONUtil.toJsonStr(deskTops));
-        jedisClient.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
-        jedisClient.set("authPointsMation:" + userId, roleIds);
+        jedisClientService.set(ObjectConstant.getDeskTopsCacheKey(userId), JSONUtil.toJsonStr(deskTops));
+        jedisClientService.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
+        jedisClientService.set("authPointsMation:" + userId, roleIds);
         LOGGER.info("set menu and auth mation to redis cache end.");
         userMation.remove("roleId");
         return authPoints;
@@ -378,9 +370,9 @@ public class SysEveUserServiceImpl implements SysEveUserService {
     @Override
     public void removeLogin(String userId) {
         SysUserAuthConstants.delUserLoginRedisCache(userId);
-        jedisClient.del(ObjectConstant.getDeskTopsCacheKey(userId));
-        jedisClient.del(ObjectConstant.getAllMenuCacheKey(userId));
-        jedisClient.del("authPointsMation:" + userId);
+        jedisClientService.del(ObjectConstant.getDeskTopsCacheKey(userId));
+        jedisClientService.del(ObjectConstant.getAllMenuCacheKey(userId));
+        jedisClientService.del("authPointsMation:" + userId);
         if (userId.lastIndexOf(SysUserAuthConstants.APP_IDENTIFYING) < 0) {
             // PC端用户登录信息
         } else {
@@ -562,10 +554,11 @@ public class SysEveUserServiceImpl implements SysEveUserService {
             for (int i = 0; i < pwdNum; i++) {
                 newPassword = ToolUtil.MD5(newPassword);
             }
-            Map<String, Object> bean = new HashMap<>();
-            bean.put("id", user.get("id"));
-            bean.put("password", newPassword);
-            sysEveUserDao.editUserPassword(bean);
+            // 更新数据库中的密码
+            UpdateWrapper<SysEveUser> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq(CommonConstants.ID, user.get("id").toString());
+            updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getPassword), newPassword);
+            update(updateWrapper);
         } else {
             outputObject.setreturnMessage("旧密码输入错误.");
         }
@@ -660,7 +653,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         map.put("userId", user.get("id"));
         sysEveUserDao.editUserDetailsMationByUserId(map);
         // 删除用户在redis中存储的信息
-        jedisClient.del(Constants.getSysTalkUserThisMainMationById(user.get("id").toString()));
+        jedisClientService.del(Constants.getSysTalkUserThisMainMationById(user.get("id").toString()));
     }
 
     /**
@@ -915,8 +908,8 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                     iDepmentService.setNameForMap(userMation, "departmentId", "departmentName");
                     iCompanyJobService.setNameForMap(userMation, "jobId", "jobName");
                     SysUserAuthConstants.setUserLoginRedisCache(appUserId, userMation);
-                    jedisClient.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
-                    jedisClient.set("authPointsMation:" + appUserId, roleIds);
+                    jedisClientService.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
+                    jedisClientService.set("authPointsMation:" + appUserId, roleIds);
                     // 获取用户权限点返回给前台
                     List<Map<String, Object>> authPoints = sysAuthorityService.getRoleHasMenuPointListByRoleIds(roleIds, appUserId);
                     outputObject.setBean(userMation);
@@ -940,7 +933,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         String openId = map.get("openId").toString();
         //判断该微信用户在redis中是否存在数据
         String key = WxchatUtil.getWechatUserOpenIdMation(openId);
-        if (ToolUtil.isBlank(jedisClient.get(key))) {
+        if (ToolUtil.isBlank(jedisClientService.get(key))) {
             //该用户没有绑定账号
             Map<String, Object> bean = sysEveUserDao.queryWxUserMationByOpenId(openId);
             //判断该用户的openId是否存在于数据库
@@ -948,7 +941,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                 //存在数据库
                 map.putAll(bean);
                 //1.将微信和账号的绑定信息存入redis
-                jedisClient.set(key, JSONUtil.toJsonStr(bean));
+                jedisClientService.set(key, JSONUtil.toJsonStr(bean));
                 //如果已经绑定用户，则获取用户信息
                 if (bean.containsKey("userId") && !ToolUtil.isBlank(bean.get("userId").toString())) {
                     Map<String, Object> userMation = sysEveUserDao.queryUserMationByOpenId(openId);
@@ -957,7 +950,7 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                     // 2.将账号的信息存入redis
                     SysUserAuthConstants.setUserLoginRedisCache(bean.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, userMation);
                     //3.将权限的信息存入redis
-                    jedisClient.set("authPointsMation:" + bean.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, "");
+                    jedisClientService.set("authPointsMation:" + bean.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, "");
                 }
             } else {
                 //不存在
@@ -967,10 +960,10 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                 map.put("userId", "");
                 sysEveUserDao.insertWxUserMation(map);
                 //1.将微信和账号的绑定信息存入redis
-                jedisClient.set(key, JSONUtil.toJsonStr(map));
+                jedisClientService.set(key, JSONUtil.toJsonStr(map));
             }
         } else {
-            map = JSONUtil.toBean(jedisClient.get(key), null);
+            map = JSONUtil.toBean(jedisClientService.get(key), null);
             //如果已经绑定用户，则获取用户信息
             if (map.containsKey("userId") && !ToolUtil.isBlank(map.get("userId").toString())) {
                 Map<String, Object> userMation = sysEveUserDao.queryUserMationByOpenId(openId);
@@ -978,12 +971,20 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                 //2.将账号的信息存入redis
                 SysUserAuthConstants.setUserLoginRedisCache(map.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, userMation);
                 //3.将权限的信息存入redis
-                jedisClient.set("authPointsMation:" + map.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, "");
+                jedisClientService.set("authPointsMation:" + map.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, "");
             } else {
                 outputObject.setreturnMessage("您还未绑定用户，请前往绑定.", "-9000");
             }
         }
         outputObject.setBean(map);
+    }
+
+    @Override
+    public void editUserLockState(String id, Integer userLock) {
+        UpdateWrapper<SysEveUser> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getUserLock), userLock);
+        update(updateWrapper);
     }
 
     /**
@@ -1037,11 +1038,11 @@ public class SysEveUserServiceImpl implements SysEveUserService {
                                 map = sysEveUserDao.queryWxUserMationByOpenId(openId);
                                 //1.将微信和账号的绑定信息存入redis
                                 String key = WxchatUtil.getWechatUserOpenIdMation(openId);
-                                jedisClient.set(key, JSONUtil.toJsonStr(map));
+                                jedisClientService.set(key, JSONUtil.toJsonStr(map));
                                 //2.将账号的信息存入redis
                                 SysUserAuthConstants.setUserLoginRedisCache(userId + SysUserAuthConstants.APP_IDENTIFYING, userMation);
                                 //3.将权限的信息存入redis
-                                jedisClient.set("authPointsMation:" + userId + SysUserAuthConstants.APP_IDENTIFYING, "");
+                                jedisClientService.set("authPointsMation:" + userId + SysUserAuthConstants.APP_IDENTIFYING, "");
                                 outputObject.setBean(map);
                             }
                         }
@@ -1055,6 +1056,21 @@ public class SysEveUserServiceImpl implements SysEveUserService {
         } else {
             outputObject.setreturnMessage("该账号不存在，请核实后进行登录.");
         }
+    }
+
+    @Override
+    public void resetUserEffectiveDate(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        String id = map.get("id").toString();
+        Integer isTermOfValidity = Integer.parseInt(map.get("isTermOfValidity").toString());
+        String startTime = map.get("startTime").toString();
+        String endTime = map.get("endTime").toString();
+        UpdateWrapper<SysEveUser> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getIsTermOfValidity), isTermOfValidity);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getStartTime), startTime);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUser::getEndTime), endTime);
+        update(updateWrapper);
     }
 
 }

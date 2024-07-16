@@ -6,8 +6,6 @@ package com.skyeye.personnel.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
@@ -339,7 +337,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
             // 删除redis中缓存的单位下的用户
             jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(departmentId) + "*");
             // 锁定帐号
-            sysEveUserDao.editSysUserLock(userId, UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
+            sysEveUserService.editUserLockState(userId, UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
             // 退出登录
             sysEveUserService.removeLogin(userId);
         }
@@ -460,6 +458,14 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         List<Map<String, Object>> staffTimeMation = sysEveUserStaffDao.queryStaffCheckWorkTimeRelationNameByStaffId(staffId);
         outputObject.setBeans(staffTimeMation);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public void editSysUserStaffBindUserId(String staffId, String userId) {
+        UpdateWrapper<SysEveUserStaff> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, staffId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getUserId), userId);
+        update(updateWrapper);
     }
 
 }

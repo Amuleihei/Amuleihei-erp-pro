@@ -6,17 +6,20 @@
 		SELECT
 			a.id,
 			a.user_code userCode,
+			a.is_term_of_validity isTermOfValidity,
+			a.start_time startTime,
+			a.end_time endTime,
 			k.id staffId,
 			k.job_number jobNumber,
 			k.email email,
 			k.user_name userName,
-			k.user_sex sexName,
+			k.user_sex userSex,
 			a.user_lock userLock,
-			(SELECT c.user_name FROM sys_eve_user_staff c WHERE a.creater = c.user_id) createName,
 			(SELECT group_concat(distinct b.`name`) FROM sys_eve_role b WHERE INSTR(CONCAT(',', a.role_id, ','), CONCAT(',', b.id, ','))) roleName,
 			k.company_id companyId,
 			k.department_id departmentId,
 			k.job_id jobId,
+			a.create_id createId,
 			CONVERT(a.create_time, char) createTime
 		FROM
 			sys_eve_user a,
@@ -32,40 +35,6 @@
 		</where>
 		ORDER BY a.user_lock ASC, a.create_time DESC
 	</select>
-	
-	<select id="querySysUserLockStateById" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.user_lock userLock
-		FROM
-			sys_eve_user a
-		WHERE a.id = #{id}
-	</select>
-	
-	<update id="editSysUserLockStateToLockById" parameterType="java.util.Map">
-		UPDATE sys_eve_user
-		<set>
-			user_lock = #{userLock}
-		</set>
-		WHERE id = #{id}
-	</update>
-	
-	<update id="editSysUserLockStateToUnLockById" parameterType="java.util.Map">
-		UPDATE sys_eve_user
-		<set>
-			user_lock = #{userLock}
-		</set>
-		WHERE id = #{id}
-	</update>
-
-	<update id="editSysUserPasswordMationById" parameterType="java.util.Map">
-		UPDATE sys_eve_user
-		<set>
-			password = #{password},
-			pwd_num_enc = #{pwdNum},
-		</set>
-		WHERE id = #{id}
-	</update>
 	
 	<select id="queryMationByUserCode" resultType="java.util.Map">
 		SELECT
@@ -238,37 +207,12 @@
 		WHERE user_id = #{userId}
 	</update>
 	
-	<select id="querySysUserCodeByMation" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.user_code userCode
-		FROM
-			sys_eve_user a
-		WHERE
-			a.user_code = #{userCode}
-	</select>
-	
-	<insert id="insertSysUserMation" parameterType="java.util.Map">
-	     INSERT into sys_eve_user 
-	     (id, user_code, pwd_num_enc, password, user_lock, creater, create_time, is_term_of_validity)
-	     VALUES
-	     (#{id}, #{userCode}, #{pwdNum}, #{password}, #{userLock}, #{createId}, #{createTime}, #{isTermOfValidity})
-	</insert>
-	
 	<insert id="insertSysUserInstallMation" parameterType="java.util.Map">
 	     INSERT into sys_eve_user_install 
 	     (id, user_id, win_bg_pic_url, win_lock_bg_pic_url, win_theme_color, win_start_menu_size, win_task_position, create_id, create_time)
 	     VALUES
 	     (#{id}, #{userId}, #{winBgPicUrl}, #{winLockBgPicUrl}, #{winThemeColor}, #{winStartMenuSize}, #{winTaskPosition}, #{createId}, #{createTime})
 	</insert>
-	
-	<update id="editUserPassword" parameterType="java.util.Map">
-		UPDATE sys_eve_user
-		<set>
-			password = #{password}
-		</set>
-		WHERE id = #{id}
-	</update>
 	
 	<update id="editUserInstallVagueBgSrc" parameterType="java.util.Map">
 		UPDATE sys_eve_user_install
@@ -355,14 +299,6 @@
 		</if>
 	</select>
 	
-	<update id="editSysUserStaffBindUserId" parameterType="java.util.Map">
-		UPDATE sys_eve_user_staff
-		<set>
-			user_id = #{userId}
-		</set>
-		WHERE id = #{staffId}
-	</update>
-
 	<select id="querySysDeskTopByUserId" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
 			d.id,
@@ -394,14 +330,6 @@
 		AND c.id = b.school_id
 		LIMIT 1
 	</select>
-
-	<update id="editSysUserLock" parameterType="java.util.Map">
-		UPDATE sys_eve_user
-		<set>
-			user_lock = #{lockState}
-		</set>
-		WHERE id = #{userId}
-	</update>
 
 	<select id="queryUserStaffToTree" resultType="java.util.Map">
 		SELECT

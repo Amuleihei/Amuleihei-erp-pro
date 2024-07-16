@@ -8,11 +8,11 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.eve.entity.userauth.user.SysUserMation;
-import com.skyeye.eve.entity.userauth.user.SysUserQueryDo;
 import com.skyeye.eve.entity.userauth.user.UserTreeQueryDo;
+import com.skyeye.personnel.entity.SysEveUser;
 import com.skyeye.personnel.service.SysEveUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "用户管理", tags = "用户管理", modelName = "基础模块")
+@Api(value = "用户管理", tags = "用户管理", modelName = "用户管理")
 public class SysEveUserController {
 
     @Autowired
@@ -40,7 +40,7 @@ public class SysEveUserController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "sys001", value = "获取用户列表", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = SysUserQueryDo.class)
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/SysEveUserController/querySysUserList")
     public void querySysUserList(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.querySysUserList(inputObject, outputObject);
@@ -54,7 +54,7 @@ public class SysEveUserController {
      */
     @ApiOperation(id = "sys002", value = "锁定账号", method = "PUT", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "账号ID", required = "required")})
+        @ApiImplicitParam(id = "id", name = "id", value = "账号ID", required = "required")})
     @RequestMapping("/post/SysEveUserController/editSysUserLockStateToLockById")
     public void editSysUserLockStateToLockById(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.editSysUserLockStateToLockById(inputObject, outputObject);
@@ -68,7 +68,7 @@ public class SysEveUserController {
      */
     @ApiOperation(id = "sys003", value = "解锁账号", method = "PUT", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "账号ID", required = "required")})
+        @ApiImplicitParam(id = "id", name = "id", value = "账号ID", required = "required")})
     @RequestMapping("/post/SysEveUserController/editSysUserLockStateToUnLockById")
     public void editSysUserLockStateToUnLockById(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.editSysUserLockStateToUnLockById(inputObject, outputObject);
@@ -81,7 +81,7 @@ public class SysEveUserController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "sysAdd005", value = "创建账号", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = SysUserMation.class)
+    @ApiImplicitParams(classBean = SysEveUser.class)
     @RequestMapping("/post/SysEveUserController/insertSysUserMationById")
     public void insertSysUserMationById(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.insertSysUserMationById(inputObject, outputObject);
@@ -95,7 +95,7 @@ public class SysEveUserController {
      */
     @ApiOperation(id = "sys005", value = "重置密码", method = "POST", allUse = "1")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "账号ID", required = "required"),
+        @ApiImplicitParam(id = "id", name = "id", value = "账号ID", required = "required"),
         @ApiImplicitParam(id = "password", name = "password", value = "密码", required = "required")})
     @RequestMapping("/post/SysEveUserController/editSysUserPasswordMationById")
     public void editSysUserPasswordMationById(InputObject inputObject, OutputObject outputObject) {
@@ -303,6 +303,7 @@ public class SysEveUserController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
+    @ApiOperation(id = "sys032", value = "修改个人信息时获取数据回显", method = "POST", allUse = "2")
     @RequestMapping("/post/SysEveUserController/queryUserDetailsMationByUserId")
     public void queryUserDetailsMationByUserId(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.queryUserDetailsMationByUserId(inputObject, outputObject);
@@ -491,6 +492,37 @@ public class SysEveUserController {
     @RequestMapping("/post/SysEveUserController/insertUserMationByOpenId")
     public void insertUserMationByOpenId(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.insertUserMationByOpenId(inputObject, outputObject);
+    }
+
+    /**
+     * 根据id查询用户信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "querySysEveUserById", value = "根据id查询用户信息", method = "GET", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "id", name = "id", value = "用户ID", required = "required")})
+    @RequestMapping("/post/SysEveUserController/querySysEveUserById")
+    public void querySysEveUserById(InputObject inputObject, OutputObject outputObject) {
+        sysEveUserService.selectById(inputObject, outputObject);
+    }
+
+    /**
+     * 重置用户有效期
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "resetUserEffectiveDate", value = "重置用户有效期", method = "POST", allUse = "1")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "id", name = "id", value = "用户ID", required = "required"),
+        @ApiImplicitParam(id = "isTermOfValidity", name = "isTermOfValidity", value = "是否长期有效，参考#UserIsTermOfValidity", required = "required,num"),
+        @ApiImplicitParam(id = "startTime", name = "startTime", value = "有效期开始时间"),
+        @ApiImplicitParam(id = "endTime", name = "endTime", value = "有效期结束时间")})
+    @RequestMapping("/post/SysEveUserController/resetUserEffectiveDate")
+    public void resetUserEffectiveDate(InputObject inputObject, OutputObject outputObject) {
+        sysEveUserService.resetUserEffectiveDate(inputObject, outputObject);
     }
 
 }
