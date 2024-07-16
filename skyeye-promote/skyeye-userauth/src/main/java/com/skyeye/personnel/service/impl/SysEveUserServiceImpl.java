@@ -21,7 +21,9 @@ import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.authority.service.SysAuthorityService;
 import com.skyeye.eve.entity.userauth.user.UserTreeQueryDo;
+import com.skyeye.exception.CustomException;
 import com.skyeye.organization.service.*;
+import com.skyeye.personnel.classenum.UserIsTermOfValidity;
 import com.skyeye.personnel.classenum.UserLockState;
 import com.skyeye.personnel.dao.SysEveUserDao;
 import com.skyeye.personnel.dao.SysEveUserStaffDao;
@@ -257,6 +259,9 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
                 if (UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey() == userLock) {
                     outputObject.setreturnMessage("您的账号已被锁定，请联系管理员解除！");
                 } else {
+                    // 校验用户有效期
+                    chectUserEffectiveDate(userMation);
+
                     String userId = userMation.get("id").toString();
                     setUserOtherMation(userMation);
                     List<Map<String, Object>> authPoints = getMenuAndAuthToRedis(userMation, userId);
@@ -271,6 +276,21 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
                 }
             } else {
                 outputObject.setreturnMessage("密码输入错误！");
+            }
+        }
+    }
+
+    private void chectUserEffectiveDate(Map<String, Object> userMation) {
+        Integer isTermOfValidity = Integer.parseInt(userMation.get("isTermOfValidity").toString());
+        if (isTermOfValidity == UserIsTermOfValidity.EFFECTIVE_TIME_PERIOD.getKey()) {
+            // 时间段有效期
+            String startTime = userMation.get("startTime").toString();
+            String endTime = userMation.get("endTime").toString();
+            String currentTime = DateUtil.getYmdTimeAndToString();
+            if (DateUtil.getDistanceDay(startTime, currentTime) >= 0 && DateUtil.getDistanceDay(currentTime, endTime) >= 0) {
+                // startTime <= 当前时间 <= endTime
+            } else {
+                throw new CustomException("用户有效期已过，请联系管理员续期！");
             }
         }
     }
