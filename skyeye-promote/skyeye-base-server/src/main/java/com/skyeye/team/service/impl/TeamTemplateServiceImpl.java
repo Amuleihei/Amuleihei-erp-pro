@@ -11,6 +11,7 @@ import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.EnableEnum;
+import com.skyeye.common.enumeration.IsUsedEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DataCommonUtil;
@@ -65,11 +66,11 @@ public class TeamTemplateServiceImpl extends AbstractTeamServiceImpl<TeamTemplat
     @Override
     public void setUsed(String id) {
         TeamTemplate teamTemplate = super.selectById(id);
-        if (teamTemplate.getIsUsed() == null || teamTemplate.getIsUsed() == 0) {
+        if (teamTemplate.getIsUsed() == null || teamTemplate.getIsUsed() == IsUsedEnum.NOT_USED.getKey()) {
             UpdateWrapper<TeamTemplate> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq(CommonConstants.ID, id);
             TeamTemplate template = new TeamTemplate();
-            template.setIsUsed(1);
+            template.setIsUsed(IsUsedEnum.IN_USE.getKey());
             String userId = InputObject.getLogParamsStatic().get(CommonConstants.ID).toString();
             DataCommonUtil.setCommonLastUpdateDataByGenericity(template, userId);
             skyeyeBaseMapper.update(template, updateWrapper);

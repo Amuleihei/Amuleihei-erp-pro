@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.constans.CacheConstants;
@@ -51,10 +52,8 @@ public class TeamTemplate extends AbstractTeam {
     @ApiModelProperty(value = "启用 1-启用  2-禁用", required = "required,num")
     private Integer enabled;
 
-    /**
-     * 是否使用中 0-未使用  2-已使用
-     */
     @TableField("is_used")
+    @Property(value = "是否使用中，参考#IsUsedEnum")
     private Integer isUsed;
 
 }
