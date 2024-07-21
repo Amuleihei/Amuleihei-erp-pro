@@ -199,9 +199,23 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
         queryWrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getComponentId), componentId);
         List<AttrDefinitionCustom> attrDefinitionCustoms = list(queryWrapper);
         List<String> classNames = attrDefinitionCustoms.stream().map(AttrDefinitionCustom::getClassName).collect(Collectors.toList());
+        // 查询服务类信息
         Map<String, ServiceBean> serviceBeanMap = serviceBeanService.queryServiceClass(classNames);
         attrDefinitionCustoms.forEach(attrDefinitionCustom -> {
-            attrDefinitionCustom.setServiceBean(serviceBeanMap.get(attrDefinitionCustom.getClassName()));
+            ServiceBean serviceBean = serviceBeanMap.get(attrDefinitionCustom.getClassName());
+            if (ObjectUtil.isEmpty(serviceBean)) {
+                attrDefinitionCustom.setWhetherDelete(true);
+                return;
+            }
+            // 判断属性是否在服务类的原始属性中，如果不在，则说明该自定义属性可以删除
+            List<String> attrKeyList = serviceBean.getAttrDefinitionList().stream().map(AttrDefinition::getAttrKey)
+                .distinct().collect(Collectors.toList());
+            if (attrKeyList.contains(attrDefinitionCustom.getAttrKey())) {
+                attrDefinitionCustom.setWhetherDelete(false);
+            } else {
+                attrDefinitionCustom.setWhetherDelete(true);
+            }
+            attrDefinitionCustom.setServiceBean(serviceBean);
         });
         outputObject.setBeans(attrDefinitionCustoms);
         outputObject.settotal(attrDefinitionCustoms.size());

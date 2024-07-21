@@ -229,4 +229,13 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
         attrDefinition.setAttrDefinitionCustom(attrDefinitionCustom);
     }
 
+    @Override
+    public Map<String, List<AttrDefinition>> queryAttrDefinitionList(List<String> classNameList) {
+        QueryWrapper<AttrDefinition> wrapper = new QueryWrapper<>();
+        wrapper.in(MybatisPlusUtil.toColumns(AttrDefinition::getClassName), classNameList);
+        List<AttrDefinition> list = list(wrapper);
+        Map<String, List<AttrDefinition>> map = list.stream().collect(Collectors.groupingBy(AttrDefinition::getClassName));
+        return map;
+    }
+
 }

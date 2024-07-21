@@ -46,4 +46,6 @@ public interface AttrDefinitionService extends SkyeyeBusinessService<AttrDefinit
     Map<String, AttrDefinition> queryAttrDefinitionMap(String className, List<String> attrKey);
 
     AttrDefinition queryAttrDefinition(String className, String attrKey);
+
+    Map<String, List<AttrDefinition>> queryAttrDefinitionList(List<String> classNameList);
 }

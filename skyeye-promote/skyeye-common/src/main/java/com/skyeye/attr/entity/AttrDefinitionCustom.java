@@ -92,4 +92,8 @@ public class AttrDefinitionCustom extends OperatorUserInfo {
     @ApiModelProperty(value = "dataType=4时，自定义api接口的请求", required = "json")
     private BusinessApi businessApi;
 
+    @TableField(exist = false)
+    @Property(value = "是否可以删除")
+    private Boolean whetherDelete;
+
 }
