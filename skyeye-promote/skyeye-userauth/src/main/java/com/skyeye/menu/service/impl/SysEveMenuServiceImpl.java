@@ -7,10 +7,8 @@ package com.skyeye.menu.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -28,7 +26,6 @@ import com.skyeye.win.service.SysEveDesktopService;
 import com.skyeye.win.service.SysEveWinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -99,8 +96,6 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         setOpenType(entity);
         // 设置菜单级别
         setMenuLevel(entity);
-        // 设置培训序号
-        setOrderNum(entity);
     }
 
     @Override
@@ -109,24 +104,6 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         setOpenType(entity);
         // 设置菜单级别
         setMenuLevel(entity);
-        SysMenu oldParent = selectById(entity.getId());
-        if (!oldParent.getParentId().equals(entity.getParentId())) {
-            // 修改之后不再是之前父类的子菜单，设置培训序号
-            setOrderNum(entity);
-        }
-    }
-
-    private void setOrderNum(SysMenu sysMenu) {
-        Map<String, Object> orderNum = sysEveMenuDao.querySysMenuAfterOrderBumByParentId(sysMenu.getParentId());
-        if (orderNum == null) {
-            sysMenu.setOrderNum(0);
-        } else {
-            if (orderNum.containsKey("orderNum")) {
-                sysMenu.setOrderNum(Integer.parseInt(orderNum.get("orderNum").toString()) + 1);
-            } else {
-                sysMenu.setOrderNum(0);
-            }
-        }
     }
 
     private void setMenuLevel(SysMenu sysMenu) {
@@ -214,58 +191,6 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         // 服务信息
         sysEveWinService.setDataMation(sysMenuList, SysMenu::getSysWinId);
         return sysMenuList;
-    }
-
-    /**
-     * 菜单展示顺序上移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
-    public void editSysEveMenuSortTopById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 根据同一级排序获取这条数据的上一条数据
-        Map<String, Object> topBean = sysEveMenuDao.querySysEveMenuISTopByThisId(map);
-        if (topBean == null) {
-            outputObject.setreturnMessage("已经是最靠前菜单，无法移动。");
-        } else {
-            String id = map.get("id").toString();
-            String otherId = topBean.get("id").toString();
-            updateOrderNumById(id, Integer.parseInt(topBean.get("orderNum").toString()));
-            updateOrderNumById(otherId, Integer.parseInt(topBean.get("thisOrderNum").toString()));
-        }
-    }
-
-    private void updateOrderNumById(String id, Integer orderNum) {
-        UpdateWrapper<SysMenu> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq(CommonConstants.ID, id);
-        updateWrapper.set(MybatisPlusUtil.toColumns(SysMenu::getOrderNum), orderNum);
-        update(updateWrapper);
-        refreshCache(id);
-    }
-
-    /**
-     * 菜单展示顺序下移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
-    public void editSysEveMenuSortLowerById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 根据同一级排序获取这条数据的下一条数据
-        Map<String, Object> topBean = sysEveMenuDao.querySysEveMenuISLowerByThisId(map);
-        if (topBean == null) {
-            outputObject.setreturnMessage("已经是最靠后菜单，无法移动。");
-        } else {
-            String id = map.get("id").toString();
-            String otherId = topBean.get("id").toString();
-            updateOrderNumById(id, Integer.parseInt(topBean.get("orderNum").toString()));
-            updateOrderNumById(otherId, Integer.parseInt(topBean.get("thisOrderNum").toString()));
-        }
     }
 
 }

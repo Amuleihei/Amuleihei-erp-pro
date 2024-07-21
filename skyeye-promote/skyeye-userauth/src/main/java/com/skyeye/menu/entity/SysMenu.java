@@ -77,10 +77,8 @@ public class SysMenu extends IconOrImgInfo {
     @TableField("open_type")
     private Integer openType;
 
-    /**
-     * 排序
-     */
     @TableField("order_num")
+    @ApiModelProperty(value = "排序", required = "required,num")
     private Integer orderNum;
 
     @TableField("sys_win_id")

@@ -28,12 +28,6 @@ public interface SysEveMenuDao extends SkyeyeBaseMapper<SysMenu> {
 
     Map<String, Object> queryUseThisMenuRoleById(@Param("id") String id);
 
-    Map<String, Object> querySysMenuAfterOrderBumByParentId(@Param("parentId") String parentId);
-
-    Map<String, Object> querySysEveMenuISTopByThisId(Map<String, Object> map);
-
-    Map<String, Object> querySysEveMenuISLowerByThisId(Map<String, Object> map);
-
     /**
      * 根据父id查询所有的子节点信息(包含父id)，如果是多个
      *

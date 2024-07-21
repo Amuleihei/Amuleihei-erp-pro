@@ -26,17 +26,6 @@
 		ORDER BY a.order_num ASC
 	</select>
 
-	<select id="querySysMenuAfterOrderBumByParentId" resultType="java.util.Map">
-		SELECT
-			a.order_num orderNum
-		FROM
-			sys_eve_menu a
-		WHERE
-			a.parent_id = #{parentId}
-		ORDER BY a.order_num DESC 
-		LIMIT 1
-	</select>
-	
 	<select id="querySysMenuMationBySimpleLevel" parameterType="java.util.Map" resultType="java.util.Map">
 		SELECT
 			a.id,
@@ -62,36 +51,6 @@
 		FROM 
 			sys_eve_role_menu d 
 		WHERE d.menu_id = #{id}
-	</select>
-	
-	<select id="querySysEveMenuISTopByThisId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			b.id,
-			b.order_num orderNum,
-			a.order_num thisOrderNum
-		FROM
-			sys_eve_menu a,
-			sys_eve_menu b
-		WHERE
-			a.id = #{id}
-		AND b.parent_id = a.parent_id
-		AND a.order_num > b.order_num
-		ORDER BY b.order_num DESC LIMIT 1
-	</select>
-	
-	<select id="querySysEveMenuISLowerByThisId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			b.id,
-			b.order_num orderNum,
-			a.order_num thisOrderNum
-		FROM
-			sys_eve_menu a,
-			sys_eve_menu b
-		WHERE
-			a.id = #{id}
-		AND b.parent_id = a.parent_id
-		AND b.order_num > a.order_num
-		ORDER BY b.order_num ASC LIMIT 1
 	</select>
 	
 	<select id="queryAllChildIdsByParentId" resultType="java.lang.String">

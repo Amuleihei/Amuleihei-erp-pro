@@ -100,32 +100,4 @@ public class SysEveMenuController {
         sysEveMenuService.deleteById(inputObject, outputObject);
     }
 
-    /**
-     * 菜单展示顺序上移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "sys022", value = "菜单展示顺序上移", method = "POST", allUse = "1")
-    @ApiImplicitParams(value = {
-        @ApiImplicitParam(id = "id", name = "id", value = "菜单ID", required = "required")})
-    @RequestMapping("/post/SysEveMenuController/editSysEveMenuSortTopById")
-    public void editSysEveMenuSortTopById(InputObject inputObject, OutputObject outputObject) {
-        sysEveMenuService.editSysEveMenuSortTopById(inputObject, outputObject);
-    }
-
-    /**
-     * 菜单展示顺序下移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "sys023", value = "菜单展示顺序下移", method = "POST", allUse = "1")
-    @ApiImplicitParams(value = {
-        @ApiImplicitParam(id = "id", name = "id", value = "菜单ID", required = "required")})
-    @RequestMapping("/post/SysEveMenuController/editSysEveMenuSortLowerById")
-    public void editSysEveMenuSortLowerById(InputObject inputObject, OutputObject outputObject) {
-        sysEveMenuService.editSysEveMenuSortLowerById(inputObject, outputObject);
-    }
-
 }
