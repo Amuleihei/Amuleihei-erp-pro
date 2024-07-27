@@ -38,7 +38,8 @@ public class AttrDefinitionController {
      */
     @ApiOperation(id = "queryAttrDefinitionList", value = "根据service的className获取属性信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required")})
+        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/AttrDefinitionController/queryAttrDefinitionList")
     public void queryAttrDefinitionList(InputObject inputObject, OutputObject outputObject) {
         attrDefinitionService.queryAttrDefinitionList(inputObject, outputObject);
@@ -53,7 +54,8 @@ public class AttrDefinitionController {
     @ApiOperation(id = "queryChildAttrDefinitionList", value = "获取子属性信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
-        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required")})
+        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/AttrDefinitionController/queryChildAttrDefinitionList")
     public void queryChildAttrDefinitionList(InputObject inputObject, OutputObject outputObject) {
         attrDefinitionService.queryChildAttrDefinitionList(inputObject, outputObject);

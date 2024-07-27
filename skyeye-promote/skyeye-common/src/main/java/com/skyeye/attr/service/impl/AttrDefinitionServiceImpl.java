@@ -120,8 +120,9 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
     public void queryAttrDefinitionList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
-        List<AttrDefinition> attrDefinitionList = getAttrDefinitions(className);
-        setCustomDefinition(className, attrDefinitionList);
+        String appId = params.get("appId").toString();
+        List<AttrDefinition> attrDefinitionList = getAttrDefinitions(appId, className);
+        setCustomDefinition(appId, className, attrDefinitionList);
 
         attrDefinitionList = attrDefinitionList.stream()
             .sorted(Comparator.comparing(AttrDefinition::getWhetherInputParams, Comparator.reverseOrder())).collect(Collectors.toList());
@@ -129,18 +130,19 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
         outputObject.settotal(attrDefinitionList.size());
     }
 
-    private void setCustomDefinition(String className, List<AttrDefinition> attrDefinitionList) {
+    private void setCustomDefinition(String appId, String className, List<AttrDefinition> attrDefinitionList) {
         // 获取自定义属性id
         List<String> attrKey = attrDefinitionList.stream().map(AttrDefinition::getAttrKey).collect(Collectors.toList());
-        Map<String, AttrDefinitionCustom> attrDefinitionCustomMap = attrDefinitionCustomService.queryAttrDefinitionCustomMap(className, attrKey);
+        Map<String, AttrDefinitionCustom> attrDefinitionCustomMap = attrDefinitionCustomService.queryAttrDefinitionCustomMap(appId, className, attrKey);
         attrDefinitionList.forEach(attrDefinition -> {
             AttrDefinitionCustom attrDefinitionCustom = attrDefinitionCustomMap.get(attrDefinition.getAttrKey());
             attrDefinition.setAttrDefinitionCustom(attrDefinitionCustom);
         });
     }
 
-    private List<AttrDefinition> getAttrDefinitions(String className) {
+    private List<AttrDefinition> getAttrDefinitions(String appId, String className) {
         QueryWrapper<AttrDefinition> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getClassName), className);
         List<AttrDefinition> attrDefinitionList = list(wrapper);
         return attrDefinitionList;
@@ -157,8 +159,10 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
         String attrKey = params.get("attrKey").toString();
+        String appId = params.get("appId").toString();
 
         QueryWrapper<AttrDefinition> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getClassName), className);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAttrKey), attrKey);
         AttrDefinition attrDefinition = getOne(wrapper);
@@ -170,8 +174,8 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
         if (service == null) {
             return;
         }
-        List<AttrDefinition> attrDefinitionList = getAttrDefinitions(service.getClassName());
-        setCustomDefinition(service.getClassName(), attrDefinitionList);
+        List<AttrDefinition> attrDefinitionList = getAttrDefinitions(appId, service.getClassName());
+        setCustomDefinition(appId, service.getClassName(), attrDefinitionList);
         outputObject.setBeans(attrDefinitionList);
         outputObject.settotal(attrDefinitionList.size());
     }
@@ -184,12 +188,13 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
      * @return
      */
     @Override
-    public List<AttrDefinition> queryAttrDefinitionList(String className, List<String> attrKey) {
+    public List<AttrDefinition> queryAttrDefinitionList(String appId, String className, List<String> attrKey) {
         QueryWrapper<AttrDefinition> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getClassName), className);
         wrapper.in(MybatisPlusUtil.toColumns(AttrDefinition::getAttrKey), attrKey);
         List<AttrDefinition> attrDefinitionList = list(wrapper);
-        setCustomDefinition(className, attrDefinitionList);
+        setCustomDefinition(appId, className, attrDefinitionList);
         return attrDefinitionList;
     }
 
@@ -201,8 +206,8 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
      * @return
      */
     @Override
-    public Map<String, AttrDefinition> queryAttrDefinitionMap(String className, List<String> attrKey) {
-        List<AttrDefinition> attrDefinitionList = queryAttrDefinitionList(className, attrKey);
+    public Map<String, AttrDefinition> queryAttrDefinitionMap(String appId, String className, List<String> attrKey) {
+        List<AttrDefinition> attrDefinitionList = queryAttrDefinitionList(appId, className, attrKey);
         return attrDefinitionList.stream().collect(Collectors.toMap(AttrDefinition::getAttrKey, item -> item));
     }
 
@@ -214,18 +219,19 @@ public class AttrDefinitionServiceImpl extends SkyeyeBusinessServiceImpl<AttrDef
      * @return
      */
     @Override
-    public AttrDefinition queryAttrDefinition(String className, String attrKey) {
+    public AttrDefinition queryAttrDefinition(String appId, String className, String attrKey) {
         QueryWrapper<AttrDefinition> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getClassName), className);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinition::getAttrKey), attrKey);
         AttrDefinition attrDefinition = getOne(wrapper);
-        setCustomDefinition(className, attrDefinition);
+        setCustomDefinition(appId, className, attrDefinition);
         return attrDefinition;
     }
 
-    private void setCustomDefinition(String className, AttrDefinition attrDefinition) {
+    private void setCustomDefinition(String appId, String className, AttrDefinition attrDefinition) {
         // 获取自定义属性id
-        AttrDefinitionCustom attrDefinitionCustom = attrDefinitionCustomService.queryAttrDefinitionCustom(className, attrDefinition.getAttrKey());
+        AttrDefinitionCustom attrDefinitionCustom = attrDefinitionCustomService.queryAttrDefinitionCustom(appId, className, attrDefinition.getAttrKey());
         attrDefinition.setAttrDefinitionCustom(attrDefinitionCustom);
     }
 

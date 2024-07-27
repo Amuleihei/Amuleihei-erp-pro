@@ -40,7 +40,8 @@ public class AttrDefinitionCustomController {
     @ApiOperation(id = "queryAttrDefinitionCustom", value = "获取属性信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
-        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required")})
+        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/AttrDefinitionCustomController/queryAttrDefinitionCustom")
     public void queryAttrDefinitionCustom(InputObject inputObject, OutputObject outputObject) {
         attrDefinitionCustomService.queryAttrDefinitionCustom(inputObject, outputObject);
@@ -68,7 +69,8 @@ public class AttrDefinitionCustomController {
     @ApiOperation(id = "deleteAttrDefinitionCustom", value = "删除自定义属性信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
-        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required")})
+        @ApiImplicitParam(id = "attrKey", name = "attrKey", value = "属性", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/AttrDefinitionCustomController/deleteAttrDefinitionCustom")
     public void deleteAttrDefinitionCustom(InputObject inputObject, OutputObject outputObject) {
         attrDefinitionCustomService.deleteAttrDefinitionCustom(inputObject, outputObject);

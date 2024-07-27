@@ -41,11 +41,11 @@ public interface AttrDefinitionService extends SkyeyeBusinessService<AttrDefinit
      * @param attrKey
      * @return
      */
-    List<AttrDefinition> queryAttrDefinitionList(String className, List<String> attrKey);
+    List<AttrDefinition> queryAttrDefinitionList(String appId, String className, List<String> attrKey);
 
-    Map<String, AttrDefinition> queryAttrDefinitionMap(String className, List<String> attrKey);
+    Map<String, AttrDefinition> queryAttrDefinitionMap(String appId, String className, List<String> attrKey);
 
-    AttrDefinition queryAttrDefinition(String className, String attrKey);
+    AttrDefinition queryAttrDefinition(String appId, String className, String attrKey);
 
     Map<String, List<AttrDefinition>> queryAttrDefinitionList(List<String> classNameList);
 }

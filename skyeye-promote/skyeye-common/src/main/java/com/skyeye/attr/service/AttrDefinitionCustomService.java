@@ -22,11 +22,11 @@ import java.util.Map;
  */
 public interface AttrDefinitionCustomService extends SkyeyeBusinessService<AttrDefinitionCustom> {
 
-    List<AttrDefinitionCustom> queryAttrDefinitionCustomList(String className, List<String> attrKey);
+    List<AttrDefinitionCustom> queryAttrDefinitionCustomList(String appId, String className, List<String> attrKey);
 
-    Map<String, AttrDefinitionCustom> queryAttrDefinitionCustomMap(String className, List<String> attrKey);
+    Map<String, AttrDefinitionCustom> queryAttrDefinitionCustomMap(String appId, String className, List<String> attrKey);
 
-    AttrDefinitionCustom queryAttrDefinitionCustom(String className, String attrKey);
+    AttrDefinitionCustom queryAttrDefinitionCustom(String appId, String className, String attrKey);
 
     void queryAttrDefinitionCustom(InputObject inputObject, OutputObject outputObject);
 

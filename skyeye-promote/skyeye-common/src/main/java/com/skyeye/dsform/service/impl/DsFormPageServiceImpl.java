@@ -176,7 +176,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
         // 获取属性信息
         List<String> attrKeys = dsFormPageContents.stream().filter(bean -> StrUtil.isNotEmpty(bean.getAttrKey())).map(DsFormPageContent::getAttrKey).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(attrKeys)) {
-            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getClassName(), attrKeys);
+            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getAppId(), dsFormPage.getClassName(), attrKeys);
             dsFormPageContents.forEach(dsFormPageContent -> {
                 if (StrUtil.isNotEmpty(dsFormPageContent.getAttrKey())) {
                     dsFormPageContent.setAttrDefinition(attrDefinitionMap.get(dsFormPageContent.getAttrKey()));
@@ -190,7 +190,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
         // 获取属性信息
         List<String> attrKeys = tableColumnList.stream().map(TableColumn::getAttrKey).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(attrKeys)) {
-            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getClassName(), attrKeys);
+            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getAppId(),dsFormPage.getClassName(), attrKeys);
             tableColumnList.forEach(tableColumn -> {
                 tableColumn.setAttrDefinition(attrDefinitionMap.get(tableColumn.getAttrKey()));
             });

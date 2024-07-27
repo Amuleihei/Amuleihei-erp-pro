@@ -70,8 +70,9 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
     }
 
     @Override
-    public List<AttrDefinitionCustom> queryAttrDefinitionCustomList(String className, List<String> attrKey) {
+    public List<AttrDefinitionCustom> queryAttrDefinitionCustomList(String appId, String className, List<String> attrKey) {
         QueryWrapper<AttrDefinitionCustom> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getClassName), className);
         wrapper.in(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getAttrKey), attrKey);
         List<AttrDefinitionCustom> attrDefinitionCustomList = list(wrapper);
@@ -101,14 +102,15 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
     }
 
     @Override
-    public Map<String, AttrDefinitionCustom> queryAttrDefinitionCustomMap(String className, List<String> attrKey) {
-        List<AttrDefinitionCustom> attrDefinitionCustomList = queryAttrDefinitionCustomList(className, attrKey);
+    public Map<String, AttrDefinitionCustom> queryAttrDefinitionCustomMap(String appId, String className, List<String> attrKey) {
+        List<AttrDefinitionCustom> attrDefinitionCustomList = queryAttrDefinitionCustomList(appId, className, attrKey);
         return attrDefinitionCustomList.stream().collect(Collectors.toMap(AttrDefinitionCustom::getAttrKey, item -> item));
     }
 
     @Override
-    public AttrDefinitionCustom queryAttrDefinitionCustom(String className, String attrKey) {
+    public AttrDefinitionCustom queryAttrDefinitionCustom(String appId, String className, String attrKey) {
         QueryWrapper<AttrDefinitionCustom> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getClassName), className);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getAttrKey), attrKey);
         AttrDefinitionCustom attrDefinitionCustom = getOne(wrapper);
@@ -129,10 +131,11 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
         String attrKey = params.get("attrKey").toString();
+        String appId = params.get("appId").toString();
         // 获取属性的原始信息
-        AttrDefinition attrDefinition = attrDefinitionService.queryAttrDefinition(className, attrKey);
+        AttrDefinition attrDefinition = attrDefinitionService.queryAttrDefinition(appId, className, attrKey);
         // 获取属性的自定义信息
-        AttrDefinitionCustom attrDefinitionCustom = queryAttrDefinitionCustom(className, attrKey);
+        AttrDefinitionCustom attrDefinitionCustom = queryAttrDefinitionCustom(appId, className, attrKey);
         if (ObjectUtil.isEmpty(attrDefinitionCustom)) {
             attrDefinitionCustom = new AttrDefinitionCustom();
             attrDefinitionCustom.setName(attrDefinition.getName());
@@ -155,7 +158,9 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
         String attrKey = params.get("attrKey").toString();
-        AttrDefinitionCustom attrDefinitionCustom = queryAttrDefinitionCustom(className, attrKey);
+        String appId = params.get("appId").toString();
+
+        AttrDefinitionCustom attrDefinitionCustom = queryAttrDefinitionCustom(appId, className, attrKey);
         if (ObjectUtil.isEmpty(attrDefinitionCustom)) {
             return;
         }

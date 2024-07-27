@@ -36,6 +36,10 @@ public class AttrDefinitionCustom extends OperatorUserInfo {
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
+    @TableField("app_id")
+    @ApiModelProperty(value = "应用的appId", required = "required")
+    private String appId;
+
     @TableField("class_name")
     @ApiModelProperty(value = "服务类的className", required = "required")
     private String className;
