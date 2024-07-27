@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.coderule.entity.CodeRule;
 import com.skyeye.coderule.service.CodeRuleService;
-import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -45,15 +44,19 @@ public class ServiceBeanCustomServiceImpl extends SkyeyeBusinessServiceImpl<Serv
     public void queryServiceBeanCustom(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
-        ServiceBeanCustom serviceBeanCustom = selectById(className);
+        String appId = params.get("appId").toString();
+        ServiceBeanCustom serviceBeanCustom = selectServiceBeanCustom(appId, className);
         outputObject.setBean(serviceBeanCustom);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
     @Override
-    public ServiceBeanCustom selectById(String className) {
-        ServiceBeanCustom serviceBeanCustom = super.selectById(className);
-        ServiceBean serviceBean = serviceBeanService.queryServiceClass(className);
+    public ServiceBeanCustom selectServiceBeanCustom(String appId, String className) {
+        QueryWrapper<ServiceBeanCustom> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ServiceBeanCustom::getAppId), appId);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ServiceBeanCustom::getClassName), className);
+        ServiceBeanCustom serviceBeanCustom = getOne(queryWrapper, false);
+        ServiceBean serviceBean = serviceBeanService.queryServiceClass(appId, className);
         if (serviceBeanCustom == null) {
             serviceBeanCustom = new ServiceBeanCustom();
         }
@@ -62,16 +65,6 @@ public class ServiceBeanCustomServiceImpl extends SkyeyeBusinessServiceImpl<Serv
             CodeRule codeRule = codeRuleService.selectById(serviceBeanCustom.getCodeRuleId());
             serviceBeanCustom.setCodeRule(codeRule);
         }
-        return serviceBeanCustom;
-    }
-
-    @Override
-    public ServiceBeanCustom getDataFromDb(String className) {
-        QueryWrapper<ServiceBeanCustom> queryWrapper = new QueryWrapper<>();
-        queryWrapper.and(wrapper ->
-            wrapper.eq(MybatisPlusUtil.toColumns(ServiceBeanCustom::getClassName), className)
-                .or().eq(CommonConstants.ID, className));
-        ServiceBeanCustom serviceBeanCustom = getOne(queryWrapper, false);
         return serviceBeanCustom;
     }
 

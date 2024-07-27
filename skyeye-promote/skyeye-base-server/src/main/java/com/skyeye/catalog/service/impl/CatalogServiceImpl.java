@@ -134,7 +134,7 @@ public class CatalogServiceImpl extends SkyeyeBusinessServiceImpl<CatalogDao, Ca
     @Override
     public void deleteById(String id) {
         Catalog catalog = selectById(id);
-        URI serviceBeanUri = serviceBeanService.getServiceBean(catalog.getObjectKey());
+        URI serviceBeanUri = serviceBeanService.getServiceBean(catalog.getObjectAppId(), catalog.getObjectKey());
         // 获取当前目录与所有的子目录id
         List<String> ids = catalogDao.queryAllChildIdsByParentId(Arrays.asList(id));
         super.deleteById(ids);

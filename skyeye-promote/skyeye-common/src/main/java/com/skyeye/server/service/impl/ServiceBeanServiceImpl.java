@@ -119,8 +119,8 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     }
 
     @Override
-    public URI getServiceBean(String className) {
-        ServiceBean serviceBean = queryServiceClass(className);
+    public URI getServiceBean(String appId, String className) {
+        ServiceBean serviceBean = queryServiceClass(appId,className);
         if (serviceBean == null) {
             throw new CustomException("未找到 service bean 对应的业务类配置信息.");
         }
@@ -145,7 +145,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getManageShow), true);
         wrapper.likeLeft(MybatisPlusUtil.toColumns(ServiceBean::getSpringApplicationName), springProfilesActive);
-        List<Map<String, Object>> serviceClass = super.list(wrapper)
+        List<Map<String, Object>> serviceClass = list(wrapper)
             .stream().map(bean -> BeanUtil.beanToMap(bean)).collect(Collectors.toList());
         List<Map<String, Object>> result = buildResult(serviceClass);
         applications.forEach(application -> {
@@ -221,8 +221,9 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     }
 
     @Override
-    public ServiceBean queryServiceClass(String className) {
+    public ServiceBean queryServiceClass(String appId, String className) {
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getClassName), className);
         wrapper.likeLeft(MybatisPlusUtil.toColumns(ServiceBean::getSpringApplicationName), springProfilesActive);
         ServiceBean skyeyeClassServiceBean = getOne(wrapper);

@@ -39,7 +39,8 @@ public class ServiceBeanCustomController {
      */
     @ApiOperation(id = "queryServiceBeanCustom", value = "获取服务信息", method = "GET", allUse = "0")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required")})
+        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/ServiceBeanCustomController/queryServiceBeanCustom")
     public void queryServiceBeanCustom(InputObject inputObject, OutputObject outputObject) {
         serviceBeanCustomService.queryServiceBeanCustom(inputObject, outputObject);

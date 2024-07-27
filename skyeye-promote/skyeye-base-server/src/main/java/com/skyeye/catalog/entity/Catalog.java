@@ -4,10 +4,7 @@
 
 package com.skyeye.catalog.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
@@ -56,11 +53,15 @@ public class Catalog extends OperatorUserInfo {
     @TableField(exist = false)
     private String parentIds;
 
-    @TableField(value = "object_id", fill = FieldFill.INSERT)
+    @TableField(value = "object_id", updateStrategy = FieldStrategy.NEVER)
     @ApiModelProperty(value = "目录所属业务对象数据的id")
     private String objectId;
 
-    @TableField(value = "object_key", fill = FieldFill.INSERT)
+    @TableField(value = "object_app_id", updateStrategy = FieldStrategy.NEVER)
+    @ApiModelProperty(value = "目录所属业务对象数据的应用id", required = "required")
+    private String objectAppId;
+
+    @TableField(value = "object_key", updateStrategy = FieldStrategy.NEVER)
     @ApiModelProperty(value = "目录所属业务对象", required = "required")
     private String objectKey;
 

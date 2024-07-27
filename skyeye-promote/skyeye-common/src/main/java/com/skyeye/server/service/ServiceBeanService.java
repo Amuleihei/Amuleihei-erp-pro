@@ -25,11 +25,11 @@ public interface ServiceBeanService extends SkyeyeBusinessService<ServiceBean> {
 
     void registerServiceBean(InputObject inputObject, OutputObject outputObject);
 
-    URI getServiceBean(String className);
+    URI getServiceBean(String appId, String className);
 
     void queryServiceClassForTree(InputObject inputObject, OutputObject outputObject);
 
-    ServiceBean queryServiceClass(String className);
+    ServiceBean queryServiceClass(String appId, String className);
 
     Map<String, ServiceBean> queryServiceClass(List<String> classNames);
 

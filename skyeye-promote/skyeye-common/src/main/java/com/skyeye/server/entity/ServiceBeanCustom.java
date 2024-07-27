@@ -10,10 +10,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
-import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.coderule.entity.CodeRule;
-import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
@@ -27,7 +25,6 @@ import lombok.Data;
  */
 @Data
 @UniqueField(value = {"className"})
-@RedisCacheField(name = CacheConstants.SERVICE_BEAN_CACHE_KEY, value = "className")
 @TableName(value = "skyeye_class_service_bean_custom", autoResultMap = true)
 @ApiModel("自定义服务信息实体类")
 public class ServiceBeanCustom extends OperatorUserInfo {
@@ -39,6 +36,10 @@ public class ServiceBeanCustom extends OperatorUserInfo {
     @TableField("class_name")
     @ApiModelProperty(value = "服务类的className", required = "required")
     private String className;
+
+    @TableField(value = "app_id")
+    @ApiModelProperty(value = "应用的appId", required = "required")
+    private String appId;
 
     @TableField("code_rule_id")
     @ApiModelProperty(value = "编码规则id", required = "required")

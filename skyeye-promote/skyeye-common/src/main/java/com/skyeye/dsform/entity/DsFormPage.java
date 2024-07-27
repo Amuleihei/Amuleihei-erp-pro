@@ -57,6 +57,10 @@ public class DsFormPage extends OperatorUserInfo {
     @ApiModelProperty(value = "表单布局的类型，可以参考#DsFormPageType", required = "required")
     private String type;
 
+    @TableField(value = "app_id")
+    @ApiModelProperty(value = "应用的appId", required = "required")
+    private String appId;
+
     @TableField("class_name")
     @ApiModelProperty(value = "服务类的className", required = "required")
     private String className;

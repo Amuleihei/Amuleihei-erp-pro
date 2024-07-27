@@ -173,7 +173,7 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         if (!sysMenu.getPageType()) {
             // 表单布局
             DsFormPage dsFormPage = dsFormPageService.getDataFromDb(sysMenu.getPageUrl());
-            ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectById(dsFormPage.getClassName());
+            ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectServiceBeanCustom(dsFormPage.getAppId(), dsFormPage.getClassName());
             dsFormPage.setServiceBeanCustom(serviceBeanCustom);
             sysMenu.setDsFormPage(dsFormPage);
         }

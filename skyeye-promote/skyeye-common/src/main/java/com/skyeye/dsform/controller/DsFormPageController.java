@@ -41,7 +41,8 @@ public class DsFormPageController {
      */
     @ApiOperation(id = "queryDsFormPageList", value = "获取表单布局列表", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required")})
+        @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required"),
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required")})
     @RequestMapping("/post/DsFormPageController/queryDsFormPageList")
     public void queryDsFormPageList(InputObject inputObject, OutputObject outputObject) {
         dsFormPageService.queryDsFormPageList(inputObject, outputObject);

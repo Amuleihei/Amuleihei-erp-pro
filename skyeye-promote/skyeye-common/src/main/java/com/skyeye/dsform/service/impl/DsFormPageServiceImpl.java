@@ -78,7 +78,8 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
     public void queryDsFormPageList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         String className = params.get("className").toString();
-        ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectById(className);
+        String appId = params.get("appId").toString();
+        ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectServiceBeanCustom(appId, className);
 
         QueryWrapper<DsFormPage> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(DsFormPage::getClassName), className);
@@ -163,7 +164,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
         dsFormPage.setBusinessApi(businessApi);
 
         // 服务类的信息
-        ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectById(dsFormPage.getClassName());
+        ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectServiceBeanCustom(dsFormPage.getAppId(), dsFormPage.getClassName());
         dsFormPage.setServiceBeanCustom(serviceBeanCustom);
 
         return dsFormPage;

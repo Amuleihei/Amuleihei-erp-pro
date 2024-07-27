@@ -148,7 +148,7 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
                 // 表单布局
                 try {
                     DsFormPage dsFormPage = dsFormPageService.getDataFromDb(operateOpenPage.getPageUrl());
-                    ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectById(dsFormPage.getClassName());
+                    ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectServiceBeanCustom(dsFormPage.getAppId(), dsFormPage.getClassName());
                     dsFormPage.setServiceBeanCustom(serviceBeanCustom);
                     operateOpenPage.setDsFormPage(dsFormPage);
                 } catch (Exception ex) {
