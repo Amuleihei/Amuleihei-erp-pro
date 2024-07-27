@@ -9,6 +9,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.application.service.ApplicationService;
 import com.skyeye.attr.entity.AttrDefinition;
@@ -107,7 +108,8 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     }
 
     private String getKey(ServiceBean bean) {
-        return String.format(Locale.ROOT, "%s_%s_%s_%s_%s", bean.getClassName(), bean.getManageShow(), bean.getTeamAuth(), bean.getTenant(), bean.getFlowable());
+        return String.format(Locale.ROOT, "%s_%s_%s_%s_%s_%s", bean.getAppId(), bean.getClassName(), bean.getManageShow(),
+            bean.getTeamAuth(), bean.getTenant(), bean.getFlowable());
     }
 
     private void saveAttrDefinition(String appId, List<ServiceBean> classNameList) {
@@ -120,7 +122,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
 
     @Override
     public URI getServiceBean(String appId, String className) {
-        ServiceBean serviceBean = queryServiceClass(appId,className);
+        ServiceBean serviceBean = queryServiceClass(appId, className);
         if (serviceBean == null) {
             throw new CustomException("未找到 service bean 对应的业务类配置信息.");
         }
@@ -223,7 +225,9 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     @Override
     public ServiceBean queryServiceClass(String appId, String className) {
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
-        wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getAppId), appId);
+        if (StrUtil.isNotEmpty(appId)) {
+            wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getAppId), appId);
+        }
         wrapper.eq(MybatisPlusUtil.toColumns(ServiceBean::getClassName), className);
         wrapper.likeLeft(MybatisPlusUtil.toColumns(ServiceBean::getSpringApplicationName), springProfilesActive);
         ServiceBean skyeyeClassServiceBean = getOne(wrapper);
