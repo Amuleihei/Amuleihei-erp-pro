@@ -24,8 +24,6 @@ public interface SysEveRoleDao extends SkyeyeBaseMapper<Role> {
 
     List<Map<String, Object>> querySysRoleList(CommonPageInfo commonPageInfo);
 
-    List<Map<String, Object>> querySysRoleBandMenuList(Map<String, Object> map);
-
     int insertSysRoleMenuMation(List<Map<String, Object>> beans);
 
     List<String> querySysRoleMenuIdByRoleId(@Param("roleId") String roleId);
@@ -33,8 +31,6 @@ public interface SysEveRoleDao extends SkyeyeBaseMapper<Role> {
     int deleteRoleMenuByRoleId(@Param("roleId") String roleId);
 
     Integer queryUserRoleByRoleId(@Param("roleId") String roleId);
-
-    List<Map<String, Object>> querySysRoleBandAppMenuList(Map<String, Object> map);
 
     List<String> querySysRoleAppMenuIdByRoleId(@Param("roleId") String roleId);
 

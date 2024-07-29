@@ -12,6 +12,8 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.exception.CustomException;
+import com.skyeye.menu.dao.AppWorkPageDao;
+import com.skyeye.menu.dao.SysEveMenuDao;
 import com.skyeye.role.dao.SysEveRoleDao;
 import com.skyeye.role.entity.Role;
 import com.skyeye.role.service.SysEveRoleService;
@@ -43,6 +45,12 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
 
     @Autowired
     private SysEveRoleDao sysEveRoleDao;
+
+    @Autowired
+    private SysEveMenuDao sysEveMenuDao;
+
+    @Autowired
+    private AppWorkPageDao appWorkPageDao;
 
     @Autowired
     private SysEveDesktopService sysEveDesktopService;
@@ -78,8 +86,7 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
      */
     @Override
     public void querySysRoleBandMenuList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = sysEveRoleDao.querySysRoleBandMenuList(map);
+        List<Map<String, Object>> beans = sysEveMenuDao.queryAllMenuList();
         // 获取桌面信息
         List<Map<String, Object>> desktopList = sysEveDesktopService.queryAllDataForMap();
         beans.addAll(desktopList);
@@ -154,8 +161,7 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
      */
     @Override
     public void querySysRoleBandAppMenuList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        List<Map<String, Object>> beans = sysEveRoleDao.querySysRoleBandAppMenuList(map);
+        List<Map<String, Object>> beans = appWorkPageDao.queryAllAppMenuList();
         // 获取桌面信息
         List<Map<String, Object>> desktopList = sysEveDesktopService.queryAllDataForMap();
         beans.addAll(desktopList);
@@ -169,7 +175,7 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysRoleAppMenuById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         String[] menuIds = map.get("menuIds").toString().split(",");

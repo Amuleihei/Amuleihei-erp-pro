@@ -2,13 +2,14 @@
  * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
  ******************************************************************************/
 
-package com.skyeye.tenant.service;
+package com.skyeye.tenant.service.impl;
 
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.tenant.dao.TenantDao;
 import com.skyeye.tenant.entity.Tenant;
+import com.skyeye.tenant.service.TenantService;
 import org.springframework.stereotype.Service;
 
 /**

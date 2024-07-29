@@ -83,4 +83,32 @@
 		</foreach>
 	</select>
 
+	<select id="queryAllMenuList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+			(SELECT
+				 a.id,
+				 a.`name`,
+				 CASE a.parent_id WHEN '0' THEN a.desktop_id ELSE a.parent_id END pId,
+				 b.`name` sysName,
+				 CASE a.page_url WHEN '--' THEN '盒子' ELSE '页面' END pageType
+			 FROM
+				 sys_eve_menu a
+				 LEFT JOIN sys_eve_win b ON a.sys_win_id = b.id
+			 ORDER BY a.order_num ASC) m
+		UNION
+		SELECT
+			a.id,
+			a.`name`,
+			CASE a.parent_id WHEN '0' THEN a.object_id ELSE a.parent_id END pId,
+			c.`name` sysName,
+			CASE a.type WHEN '1' THEN '权限点' WHEN '2' THEN '数据权限分组' WHEN '3' THEN '数据权限' ELSE '' END pageType
+		FROM
+			sys_eve_menu_auth_point a,
+			sys_eve_menu b
+			LEFT JOIN sys_eve_win c ON b.sys_win_id = c.id
+		WHERE a.object_id = b.id
+	</select>
+
 </mapper>

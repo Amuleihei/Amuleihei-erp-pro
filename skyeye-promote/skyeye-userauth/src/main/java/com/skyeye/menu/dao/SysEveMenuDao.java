@@ -35,4 +35,6 @@ public interface SysEveMenuDao extends SkyeyeBaseMapper<SysMenu> {
      * @return
      */
     List<String> queryAllChildIdsByParentId(@Param("ids") List<String> ids);
+
+    List<Map<String, Object>> queryAllMenuList();
 }

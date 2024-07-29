@@ -24,4 +24,7 @@ public interface AppWorkPageDao extends SkyeyeBaseMapper<AppWorkPage> {
     List<Map<String, Object>> queryAppWorkPageList(CommonPageInfo commonPageInfo);
 
     List<String> queryAllChildIdsByParentId(List<String> ids);
+
+    List<Map<String, Object>> queryAllAppMenuList();
+
 }

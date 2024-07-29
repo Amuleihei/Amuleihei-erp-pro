@@ -52,4 +52,34 @@
 			WHERE FIND_IN_SET(d.id, i._ids)
 		</foreach>
 	</select>
+
+	<select id="queryAllAppMenuList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+			(SELECT
+				 a.id,
+				 a.`name`,
+				 CASE a.parent_id WHEN '0' THEN a.desktop_id ELSE a.parent_id END pId,
+				 c.`name` sysName,
+				 CASE (select parent_id from app_workbench_page where a.id = id) WHEN '0' THEN '目录' ELSE '页面' END pageType,
+				 'page' type
+			 FROM
+				 app_workbench_page a
+				 LEFT JOIN sys_eve_desktop c ON a.desktop_id = c.id
+			 ORDER BY a.order_by ASC) m
+		UNION ALL
+		SELECT
+			a.id,
+			a.`name`,
+			CASE a.parent_id WHEN '0' THEN a.object_id ELSE a.parent_id END pId,
+			c.`name` sysName,
+			CASE a.type WHEN '1' THEN '权限点' WHEN '2' THEN '数据权限分组' WHEN '3' THEN '数据权限' ELSE '' END pageType,
+			'authPoint' type
+		FROM
+			sys_eve_menu_auth_point a,
+			app_workbench_page b
+			LEFT JOIN sys_eve_desktop c ON b.desktop_id = c.id
+		WHERE a.object_id = b.id
+	</select>
 </mapper>
