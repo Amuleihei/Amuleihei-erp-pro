@@ -37,7 +37,7 @@ public class TenantApp extends BaseGeneralInfo {
     private List<String> menuIds;
 
     @TableField(exist = false)
-    @Property(value = "手机端菜单权限")
+    @ApiModelProperty(value = "手机端菜单权限")
     private List<String> appMenuIds;
 
 }
