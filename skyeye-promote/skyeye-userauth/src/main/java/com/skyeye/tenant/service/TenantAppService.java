@@ -9,6 +9,8 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.tenant.entity.TenantApp;
 
+import java.util.Map;
+
 /**
  * @ClassName: TenantAppService
  * @Description: 租户应用管理服务层接口
@@ -28,4 +30,6 @@ public interface TenantAppService extends SkyeyeBusinessService<TenantApp> {
     void editTenantAppAppMenuById(InputObject inputObject, OutputObject outputObject);
 
     void queryAllTenantAppList(InputObject inputObject, OutputObject outputObject);
+
+    Map<String, TenantApp> queryTenantAppByAppId(String... appId);
 }

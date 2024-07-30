@@ -7,12 +7,15 @@ package com.skyeye.tenant.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
+import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @ClassName: Tenant
@@ -32,5 +35,9 @@ public class Tenant extends BaseGeneralInfo {
     @TableField("account_num")
     @Property(value = "允许的账号数量")
     private Integer accountNum;
+
+    @TableField(exist = false)
+    @ApiModelProperty("应用信息")
+    private List<TenantAppLink> tenantAppLinkList;
 
 }

@@ -4,19 +4,17 @@
 
 package com.skyeye.tenant.service;
 
-import com.skyeye.base.business.service.SkyeyeBusinessService;
-import com.skyeye.tenant.entity.Tenant;
+import com.skyeye.base.business.service.SkyeyeFlowableService;
+import com.skyeye.tenant.entity.TenantAppBuyOrder;
 
 /**
- * @ClassName: TenantService
- * @Description: 租户服务接口层
+ * @ClassName: TenantAppBuyOrderService
+ * @Description: 订单管理服务接口层
  * @author: skyeye云系列--卫志强
- * @date: 2024/7/28 20:14
+ * @date: 2024/7/30 16:25
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
-public interface TenantService extends SkyeyeBusinessService<Tenant> {
-
-    void editTenantAccountNumber(String tenantId, Integer accountNumber);
+public interface TenantAppBuyOrderService extends SkyeyeFlowableService<TenantAppBuyOrder> {
 
 }
