@@ -98,7 +98,7 @@ public class TenantAppBuyOrderServiceImpl extends SkyeyeFlowableServiceImpl<Tena
 
     @Override
     public TenantAppBuyOrder selectById(String id) {
-        TenantAppBuyOrder tenantAppBuyOrder = super.getDataFromDb(id);
+        TenantAppBuyOrder tenantAppBuyOrder = super.selectById(id);
         tenantService.setDataMation(tenantAppBuyOrder, TenantAppBuyOrder::getTenantId);
         if (CollectionUtil.isNotEmpty(tenantAppBuyOrder.getTenantAppBuyOrderYearList())) {
             List<String> appIds = tenantAppBuyOrder.getTenantAppBuyOrderYearList().stream().map(TenantAppBuyOrderYear::getAppId).collect(Collectors.toList());
