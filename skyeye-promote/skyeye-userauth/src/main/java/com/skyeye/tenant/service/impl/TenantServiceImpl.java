@@ -6,6 +6,7 @@ package com.skyeye.tenant.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -71,7 +72,7 @@ public class TenantServiceImpl extends SkyeyeBusinessServiceImpl<TenantDao, Tena
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstants.ID, tenantId);
         Tenant tenant = getOne(queryWrapper, false);
-        if (ObjectUtil.isEmpty(tenant)) {
+        if (ObjectUtil.isNotEmpty(tenant) && StrUtil.isNotEmpty(tenant.getId())) {
             Integer accountNum = tenant.getAccountNum() + accountNumber;
             tenant.setAccountNum(accountNum);
             updateById(tenant);
