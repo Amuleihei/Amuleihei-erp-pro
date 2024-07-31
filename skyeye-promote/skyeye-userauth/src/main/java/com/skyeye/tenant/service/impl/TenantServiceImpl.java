@@ -11,6 +11,8 @@ import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
 import com.skyeye.exception.CustomException;
 import com.skyeye.tenant.dao.TenantDao;
 import com.skyeye.tenant.entity.Tenant;
@@ -77,5 +79,12 @@ public class TenantServiceImpl extends SkyeyeBusinessServiceImpl<TenantDao, Tena
         } else {
             throw new CustomException("租户不存在");
         }
+    }
+
+    @Override
+    public void queryAllTenantList(InputObject inputObject, OutputObject outputObject) {
+        List<Tenant> tenants = queryAllData();
+        outputObject.setBeans(tenants);
+        outputObject.settotal(tenants.size());
     }
 }

@@ -5,6 +5,8 @@
 package com.skyeye.tenant.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
 import com.skyeye.tenant.entity.Tenant;
 
 /**
@@ -19,4 +21,5 @@ public interface TenantService extends SkyeyeBusinessService<Tenant> {
 
     void editTenantAccountNumber(String tenantId, Integer accountNumber);
 
+    void queryAllTenantList(InputObject inputObject, OutputObject outputObject);
 }
