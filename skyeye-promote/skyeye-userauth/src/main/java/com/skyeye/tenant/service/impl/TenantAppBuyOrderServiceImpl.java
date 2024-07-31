@@ -7,11 +7,14 @@ package com.skyeye.tenant.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeFlowableServiceImpl;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
+import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.tenant.dao.TenantAppBuyOrderDao;
 import com.skyeye.tenant.entity.TenantApp;
 import com.skyeye.tenant.entity.TenantAppBuyOrder;
+import com.skyeye.tenant.entity.TenantAppBuyOrderNum;
 import com.skyeye.tenant.entity.TenantAppBuyOrderYear;
 import com.skyeye.tenant.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,22 @@ public class TenantAppBuyOrderServiceImpl extends SkyeyeFlowableServiceImpl<Tena
         if (CollectionUtil.isEmpty(entity.getTenantAppBuyOrderNumList()) && CollectionUtil.isEmpty(entity.getTenantAppBuyOrderYearList())) {
             throw new CustomException("订单信息不能为空.");
         }
+        String totalPrice = "0";
+        if (CollectionUtil.isNotEmpty(entity.getTenantAppBuyOrderNumList())) {
+            for (TenantAppBuyOrderNum tenantAppBuyOrderNum : entity.getTenantAppBuyOrderNumList()) {
+                String allPrice = CalculationUtil.multiply(CommonNumConstants.NUM_TWO, String.valueOf(tenantAppBuyOrderNum.getAccountNum()), tenantAppBuyOrderNum.getUnitPrice());
+                tenantAppBuyOrderNum.setAllPrice(allPrice);
+                totalPrice = CalculationUtil.add(totalPrice, allPrice);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(entity.getTenantAppBuyOrderYearList())) {
+            for (TenantAppBuyOrderYear tenantAppBuyOrderYear : entity.getTenantAppBuyOrderYearList()) {
+                String allPrice = CalculationUtil.multiply(CommonNumConstants.NUM_TWO, String.valueOf(tenantAppBuyOrderYear.getAccountYear()), tenantAppBuyOrderYear.getUnitPrice());
+                tenantAppBuyOrderYear.setAllPrice(allPrice);
+                totalPrice = CalculationUtil.add(totalPrice, allPrice);
+            }
+        }
+        entity.setAllPrice(totalPrice);
     }
 
     @Override

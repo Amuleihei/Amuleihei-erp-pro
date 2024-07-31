@@ -93,7 +93,6 @@ public class TenantController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryAllTenantList", value = "获取所有租户信息", method = "GET", allUse = "2")
-    @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/TenantController/queryAllTenantList")
     public void queryAllTenantList(InputObject inputObject, OutputObject outputObject) {
         tenantService.queryAllTenantList(inputObject, outputObject);
