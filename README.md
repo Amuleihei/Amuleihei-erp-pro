@@ -26,12 +26,13 @@
 
 > [企业版开发文档](https://articles.zsxq.com/id_xi3xhacte72g.html)
 
+>  **体验地址** ：关注下方微信公众号，回复`skyeye`获取
 
 ## 🐶 沟通交流
 
-| |   知识星球   |   作者微信   |
-|:---------------------:|:---------------------:|:--------------------------------:|
-| 微信扫码 | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/知识星球.png) |    ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/chatgpt的微信.jpg)    |
+| |   知识星球   |   作者微信   |  微信公众号(Skyeye智能制造云办公) |
+|:---------------------:|:---------------------:|:--------------------------------:|:--------------------------------:|
+| 微信扫码 | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/知识星球.png) |    ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/chatgpt的微信.jpg)    | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/微信公众号.jpg) |
 
 ## 项目框架介绍
 
