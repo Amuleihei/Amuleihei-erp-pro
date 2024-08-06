@@ -203,7 +203,7 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
         QueryWrapper<AttrDefinitionCustom> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getComponentId), componentId);
         List<AttrDefinitionCustom> attrDefinitionCustoms = list(queryWrapper);
-        List<String> classNames = attrDefinitionCustoms.stream().map(AttrDefinitionCustom::getClassName).collect(Collectors.toList());
+        List<String> classNames = attrDefinitionCustoms.stream().map(bean -> bean.getAppId() + bean.getClassName()).collect(Collectors.toList());
         // 查询服务类信息
         Map<String, ServiceBean> serviceBeanMap = serviceBeanService.queryServiceClass(classNames);
         attrDefinitionCustoms.forEach(attrDefinitionCustom -> {

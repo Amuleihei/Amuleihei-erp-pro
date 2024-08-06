@@ -245,7 +245,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
         // 查询属性列表
         classNames = classNames.stream().distinct().collect(Collectors.toList());
         QueryWrapper<ServiceBean> wrapper = new QueryWrapper<>();
-        wrapper.in(MybatisPlusUtil.toColumns(ServiceBean::getClassName), classNames);
+        wrapper.in("CONCAT(" + MybatisPlusUtil.toColumns(ServiceBean::getAppId) + ", " + MybatisPlusUtil.toColumns(ServiceBean::getClassName) + ")", classNames);
         List<ServiceBean> serviceBeans = list(wrapper);
         // 获取原始的属性列表
         Map<String, List<AttrDefinition>> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionList(classNames);
