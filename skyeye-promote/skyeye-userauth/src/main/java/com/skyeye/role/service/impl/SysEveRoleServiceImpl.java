@@ -6,7 +6,6 @@ package com.skyeye.role.service.impl;
 
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
@@ -54,13 +53,6 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
 
     @Autowired
     private SysEveDesktopService sysEveDesktopService;
-
-    @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = sysEveRoleDao.querySysRoleList(commonPageInfo);
-        return beans;
-    }
 
     @Override
     public Role getDataFromDb(String id) {

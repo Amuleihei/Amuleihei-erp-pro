@@ -22,8 +22,6 @@ import java.util.Map;
  */
 public interface SysEveRoleDao extends SkyeyeBaseMapper<Role> {
 
-    List<Map<String, Object>> querySysRoleList(CommonPageInfo commonPageInfo);
-
     int insertSysRoleMenuMation(List<Map<String, Object>> beans);
 
     List<String> querySysRoleMenuIdByRoleId(@Param("roleId") String roleId);
