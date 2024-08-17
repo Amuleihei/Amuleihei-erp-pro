@@ -42,6 +42,10 @@ public class CommonController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
+    @ApiOperation(id = "common004", value = "上传文件Base64", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "type", name = "type", value = "文件类型", required = "required,num"),
+        @ApiImplicitParam(id = "images", name = "images", value = "图片Base64", required = "required")})
     @RequestMapping("/post/CommonController/uploadFileBase64")
     public void uploadFileBase64(InputObject inputObject, OutputObject outputObject) {
         commonService.uploadFileBase64(inputObject, outputObject);
@@ -64,6 +68,7 @@ public class CommonController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
+    @ApiOperation(id = "sysevewinmation001", value = "获取win系统桌列表信息供展示", method = "POST", allUse = "2")
     @RequestMapping("/post/CommonController/querySysWinMationById")
     public void querySysWinMationById(InputObject inputObject, OutputObject outputObject) {
         commonService.querySysWinMationById(inputObject, outputObject);
