@@ -185,25 +185,6 @@
 		<property id="userName" name="userName" ref="" var="员工姓名" />
 	</url>
 
-	<url id="sysevewinbgpic001" path="/post/SysEveWinBgPicController/querySysEveWinBgPicList" val="获取win系统桌面图片列表" allUse="1">
-		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
-	    <property id="page" name="page" ref="required,num" var="分页参数,第几页"/>
-	</url>
-	<url id="sysevewinbgpic002" path="/post/SysEveWinBgPicController/insertSysEveWinBgPicMation" val="添加win系统桌面图片信息" allUse="1">
-		<property id="picUrl" name="picUrl" ref="required" var="图片路径"/>
-	</url>
-	<url id="sysevewinbgpic003" path="/post/SysEveWinBgPicController/deleteSysEveWinBgPicMationById" val="删除win系统桌面图片信息" allUse="1">
-	    <property id="rowId" name="id" ref="required" var="win系统桌面图片id"/>
-	</url>
-	<url id="sysevewinbgpic005" path="/post/SysEveWinBgPicController/insertSysEveWinBgPicMationByCustom" val="用户自定义上传win系统桌面图片信息" allUse="2">
-		<property id="picUrl" name="picUrl" ref="required" var="图片路径"/>
-	</url>
-	<url id="sysevewinbgpic006" path="/post/SysEveWinBgPicController/querySysEveWinBgPicCustomList" val="获取win系统桌面图片列表用户自定义" allUse="2">
-	</url>
-	<url id="sysevewinbgpic007" path="/post/SysEveWinBgPicController/deleteSysEveWinBgPicMationCustomById" val="删除win系统桌面图片信息用户自定义" allUse="1">
-	    <property id="rowId" name="id" ref="required" var="win系统桌面图片id"/>
-	</url>
-	
 	<url id="sysevewinlockbgpic001" path="/post/SysEveWinLockBgPicController/querySysEveWinLockBgPicList" val="获取win系统锁屏桌面图片列表" allUse="1">
 		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
 	    <property id="page" name="page" ref="required,num" var="分页参数,第几页"/>

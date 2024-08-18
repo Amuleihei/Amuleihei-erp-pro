@@ -4,100 +4,62 @@
 
 package com.skyeye.win.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.cache.redis.RedisCache;
 import com.skyeye.common.constans.Constants;
+import com.skyeye.common.constans.RedisConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.common.util.DataCommonUtil;
-import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.FileUtil;
-import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.win.dao.SysEveWinBgPicDao;
+import com.skyeye.win.entity.SysEveWinBgPic;
+import com.skyeye.win.enums.PicTypeEnum;
 import com.skyeye.win.service.SysEveWinBgPicService;
-import com.skyeye.jedis.JedisClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * @ClassName: SysEveWinBgPicServiceImpl
+ * @Description: win系统桌面图片服务层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/18 22:48
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Service
-public class SysEveWinBgPicServiceImpl implements SysEveWinBgPicService {
-
-    @Autowired
-    private SysEveWinBgPicDao sysEveWinBgPicDao;
-
-    @Autowired
-    public JedisClientService jedisClient;
+@SkyeyeService(name = "win系统桌面图片", groupName = "win系统桌面图片")
+public class SysEveWinBgPicServiceImpl extends SkyeyeBusinessServiceImpl<SysEveWinBgPicDao, SysEveWinBgPic> implements SysEveWinBgPicService {
 
     @Value("${IMAGES_PATH}")
     private String tPath;
 
-    /**
-     * 获取win系统桌面图片列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
+    @Autowired
+    private RedisCache redisCache;
+
     @Override
-    public void querySysEveWinBgPicList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Page pages = PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
-        List<Map<String, Object>> beans = sysEveWinBgPicDao.querySysEveWinBgPicList(map);
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
+    public QueryWrapper<SysEveWinBgPic> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<SysEveWinBgPic> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinBgPic::getPicType), PicTypeEnum.SYSTEM_PUBLISH.getKey());
+        return queryWrapper;
     }
 
-    /**
-     * 添加win系统桌面图片信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void insertSysEveWinBgPicMation(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        DataCommonUtil.setCommonData(map, inputObject.getLogParams().get("id").toString());
-        sysEveWinBgPicDao.insertSysEveWinBgPicMation(map);
-        jedisClient.del(Constants.getSysWinBgPicRedisKey());
+    public void createPostpose(SysEveWinBgPic entity, String userId) {
+        jedisClientService.del(Constants.getSysWinBgPicRedisKey());
     }
 
-    /**
-     * 删除win系统桌面图片信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteSysEveWinBgPicMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveWinBgPicDao.querySysEveMationById(map);
-        String basePath = tPath + bean.get("picUrl").toString().replace("/images/", "");
+    public void deletePostpose(SysEveWinBgPic entity) {
+        String basePath = tPath + entity.getPicUrl().replace("/images/", "");
         FileUtil.deleteFile(basePath);
-        sysEveWinBgPicDao.deleteSysEveWinBgPicMationById(map);
-        jedisClient.del(Constants.getSysWinBgPicRedisKey());
-    }
-
-    /**
-     * 用户自定义上传添加win系统桌面图片信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void insertSysEveWinBgPicMationByCustom(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("id", ToolUtil.getSurFaceId());
-        map.put("createId", user.get("id"));
-        map.put("createTime", DateUtil.getTimeAndToString());
-        sysEveWinBgPicDao.insertSysEveWinBgPicMationByCustom(map);
+        jedisClientService.del(Constants.getSysWinBgPicRedisKey());
     }
 
     /**
@@ -108,30 +70,23 @@ public class SysEveWinBgPicServiceImpl implements SysEveWinBgPicService {
      */
     @Override
     public void querySysEveWinBgPicCustomList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("createId", user.get("id"));
-        List<Map<String, Object>> beans = sysEveWinBgPicDao.querySysEveWinBgPicCustomList(map);
-        if (beans != null && !beans.isEmpty()) {
-            outputObject.setBeans(beans);
-            outputObject.settotal(beans.size());
-        }
+        String userId = inputObject.getLogParams().get("id").toString();
+        QueryWrapper<SysEveWinBgPic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinBgPic::getCreateId), userId);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinBgPic::getPicType), PicTypeEnum.USER_UPLOAD.getKey());
+        List<SysEveWinBgPic> list = list(queryWrapper);
+        outputObject.setBeans(list);
+        outputObject.settotal(list.size());
     }
 
-    /**
-     * 删除win系统桌面图片信息用户自定义
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteSysEveWinBgPicMationCustomById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveWinBgPicDao.querySysEveMationById(map);
-        String basePath = tPath + bean.get("picUrl").toString().replace("/images/", "");
-        FileUtil.deleteFile(basePath);
-        sysEveWinBgPicDao.deleteSysEveWinBgPicMationById(map);
+    public List<SysEveWinBgPic> querySystemSysEveWinBgPicList() {
+        return redisCache.getList(Constants.getSysWinBgPicRedisKey(), key -> {
+            QueryWrapper<SysEveWinBgPic> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinBgPic::getPicType), PicTypeEnum.SYSTEM_PUBLISH.getKey());
+            List<SysEveWinBgPic> list = list(queryWrapper);
+            return list;
+        }, RedisConstants.THIRTY_DAY_SECONDS, SysEveWinBgPic.class);
     }
 
 }

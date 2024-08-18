@@ -45,7 +45,6 @@ public class SysEveDesktopController {
         sysEveDesktopService.queryPageList(inputObject, outputObject);
     }
 
-
     /**
      * 新增/编辑桌面信息
      *

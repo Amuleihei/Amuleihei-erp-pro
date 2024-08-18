@@ -48,9 +48,6 @@ public class SysDesktop extends OperatorUserInfo {
     @Property(value = "序号")
     private Integer orderBy;
 
-    /**
-     * 状态
-     */
     @TableField("enabled")
     @ApiModelProperty(value = "状态，参考#EnableEnum枚举类", required = "required,num")
     private Integer enabled;

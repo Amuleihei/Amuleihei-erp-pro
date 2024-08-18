@@ -4,8 +4,8 @@
 
 package com.skyeye.win.dao;
 
-import java.util.List;
-import java.util.Map;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
+import com.skyeye.win.entity.SysEveWinBgPic;
 
 /**
  * @ClassName: SysEveWinBgPicDao
@@ -15,20 +15,6 @@ import java.util.Map;
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
-public interface SysEveWinBgPicDao {
-
-    List<Map<String, Object>> querySysEveWinBgPicList(Map<String, Object> map);
-
-    int insertSysEveWinBgPicMation(Map<String, Object> map);
-
-    int deleteSysEveWinBgPicMationById(Map<String, Object> map);
-
-    Map<String, Object> querySysEveMationById(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysEveWinBgPicListToShow(Map<String, Object> map);
-
-    int insertSysEveWinBgPicMationByCustom(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysEveWinBgPicCustomList(Map<String, Object> map);
+public interface SysEveWinBgPicDao extends SkyeyeBaseMapper<SysEveWinBgPic> {
 
 }
