@@ -21,13 +21,13 @@ public abstract class AbstractFileClient<Config extends FileClientConfig> implem
     /**
      * 配置编号
      */
-    private final Long id;
+    private final String id;
     /**
      * 文件配置
      */
     protected Config config;
 
-    public AbstractFileClient(Long id, Config config) {
+    public AbstractFileClient(String id, Config config) {
         this.id = id;
         this.config = config;
     }
@@ -57,7 +57,7 @@ public abstract class AbstractFileClient<Config extends FileClientConfig> implem
     }
 
     @Override
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -65,12 +65,11 @@ public abstract class AbstractFileClient<Config extends FileClientConfig> implem
      * 格式化文件的 URL 访问地址
      * 使用场景：local、ftp、db，通过 FileController 的 getFile 来获取文件内容
      *
-     * @param domain 自定义域名
-     * @param path   文件路径
+     * @param path 文件路径
      * @return URL 访问地址
      */
-    protected String formatFileUrl(String domain, String path) {
-        return StrUtil.format("{}/admin-api/infra/file/{}/get/{}", domain, getId(), path);
+    protected String formatFileUrl(String path) {
+        return StrUtil.format("/upload/{}/get/{}", getId(), path);
     }
 
 }

@@ -18,7 +18,7 @@ public class DBFileClient extends AbstractFileClient<DBFileClientConfig> {
 
 //    private FileContentMapper fileContentMapper;
 
-    public DBFileClient(Long id, DBFileClientConfig config) {
+    public DBFileClient(String id, DBFileClientConfig config) {
         super(id, config);
     }
 

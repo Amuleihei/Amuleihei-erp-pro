@@ -9,10 +9,6 @@ import com.skyeye.common.object.OutputObject;
 
 public interface CommonService {
 
-    void uploadFile(InputObject inputObject, OutputObject outputObject);
-
-    void uploadFileBase64(InputObject inputObject, OutputObject outputObject);
-
     void downloadFileByJsonData(InputObject inputObject, OutputObject outputObject);
 
     void querySysWinMationById(InputObject inputObject, OutputObject outputObject);

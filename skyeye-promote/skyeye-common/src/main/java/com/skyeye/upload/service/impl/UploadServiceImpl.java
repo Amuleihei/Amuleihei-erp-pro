@@ -4,6 +4,9 @@
 
 package com.skyeye.upload.service.impl;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import cn.hutool.json.JSONUtil;
 import com.skyeye.cache.redis.RedisCache;
 import com.skyeye.common.constans.CommonCharConstants;
@@ -14,18 +17,28 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.object.PutObject;
 import com.skyeye.common.util.FileUtil;
+import com.skyeye.common.util.ToolUtil;
 import com.skyeye.exception.CustomException;
+import com.skyeye.framework.file.core.client.FileClient;
 import com.skyeye.jedis.JedisClientService;
 import com.skyeye.upload.entity.Upload;
 import com.skyeye.upload.entity.UploadChunks;
+import com.skyeye.upload.service.FileConfigService;
+import com.skyeye.upload.service.FileService;
 import com.skyeye.upload.service.UploadService;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -44,23 +57,31 @@ import java.util.*;
 @Service
 public class UploadServiceImpl implements UploadService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadServiceImpl.class);
+
     @Autowired
     public JedisClientService jedisClient;
 
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private FileConfigService fileConfigService;
+
     @Value("${IMAGES_PATH}")
     private String tPath;
 
+    @Autowired
+    private FileService fileService;
+
     /**
-     * 上传文件
+     * 断点续传上传文件
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
+    public void uploadFileResume(InputObject inputObject, OutputObject outputObject) {
         Upload upload = inputObject.getParams(Upload.class);
         // 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(PutObject.getRequest().getSession().getServletContext());
@@ -201,4 +222,177 @@ public class UploadServiceImpl implements UploadService {
             outputObject.setreturnMessage("文件上传失败");
         }
     }
+
+    /**
+     * 上传文件
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @Override
+    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        // 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(PutObject.getRequest().getSession().getServletContext());
+        // 检查form中是否有enctype="multipart/form-data"
+        if (!multipartResolver.isMultipart(PutObject.getRequest())) {
+            return;
+        }
+        // 将request变成多部分request
+        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) PutObject.getRequest();
+        // 获取multiRequest 中所有的文件名
+        Iterator iter = multiRequest.getFileNames();
+        int type = Integer.parseInt(map.get("type").toString());
+        String basePath = tPath + FileConstants.FileUploadPath.getSavePath(type);
+        Map<String, Object> bean = new HashMap<>();
+        StringBuffer trueFileName = new StringBuffer();
+        String fileName = "";
+// TODO 上传到文件存储器待测试
+//        // 上传到文件存储器
+//        FileClient client = fileConfigService.getMasterFileClient();
+//        if (client == null) {
+//            throw new CustomException("客户端(master) 不能为空");
+//        }
+
+        byte[] content = null;
+        while (iter.hasNext()) {
+            MultipartFile file = multiRequest.getFile(iter.next().toString());
+            if (file == null) {
+                break;
+            }
+            // 得到文件扩展名
+            String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
+            // 自定义的文件名称
+            String newFileName = String.format(Locale.ROOT, "%s.%s", System.currentTimeMillis(), fileExtName);
+            String path = basePath + "/" + newFileName;
+//            try {
+//                content = IoUtil.readBytes(file.getInputStream());
+//                String url = client.upload(content, path, fileExtName);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+
+            // 文件名称
+            fileName = file.getOriginalFilename();
+            FileUtil.createDirs(basePath);
+            LOGGER.info("upload file type is: {}, path is: {}", type, path);
+            // 上传
+            try {
+                file.transferTo(new File(path));
+            } catch (IOException ex) {
+                throw new CustomException(ex);
+            }
+            newFileName = FileConstants.FileUploadPath.getVisitPath(type) + newFileName;
+            if (ToolUtil.isBlank(trueFileName.toString())) {
+                trueFileName.append(newFileName);
+            } else {
+                trueFileName.append(",").append(newFileName);
+            }
+            break;
+        }
+        bean.put("picUrl", trueFileName.toString());
+        bean.put("type", type);
+        bean.put("fileName", fileName);
+
+//        com.skyeye.upload.entity.File file = new com.skyeye.upload.entity.File();
+//        file.setConfigId(client.getId());
+//        file.setName(fileName);
+//        file.setPath(trueFileName.toString());
+//        file.setUrl(trueFileName.toString());
+//        file.setType(FileUtil.getMineType(fileName));
+//        file.setSize(content.length);
+//        fileService.createEntity(file, StrUtil.EMPTY);
+        outputObject.setBean(bean);
+    }
+
+    /**
+     * 上传文件Base64
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @Override
+    public void uploadFileBase64(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        int type = Integer.parseInt(map.get("type").toString());
+        String imgStr = map.get("images").toString();
+        imgStr = imgStr.replaceAll("\\+", "%2B").replaceAll(" ", "+");
+        String[] d = imgStr.split("base64,");
+        // 上传数据是否合法
+        if (d != null && d.length == 2) {
+            String dataPrix = d[0];
+            String data = d[1];
+            if (FileUtil.checkBase64IsImage(dataPrix)) {
+                try {
+                    byte[] bytes = Base64.decodeBase64(data.getBytes());
+                    // 决定存储路径
+                    String basePath = tPath + FileConstants.FileUploadPath.getSavePath(type);
+                    FileUtil.createDirs(basePath);
+                    // 自定义的文件名称
+                    String trueFileName = System.currentTimeMillis() + "." + FileUtil.getBase64FileTypeByPrix(dataPrix);
+                    // 写入文件
+                    FileUtil.writeByteToPointPath(bytes, basePath + "/" + trueFileName);
+                    Map<String, Object> bean = new HashMap<>();
+                    bean.put("picUrl", FileConstants.FileUploadPath.getVisitPath(type) + trueFileName);
+                    bean.put("type", type);
+                    outputObject.setBean(bean);
+                } catch (Exception ee) {
+                    LOGGER.warn("uploadFileBase64 failed. {}", ee);
+                    outputObject.setreturnMessage("上传失败，数据不合法");
+                }
+            } else {
+                outputObject.setreturnMessage("文件类型不正确，只允许上传jpg,png,jpeg格式的图片");
+            }
+        } else {
+            outputObject.setreturnMessage("上传失败，数据不合法");
+        }
+    }
+
+    @Override
+    public void getFileContent(HttpServletRequest request, HttpServletResponse response, String configId) {
+        // 获取请求的路径
+        String path = StrUtil.subAfter(request.getRequestURI(), "/get/", false);
+        if (StrUtil.isEmpty(path)) {
+            throw new IllegalArgumentException("结尾的 path 路径必须传递");
+        }
+        // 解码，解决中文路径的问题 https://gitee.com/zhijiantianya/ruoyi-vue-pro/pulls/807/
+        path = URLUtil.decode(path);
+
+        // 读取内容
+        FileClient client = fileConfigService.getFileClient(configId);
+        Assert.notNull(client, "客户端({}) 不能为空", configId);
+        try {
+            byte[] content = client.getContent(path);
+            if (content == null) {
+                LOGGER.warn("[getFileContent][configId({}) path({}) 文件不存在]", configId, path);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return;
+            }
+            FileUtil.writeAttachment(response, path, content);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteFileByPath(InputObject inputObject, OutputObject outputObject) {
+        String path = inputObject.getParams().get("path").toString();
+        com.skyeye.upload.entity.File file = fileService.queryByPath(path);
+        if (file == null) {
+            throw new CustomException("文件不存在");
+        }
+        // 从文件存储器中删除
+        FileClient client = fileConfigService.getFileClient(file.getConfigId());
+        Assert.notNull(client, "客户端({}) 不能为空", file.getConfigId());
+        try {
+            client.delete(file.getPath());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // 删除记录
+        fileService.deleteById(file.getId());
+    }
+
+
 }

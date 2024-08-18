@@ -22,7 +22,7 @@ public class SftpFileClient extends AbstractFileClient<SftpFileClientConfig> {
 
     private Sftp sftp;
 
-    public SftpFileClient(Long id, SftpFileClientConfig config) {
+    public SftpFileClient(String id, SftpFileClientConfig config) {
         super(id, config);
     }
 
@@ -43,7 +43,7 @@ public class SftpFileClient extends AbstractFileClient<SftpFileClientConfig> {
         File file = com.skyeye.common.util.FileUtil.createTempFile(content);
         sftp.upload(filePath, file);
         // 拼接返回路径
-        return super.formatFileUrl(config.getDomain(), path);
+        return super.formatFileUrl(path);
     }
 
     @Override

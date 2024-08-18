@@ -21,7 +21,7 @@ public interface FileClient {
      *
      * @return 客户端编号
      */
-    Long getId();
+    String getId();
 
     /**
      * 上传文件

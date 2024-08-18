@@ -23,35 +23,6 @@ public class CommonController {
     private CommonService commonService;
 
     /**
-     * 上传文件
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "common003", value = "上传文件", method = "POST", allUse = "0")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "type", name = "type", value = "文件类型", required = "required,num")})
-    @RequestMapping("/post/CommonController/uploadFile")
-    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
-        commonService.uploadFile(inputObject, outputObject);
-    }
-
-    /**
-     * 上传文件Base64
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "common004", value = "上传文件Base64", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "type", name = "type", value = "文件类型", required = "required,num"),
-        @ApiImplicitParam(id = "images", name = "images", value = "图片Base64", required = "required")})
-    @RequestMapping("/post/CommonController/uploadFileBase64")
-    public void uploadFileBase64(InputObject inputObject, OutputObject outputObject) {
-        commonService.uploadFileBase64(inputObject, outputObject);
-    }
-
-    /**
      * 代码生成器生成下载文件
      *
      * @param inputObject  入参以及用户信息等获取对象

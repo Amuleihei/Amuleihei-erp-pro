@@ -27,10 +27,15 @@ public class FileClientFactoryImpl implements FileClientFactory {
      * 文件客户端 Map
      * key：配置编号
      */
-    private final ConcurrentMap<Long, AbstractFileClient<?>> clients = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AbstractFileClient<?>> clients = new ConcurrentHashMap<>();
 
     @Override
-    public FileClient getFileClient(Long configId) {
+    public void removeFileClient(String configId) {
+        clients.remove(configId);
+    }
+
+    @Override
+    public FileClient getFileClient(String configId) {
         AbstractFileClient<?> client = clients.get(configId);
         if (client == null) {
             log.error("[getFileClient][配置编号({}) 找不到客户端]", configId);
@@ -39,7 +44,7 @@ public class FileClientFactoryImpl implements FileClientFactory {
     }
 
     @Override
-    public <Config extends FileClientConfig> void createOrUpdateFileClient(Long configId, Integer storage, Config config) {
+    public <Config extends FileClientConfig> void createOrUpdateFileClient(String configId, Integer storage, Config config) {
         AbstractFileClient<Config> client = (AbstractFileClient<Config>) clients.get(configId);
         if (client == null) {
             client = this.createFileClient(configId, storage, config);
@@ -51,7 +56,7 @@ public class FileClientFactoryImpl implements FileClientFactory {
     }
 
     private <Config extends FileClientConfig> AbstractFileClient<Config> createFileClient(
-        Long configId, Integer storage, Config config) {
+        String configId, Integer storage, Config config) {
         FileStorageEnum storageEnum = FileStorageEnum.getByStorage(storage);
         Assert.notNull(storageEnum, String.format("文件配置(%s) 为空", storageEnum));
         // 创建客户端

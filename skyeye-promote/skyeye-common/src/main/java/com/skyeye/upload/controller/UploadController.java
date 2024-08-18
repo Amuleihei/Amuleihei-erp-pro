@@ -14,8 +14,13 @@ import com.skyeye.upload.entity.Upload;
 import com.skyeye.upload.entity.UploadChunks;
 import com.skyeye.upload.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @ClassName: UploadController
@@ -33,16 +38,16 @@ public class UploadController {
     private UploadService uploadService;
 
     /**
-     * 上传文件
+     * 断点续传上传文件
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "skyeyeUploadFile", value = "上传文件", method = "POST", allUse = "2")
+    @ApiOperation(id = "skyeyeUploadFile", value = "断点续传上传文件", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = Upload.class)
-    @RequestMapping("/post/UploadController/uploadFile")
-    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
-        uploadService.uploadFile(inputObject, outputObject);
+    @RequestMapping("/post/UploadController/uploadFileResume")
+    public void uploadFileResume(InputObject inputObject, OutputObject outputObject) {
+        uploadService.uploadFileResume(inputObject, outputObject);
     }
 
     /**
@@ -72,6 +77,63 @@ public class UploadController {
     @RequestMapping("/post/UploadController/checkUploadFileChunks")
     public void checkUploadFileChunks(InputObject inputObject, OutputObject outputObject) {
         uploadService.checkUploadFileChunks(inputObject, outputObject);
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "common003", value = "上传文件", method = "POST", allUse = "0")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "type", name = "type", value = "文件类型", required = "required,num")})
+    @RequestMapping("/post/UploadController/uploadFile")
+    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
+        uploadService.uploadFile(inputObject, outputObject);
+    }
+
+    /**
+     * 上传文件Base64
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "common004", value = "上传文件Base64", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "type", name = "type", value = "文件类型", required = "required,num"),
+        @ApiImplicitParam(id = "images", name = "images", value = "图片Base64", required = "required")})
+    @RequestMapping("/post/UploadController/uploadFileBase64")
+    public void uploadFileBase64(InputObject inputObject, OutputObject outputObject) {
+        uploadService.uploadFileBase64(inputObject, outputObject);
+    }
+
+    /**
+     * 文件下载
+     *
+     * @param request
+     * @param response
+     * @param configId
+     */
+    @GetMapping("/upload/{configId}/get/**")
+    public void getFileContent(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @PathVariable("configId") String configId) {
+        uploadService.getFileContent(request, response, configId);
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "deleteFileByPath", value = "删除文件", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "path", name = "path", value = "文件路径", required = "required")})
+    @RequestMapping("/post/UploadController/deleteFileByPath")
+    public void deleteFileByPath(InputObject inputObject, OutputObject outputObject) {
+        uploadService.deleteFileByPath(inputObject, outputObject);
     }
 
 }

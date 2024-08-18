@@ -27,7 +27,7 @@ public class FtpFileClient extends AbstractFileClient<FtpFileClientConfig> {
 
     private Ftp ftp;
 
-    public FtpFileClient(Long id, FtpFileClientConfig config) {
+    public FtpFileClient(String id, FtpFileClientConfig config) {
         super(id, config);
     }
 
@@ -57,7 +57,7 @@ public class FtpFileClient extends AbstractFileClient<FtpFileClientConfig> {
             throw new FtpException(StrUtil.format("上传文件到目标目录 ({}) 失败", filePath));
         }
         // 拼接返回路径
-        return super.formatFileUrl(config.getDomain(), path);
+        return super.formatFileUrl(path);
     }
 
     @Override

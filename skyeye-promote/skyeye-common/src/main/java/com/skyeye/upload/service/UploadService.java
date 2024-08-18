@@ -7,6 +7,9 @@ package com.skyeye.upload.service;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @ClassName: UploadService
  * @Description: 文件上传、下载服务接口层
@@ -17,9 +20,17 @@ import com.skyeye.common.object.OutputObject;
  */
 public interface UploadService {
 
-    void uploadFile(InputObject inputObject, OutputObject outputObject);
+    void uploadFileResume(InputObject inputObject, OutputObject outputObject);
 
     void uploadFileChunks(InputObject inputObject, OutputObject outputObject);
 
     void checkUploadFileChunks(InputObject inputObject, OutputObject outputObject);
+
+    void uploadFile(InputObject inputObject, OutputObject outputObject);
+
+    void uploadFileBase64(InputObject inputObject, OutputObject outputObject);
+
+    void getFileContent(HttpServletRequest request, HttpServletResponse response, String configId);
+
+    void deleteFileByPath(InputObject inputObject, OutputObject outputObject);
 }

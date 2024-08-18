@@ -19,7 +19,7 @@ import java.io.File;
  */
 public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
 
-    public LocalFileClient(Long id, LocalFileClientConfig config) {
+    public LocalFileClient(String id, LocalFileClientConfig config) {
         super(id, config);
     }
 
@@ -37,7 +37,7 @@ public class LocalFileClient extends AbstractFileClient<LocalFileClientConfig> {
         String filePath = getFilePath(path);
         FileUtil.writeBytes(content, filePath);
         // 拼接返回路径
-        return super.formatFileUrl(config.getDomain(), path);
+        return super.formatFileUrl(path);
     }
 
     @Override

@@ -24,22 +24,17 @@ import com.skyeye.exception.CustomException;
 import com.skyeye.win.dao.SysEveWinBgPicDao;
 import com.skyeye.win.dao.SysEveWinLockBgPicDao;
 import com.skyeye.win.dao.SysEveWinThemeColorDao;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -53,8 +48,6 @@ import java.util.zip.ZipOutputStream;
  */
 @Service
 public class CommonServiceImpl implements CommonService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonServiceImpl.class);
 
     @Autowired
     private CommonDao commonDao;
@@ -73,107 +66,6 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private RedisCache redisCache;
-
-    /**
-     * 上传文件
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void uploadFile(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(PutObject.getRequest().getSession().getServletContext());
-        // 检查form中是否有enctype="multipart/form-data"
-        if (!multipartResolver.isMultipart(PutObject.getRequest())) {
-            return;
-        }
-        // 将request变成多部分request
-        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) PutObject.getRequest();
-        // 获取multiRequest 中所有的文件名
-        Iterator iter = multiRequest.getFileNames();
-        int type = Integer.parseInt(map.get("type").toString());
-        String basePath = tPath + FileConstants.FileUploadPath.getSavePath(type);
-        Map<String, Object> bean = new HashMap<>();
-        StringBuffer trueFileName = new StringBuffer();
-        String fileName = "";
-        while (iter.hasNext()) {
-            // 一次遍历所有文件
-            MultipartFile file = multiRequest.getFile(iter.next().toString());
-            if (file == null) {
-                continue;
-            }
-            // 文件名称
-            fileName = file.getOriginalFilename();
-            // 得到文件扩展名
-            String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
-            FileUtil.createDirs(basePath);
-            // 自定义的文件名称
-            String newFileName = String.format(Locale.ROOT, "%s.%s", System.currentTimeMillis(), fileExtName);
-            String path = basePath + "/" + newFileName;
-            LOGGER.info("upload file type is: {}, path is: {}", type, path);
-            // 上传
-            try {
-                file.transferTo(new File(path));
-            } catch (IOException ex) {
-                throw new CustomException(ex);
-            }
-            newFileName = FileConstants.FileUploadPath.getVisitPath(type) + newFileName;
-            if (ToolUtil.isBlank(trueFileName.toString())) {
-                trueFileName.append(newFileName);
-            } else {
-                trueFileName.append(",").append(newFileName);
-            }
-        }
-        bean.put("picUrl", trueFileName.toString());
-        bean.put("type", type);
-        bean.put("fileName", fileName);
-        outputObject.setBean(bean);
-    }
-
-    /**
-     * 上传文件Base64
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void uploadFileBase64(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        int type = Integer.parseInt(map.get("type").toString());
-        String imgStr = map.get("images").toString();
-        imgStr = imgStr.replaceAll("\\+", "%2B").replaceAll(" ", "+");
-        String[] d = imgStr.split("base64,");
-        // 上传数据是否合法
-        if (d != null && d.length == 2) {
-            String dataPrix = d[0];
-            String data = d[1];
-            if (FileUtil.checkBase64IsImage(dataPrix)) {
-                try {
-                    byte[] bytes = Base64.decodeBase64(new String(data).getBytes());
-                    // 决定存储路径
-                    String basePath = tPath + FileConstants.FileUploadPath.getSavePath(type);
-                    FileUtil.createDirs(basePath);
-                    // 自定义的文件名称
-                    String trueFileName = String.valueOf(System.currentTimeMillis()) + "." + FileUtil.getBase64FileTypeByPrix(dataPrix);
-                    // 写入文件
-                    FileUtil.writeByteToPointPath(bytes, basePath + "/" + trueFileName);
-                    Map<String, Object> bean = new HashMap<>();
-                    bean.put("picUrl", FileConstants.FileUploadPath.getVisitPath(type) + trueFileName);
-                    bean.put("type", type);
-                    outputObject.setBean(bean);
-                } catch (Exception ee) {
-                    LOGGER.warn("uploadFileBase64 failed. {}", ee);
-                    outputObject.setreturnMessage("上传失败，数据不合法");
-                }
-            } else {
-                outputObject.setreturnMessage("文件类型不正确，只允许上传jpg,png,jpeg格式的图片");
-            }
-        } else {
-            outputObject.setreturnMessage("上传失败，数据不合法");
-        }
-    }
 
     /**
      * 代码生成器生成下载文件

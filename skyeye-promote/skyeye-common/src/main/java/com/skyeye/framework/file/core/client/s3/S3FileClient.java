@@ -28,7 +28,7 @@ public class S3FileClient extends AbstractFileClient<S3FileClientConfig> {
 
     private MinioClient client;
 
-    public S3FileClient(Long id, S3FileClientConfig config) {
+    public S3FileClient(String id, S3FileClientConfig config) {
         super(id, config);
     }
 
