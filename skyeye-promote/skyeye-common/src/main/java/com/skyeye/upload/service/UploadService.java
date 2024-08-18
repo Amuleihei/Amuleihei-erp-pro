@@ -33,4 +33,6 @@ public interface UploadService {
     void getFileContent(HttpServletRequest request, HttpServletResponse response, String configId);
 
     void deleteFileByPath(InputObject inputObject, OutputObject outputObject);
+
+    void getFilePresignedUrl(InputObject inputObject, OutputObject outputObject);
 }

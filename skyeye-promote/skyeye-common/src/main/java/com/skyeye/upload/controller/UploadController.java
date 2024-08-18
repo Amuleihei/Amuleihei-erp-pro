@@ -136,4 +136,18 @@ public class UploadController {
         uploadService.deleteFileByPath(inputObject, outputObject);
     }
 
+    /**
+     * 获取文件预签名地址，模式二：前端上传文件：用于前端直接上传七牛、阿里云 OSS 等文件存储器
+     *
+     * @param inputObject 入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "getFilePresignedUrl", value = "获取文件预签名地址，模式二：前端上传文件：用于前端直接上传七牛、阿里云 OSS 等文件存储器", method = "GET", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "path", name = "path", value = "文件路径", required = "required")})
+    @RequestMapping("/post/UploadController/getFilePresignedUrl")
+    public void getFilePresignedUrl(InputObject inputObject, OutputObject outputObject) {
+        uploadService.getFilePresignedUrl(inputObject, outputObject);
+    }
+
 }

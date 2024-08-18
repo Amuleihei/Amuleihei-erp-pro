@@ -144,7 +144,7 @@ public class S3FileClient extends AbstractFileClient<S3FileClientConfig> {
             .expiry(10, TimeUnit.MINUTES) // 过期时间（秒数）取值范围：1 秒 ~ 7 天
             .build()
         );
-        return new FilePresignedUrlRespDTO(uploadUrl, config.getDomain() + "/" + path);
+        return new FilePresignedUrlRespDTO(null, uploadUrl, config.getDomain() + "/" + path);
     }
 
 }

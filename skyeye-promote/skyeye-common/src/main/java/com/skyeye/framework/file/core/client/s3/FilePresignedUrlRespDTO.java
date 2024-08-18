@@ -4,6 +4,7 @@
 
 package com.skyeye.framework.file.core.client.s3;
 
+import com.skyeye.annotation.api.Property;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,16 +22,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FilePresignedUrlRespDTO {
 
-    /**
-     * 文件上传 URL（用于上传）
-     * <p>
-     * 例如说：
-     */
+    @Property(value = "文件配置id")
+    private String configId;
+
+    @Property(value = "文件上传 URL（用于上传）")
     private String uploadUrl;
 
-    /**
-     * 文件 URL（用于读取、下载等）
-     */
+    @Property(value = "文件 URL（用于读取、下载等）")
     private String url;
 
 }

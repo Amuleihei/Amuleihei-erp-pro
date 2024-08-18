@@ -20,6 +20,7 @@ import com.skyeye.common.util.FileUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.framework.file.core.client.FileClient;
+import com.skyeye.framework.file.core.client.s3.FilePresignedUrlRespDTO;
 import com.skyeye.jedis.JedisClientService;
 import com.skyeye.upload.entity.Upload;
 import com.skyeye.upload.entity.UploadChunks;
@@ -392,6 +393,20 @@ public class UploadServiceImpl implements UploadService {
 
         // 删除记录
         fileService.deleteById(file.getId());
+    }
+
+    @Override
+    public void getFilePresignedUrl(InputObject inputObject, OutputObject outputObject) {
+        String path = inputObject.getParams().get("path").toString();
+        FileClient fileClient = fileConfigService.getMasterFileClient();
+        try {
+            FilePresignedUrlRespDTO presignedObjectUrl = fileClient.getPresignedObjectUrl(path);
+            presignedObjectUrl.setConfigId(fileClient.getId());
+            outputObject.setBean(presignedObjectUrl);
+            outputObject.settotal(CommonNumConstants.NUM_ONE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

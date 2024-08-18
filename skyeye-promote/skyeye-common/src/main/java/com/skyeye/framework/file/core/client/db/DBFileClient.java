@@ -4,7 +4,11 @@
 
 package com.skyeye.framework.file.core.client.db;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.skyeye.framework.file.core.client.AbstractFileClient;
+import com.skyeye.upload.entity.FileContent;
+import com.skyeye.upload.service.FileContentService;
 
 /**
  * @ClassName: DBFileClient
@@ -16,7 +20,7 @@ import com.skyeye.framework.file.core.client.AbstractFileClient;
  */
 public class DBFileClient extends AbstractFileClient<DBFileClientConfig> {
 
-//    private FileContentMapper fileContentMapper;
+    private FileContentService fileContentService;
 
     public DBFileClient(String id, DBFileClientConfig config) {
         super(id, config);
@@ -24,34 +28,29 @@ public class DBFileClient extends AbstractFileClient<DBFileClientConfig> {
 
     @Override
     protected void doInit() {
-//        fileContentMapper = SpringUtil.getBean(FileContentMapper.class);
+        fileContentService = SpringUtil.getBean(FileContentService.class);
     }
 
     @Override
     public String upload(byte[] content, String path, String type) {
-//        FileContentDO contentDO = new FileContentDO().setConfigId(getId())
-//                .setPath(path).setContent(content);
-//        fileContentMapper.insert(contentDO);
-//        // 拼接返回路径
-//        return super.formatFileUrl(config.getDomain(), path);
-        return null;
+        FileContent fileContent = new FileContent();
+        fileContent.setConfigId(getId());
+        fileContent.setPath(path);
+        fileContent.setContent(content);
+        fileContentService.createEntity(fileContent, StrUtil.EMPTY);
+        // 拼接返回路径
+        return super.formatFileUrl(path);
     }
 
     @Override
     public void delete(String path) {
-//        fileContentMapper.deleteByConfigIdAndPath(getId(), path);
+        fileContentService.deleteByPath(path);
     }
 
     @Override
     public byte[] getContent(String path) {
-//        List<FileContentDO> list = fileContentMapper.selectListByConfigIdAndPath(getId(), path);
-//        if (CollUtil.isEmpty(list)) {
-//            return null;
-//        }
-//        // 排序后，拿 id 最大的，即最后上传的
-//        list.sort(Comparator.comparing(FileContentDO::getId));
-//        return CollUtil.getLast(list).getContent();
-        return null;
+        FileContent fileContent = fileContentService.queryByPath(path);
+        return fileContent.getContent();
     }
 
 }
