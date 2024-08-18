@@ -237,7 +237,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
     @Override
     public Map<String, ServiceBean> queryServiceClass(List<String> classNames) {
         if (CollectionUtil.isEmpty(classNames)) {
-            return CollectionUtil.newHashMap();
+            return cn.hutool.core.map.MapUtil.newHashMap();
         }
         // 获取所属应用信息
         List<Map<String, Object>> applications = applicationService.queryApplicationList();

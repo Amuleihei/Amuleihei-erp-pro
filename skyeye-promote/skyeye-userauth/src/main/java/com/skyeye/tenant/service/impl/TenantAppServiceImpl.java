@@ -5,6 +5,7 @@
 package com.skyeye.tenant.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -128,7 +129,7 @@ public class TenantAppServiceImpl extends SkyeyeBusinessServiceImpl<TenantAppDao
     public Map<String, TenantApp> queryTenantAppByAppId(String... appId) {
         List<String> appIdList = Arrays.asList(appId);
         if (CollectionUtil.isEmpty(appIdList)) {
-            return CollectionUtil.newHashMap();
+            return MapUtil.newHashMap();
         }
         QueryWrapper<TenantApp> queryWrapper = new QueryWrapper<>();
         queryWrapper.in(CommonConstants.ID, appIdList);
