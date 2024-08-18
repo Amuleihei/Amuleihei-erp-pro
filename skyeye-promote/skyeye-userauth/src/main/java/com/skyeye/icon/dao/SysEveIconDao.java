@@ -4,23 +4,17 @@
 
 package com.skyeye.icon.dao;
 
-import java.util.List;
-import java.util.Map;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
+import com.skyeye.icon.entity.SysEveIcon;
 
-public interface SysEveIconDao {
-
-    List<Map<String, Object>> querySysIconList(Map<String, Object> map);
-
-    int insertSysIconMation(Map<String, Object> map);
-
-    Map<String, Object> checkSysIconMation(Map<String, Object> map);
-
-    int deleteSysIconMationById(Map<String, Object> map);
-
-    Map<String, Object> querySysIconMationToEditById(Map<String, Object> map);
-
-    int editSysIconMationById(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysIconListToMenu(Map<String, Object> map);
+/**
+ * @ClassName: SysEveIconDao
+ * @Description: 系统icon库数据接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/18 21:36
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
+public interface SysEveIconDao extends SkyeyeBaseMapper<SysEveIcon> {
 
 }

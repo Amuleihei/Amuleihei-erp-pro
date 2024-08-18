@@ -185,29 +185,6 @@
 		<property id="userName" name="userName" ref="" var="员工姓名" />
 	</url>
 
-	<url id="icon001" path="/post/SysEveIconController/querySysIconList" val="获取ICON列表" allUse="1" groupName="系统ICON图标">
-		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
-		<property id="page" name="page" ref="required,num" var="分页参数,第几页"/>
-		<property id="iconClass" name="iconClass" ref="" var="icon属性"/>
-	</url>
-	<url id="icon002" path="/post/SysEveIconController/insertSysIconMation" val="添加ICON信息" allUse="1" groupName="系统ICON图标">
-		<property id="iconClass" name="iconClass" ref="required" var="icon属性"/>
-	</url>
-	<url id="icon003" path="/post/SysEveIconController/deleteSysIconMationById" val="删除ICON信息" allUse="1" groupName="系统ICON图标">
-		<property id="rowId" name="id" ref="required" var="icon属性id"/>
-	</url>
-	<url id="icon004" path="/post/SysEveIconController/querySysIconMationToEditById" val="编辑ICON信息时进行回显" allUse="2" groupName="系统ICON图标">
-		<property id="rowId" name="id" ref="required" var="icon属性id"/>
-	</url>
-	<url id="icon005" path="/post/SysEveIconController/editSysIconMationById" val="编辑ICON信息" allUse="1" groupName="系统ICON图标">
-		<property id="rowId" name="id" ref="required" var="icon属性id"/>
-		<property id="iconClass" name="iconClass" ref="required" var="icon属性"/>
-	</url>
-	<url id="icon006" path="/post/SysEveIconController/querySysIconListToMenu" val="获取ICON列表供menu菜单使用" allUse="2" groupName="系统ICON图标">
-		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
-		<property id="page" name="page" ref="required,num" var="分页参数,第几页"/>
-	</url>
-
 	<url id="sysevewinbgpic001" path="/post/SysEveWinBgPicController/querySysEveWinBgPicList" val="获取win系统桌面图片列表" allUse="1">
 		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
 	    <property id="page" name="page" ref="required,num" var="分页参数,第几页"/>

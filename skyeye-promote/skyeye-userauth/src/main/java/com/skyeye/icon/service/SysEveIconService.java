@@ -4,22 +4,17 @@
 
 package com.skyeye.icon.service;
 
-import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
+import com.skyeye.base.business.service.SkyeyeBusinessService;
+import com.skyeye.icon.entity.SysEveIcon;
 
-public interface SysEveIconService {
-
-    void querySysIconList(InputObject inputObject, OutputObject outputObject);
-
-    void insertSysIconMation(InputObject inputObject, OutputObject outputObject);
-
-    void deleteSysIconMationById(InputObject inputObject, OutputObject outputObject);
-
-    void querySysIconMationToEditById(InputObject inputObject, OutputObject outputObject);
-
-    void editSysIconMationById(InputObject inputObject, OutputObject outputObject);
-
-    void querySysIconListToMenu(InputObject inputObject, OutputObject outputObject);
-
+/**
+ * @ClassName: SysEveIconService
+ * @Description: 系统icon库服务接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/18 21:36
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
+public interface SysEveIconService extends SkyeyeBusinessService<SysEveIcon> {
 
 }
