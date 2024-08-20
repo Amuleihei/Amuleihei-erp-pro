@@ -44,7 +44,7 @@ public class StickyNotesServiceImpl implements StickyNotesService {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    public void selectStickyNotesMation(InputObject inputObject, OutputObject outputObject) {
+    public void queryStickyNotesList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         map.put("createId", inputObject.getLogParams().get("id"));
         List<Map<String, Object>> beans = stickyNotesDao.selectStickyNotesMation(map);

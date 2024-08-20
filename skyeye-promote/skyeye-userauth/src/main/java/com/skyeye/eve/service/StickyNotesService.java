@@ -11,7 +11,7 @@ public interface StickyNotesService {
 
     void insertStickyNotesMation(InputObject inputObject, OutputObject outputObject);
 
-    void selectStickyNotesMation(InputObject inputObject, OutputObject outputObject);
+    void queryStickyNotesList(InputObject inputObject, OutputObject outputObject);
 
     void editStickyNotesMation(InputObject inputObject, OutputObject outputObject);
 

@@ -21,10 +21,11 @@ import com.skyeye.common.util.ToolUtil;
 import com.skyeye.eve.dao.CommonDao;
 import com.skyeye.eve.service.CommonService;
 import com.skyeye.exception.CustomException;
-import com.skyeye.win.dao.SysEveWinLockBgPicDao;
 import com.skyeye.win.dao.SysEveWinThemeColorDao;
 import com.skyeye.win.entity.SysEveWinBgPic;
+import com.skyeye.win.entity.SysEveWinLockBgPic;
 import com.skyeye.win.service.SysEveWinBgPicService;
+import com.skyeye.win.service.SysEveWinLockBgPicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class CommonServiceImpl implements CommonService {
     private SysEveWinBgPicService sysEveWinBgPicService;
 
     @Autowired
-    private SysEveWinLockBgPicDao sysEveWinLockBgPicDao;
+    private SysEveWinLockBgPicService sysEveWinLockBgPicService;
 
     @Autowired
     private SysEveWinThemeColorDao sysEveWinThemeColorDao;
@@ -148,8 +149,7 @@ public class CommonServiceImpl implements CommonService {
         List<SysEveWinBgPic> winBgPic = sysEveWinBgPicService.querySystemSysEveWinBgPicList();
 
         // 获取win系统锁屏桌面图片列表供展示
-        List<Map<String, Object>> winLockBgPic = redisCache.getList(Constants.getSysWinLockBgPicRedisKey(), key ->
-            sysEveWinLockBgPicDao.querySysEveWinBgPicListToShow(map), RedisConstants.THIRTY_DAY_SECONDS);
+        List<SysEveWinLockBgPic> winLockBgPic = sysEveWinLockBgPicService.querySystemSysEveWinLockBgPicList();
 
         // 获取win系统主题颜色列表供展示
         List<Map<String, Object>> winThemeColor = redisCache.getList(Constants.getSysWinThemeColorRedisKey(), key ->

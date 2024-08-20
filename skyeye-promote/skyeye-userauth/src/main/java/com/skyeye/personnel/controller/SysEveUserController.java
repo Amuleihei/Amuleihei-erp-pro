@@ -208,6 +208,9 @@ public class SysEveUserController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
+    @ApiOperation(id = "sys025", value = "自定义设置win背景图片", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "winBgPicUrl", name = "winBgPicUrl", value = "图片url链接", required = "required")})
     @RequestMapping("/post/SysEveUserController/editUserInstallWinBgPic")
     public void editUserInstallWinBgPic(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.editUserInstallWinBgPic(inputObject, outputObject);
@@ -219,6 +222,9 @@ public class SysEveUserController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
+    @ApiOperation(id = "sys026", value = "自定义设置win锁屏背景图片", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "winLockBgPicUrl", name = "winLockBgPicUrl", value = "图片url链接", required = "required")})
     @RequestMapping("/post/SysEveUserController/editUserInstallWinLockBgPic")
     public void editUserInstallWinLockBgPic(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.editUserInstallWinLockBgPic(inputObject, outputObject);

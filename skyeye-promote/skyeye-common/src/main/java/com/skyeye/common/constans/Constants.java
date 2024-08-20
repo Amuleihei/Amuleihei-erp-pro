@@ -20,16 +20,6 @@ import java.util.Map;
 public class Constants {
 
     /**
-     * 中文
-     */
-    public static String LANGUAGE_ZH = "zh";
-
-    /**
-     * 英文
-     */
-    public static String LANGUAGE_CN = "cn";
-
-    /**
      * 保存模板说明的redis的key
      */
     public static final String REDIS_CODEMODEL_EXPLAIN_EXEXPLAIN = "exexplaintocodemodel";
@@ -41,16 +31,8 @@ public class Constants {
     // win系统桌面图片列表的redis的key
     public static final String SYS_WIN_BG_PIC_REDIS_KEY = "sys_win_bg_pic_redis_key";
 
-    public static String getSysWinBgPicRedisKey() {
-        return SYS_WIN_BG_PIC_REDIS_KEY;
-    }
-
     // win系统锁屏桌面图片列表的redis的key
     public static final String SYS_WIN_LOCK_BG_PIC_REDIS_KEY = "sys_win_lock_bg_pic_redis_key";
-
-    public static String getSysWinLockBgPicRedisKey() {
-        return SYS_WIN_LOCK_BG_PIC_REDIS_KEY;
-    }
 
     // win系统主题颜色列表的redis的key
     public static final String SYS_WIN_THEME_COLOR_REDIS_KEY = "sys_win_theme_color_redis_key";

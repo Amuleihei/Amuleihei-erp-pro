@@ -150,12 +150,6 @@
 	<url id="sys024" path="/post/SysEveUserController/editUserInstallThemeColor" val="自定义设置主题颜色" allUse="2" method="PUT" groupName="系统管理">
 		<property id="themeColor" name="themeColor" ref="required,num" var="颜色的color数字" />
 	</url>
-	<url id="sys025" path="/post/SysEveUserController/editUserInstallWinBgPic" val="自定义设置win背景图片" allUse="2" method="PUT" groupName="系统管理">
-		<property id="winBgPicUrl" name="winBgPicUrl" ref="required" var="图片url链接" />
-	</url>
-	<url id="sys026" path="/post/SysEveUserController/editUserInstallWinLockBgPic" val="自定义设置win锁屏背景图片" allUse="2" method="PUT" groupName="系统管理">
-		<property id="winLockBgPicUrl" name="winLockBgPicUrl" ref="required" var="图片url链接" />
-	</url>
 	<url id="sys027" path="/post/SysEveUserController/editUserInstallWinStartMenuSize" val="自定义设置win开始菜单尺寸" allUse="2" groupName="系统管理">
 		<property id="winStartMenuSize" name="winStartMenuSize" ref="required" var="尺寸size" />
 	</url>
@@ -185,25 +179,6 @@
 		<property id="userName" name="userName" ref="" var="员工姓名" />
 	</url>
 
-	<url id="sysevewinlockbgpic001" path="/post/SysEveWinLockBgPicController/querySysEveWinLockBgPicList" val="获取win系统锁屏桌面图片列表" allUse="1">
-		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
-	    <property id="page" name="page" ref="required,num" var="分页参数,第几页"/>
-	</url>
-	<url id="sysevewinlockbgpic002" path="/post/SysEveWinLockBgPicController/insertSysEveWinLockBgPicMation" val="添加win系统锁屏桌面图片信息" allUse="1">
-		<property id="picUrl" name="picUrl" ref="required" var="图片路径"/>
-	</url>
-	<url id="sysevewinlockbgpic003" path="/post/SysEveWinLockBgPicController/deleteSysEveWinLockBgPicMationById" val="删除win系统锁屏桌面图片信息" allUse="1">
-	    <property id="rowId" name="id" ref="required" var="win系统锁屏桌面图片id"/>
-	</url>
-	<url id="sysevewinlockbgpic005" path="/post/SysEveWinLockBgPicController/insertSysEveWinBgPicMationByCustom" val="用户自定义上传win系统锁屏桌面图片信息" allUse="1">
-		<property id="picUrl" name="picUrl" ref="required" var="图片路径"/>
-	</url>
-	<url id="sysevewinlockbgpic006" path="/post/SysEveWinLockBgPicController/querySysEveWinBgPicCustomList" val="获取win系统锁屏桌面图片列表用户自定义" allUse="2">
-	</url>
-	<url id="sysevewinlockbgpic007" path="/post/SysEveWinLockBgPicController/deleteSysEveWinBgPicMationCustomById" val="删除win系统锁屏桌面图片信息用户自定义" allUse="1">
-	    <property id="rowId" name="id" ref="required" var="win系统桌面图片id"/>
-	</url>
-	
 	<url id="sysevewinthemecolor001" path="/post/SysEveWinThemeColorController/querySysEveWinThemeColorList" val="获取win系统主题颜色列表" allUse="1">
 		<property id="limit" name="limit" ref="required,num" var="分页参数,每页多少条数据" />
 	    <property id="page" name="page" ref="required,num" var="分页参数,第几页"/>
@@ -227,8 +202,6 @@
 	<!-- 便签开始 -->
 	<url id="stickynotes001" path="/post/StickyNotesController/insertStickyNotesMation" val="新增便签" allUse="2" groupName="便签模块">
 		<property id="content" name="content" ref="required" var="便签内容" />
-	</url>
-	<url id="stickynotes002" path="/post/StickyNotesController/selectStickyNotesMation" val="查询便签" allUse="2" method="GET" groupName="便签模块">
 	</url>
 	<url id="stickynotes003" path="/post/StickyNotesController/editStickyNotesMation" val="编辑便签" allUse="2" groupName="便签模块">
 		<property id="rowId" name="id" ref="required" var="便签ID" />

@@ -52,18 +52,18 @@ public class SysEveWinBgPicServiceImpl extends SkyeyeBusinessServiceImpl<SysEveW
 
     @Override
     public void createPostpose(SysEveWinBgPic entity, String userId) {
-        jedisClientService.del(Constants.getSysWinBgPicRedisKey());
+        jedisClientService.del(Constants.SYS_WIN_BG_PIC_REDIS_KEY);
     }
 
     @Override
     public void deletePostpose(SysEveWinBgPic entity) {
         String basePath = tPath + entity.getPicUrl().replace("/images/", "");
         FileUtil.deleteFile(basePath);
-        jedisClientService.del(Constants.getSysWinBgPicRedisKey());
+        jedisClientService.del(Constants.SYS_WIN_BG_PIC_REDIS_KEY);
     }
 
     /**
-     * 获取win系统桌面图片列表用户自定义
+     * 获取用户自定义的win系统桌面图片列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
@@ -81,7 +81,7 @@ public class SysEveWinBgPicServiceImpl extends SkyeyeBusinessServiceImpl<SysEveW
 
     @Override
     public List<SysEveWinBgPic> querySystemSysEveWinBgPicList() {
-        return redisCache.getList(Constants.getSysWinBgPicRedisKey(), key -> {
+        return redisCache.getList(Constants.SYS_WIN_BG_PIC_REDIS_KEY, key -> {
             QueryWrapper<SysEveWinBgPic> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinBgPic::getPicType), PicTypeEnum.SYSTEM_PUBLISH.getKey());
             List<SysEveWinBgPic> list = list(queryWrapper);

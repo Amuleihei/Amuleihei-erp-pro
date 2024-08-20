@@ -4,25 +4,17 @@
 
 package com.skyeye.win.dao;
 
-import java.util.List;
-import java.util.Map;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
+import com.skyeye.win.entity.SysEveWinLockBgPic;
 
-public interface SysEveWinLockBgPicDao {
-
-    List<Map<String, Object>> querySysEveWinLockBgPicList(Map<String, Object> map);
-
-    int insertSysEveWinLockBgPicMation(Map<String, Object> map);
-
-    int deleteSysEveWinLockBgPicMationById(Map<String, Object> map);
-
-    Map<String, Object> querySysEveMationById(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysEveWinBgPicListToShow(Map<String, Object> map);
-
-    int insertSysEveWinBgPicMationByCustom(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysEveWinBgPicCustomList(Map<String, Object> map);
-
-    int deleteSysEveWinBgPicMationCustomById(Map<String, Object> map);
+/**
+ * @ClassName: SysEveWinLockBgPicDao
+ * @Description: win系统桌面锁屏图片数据接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/20 21:20
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
+public interface SysEveWinLockBgPicDao extends SkyeyeBaseMapper<SysEveWinLockBgPic> {
 
 }

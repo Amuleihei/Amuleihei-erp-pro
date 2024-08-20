@@ -4,129 +4,89 @@
 
 package com.skyeye.win.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.cache.redis.RedisCache;
 import com.skyeye.common.constans.Constants;
+import com.skyeye.common.constans.RedisConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.FileUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.win.dao.SysEveWinLockBgPicDao;
+import com.skyeye.win.entity.SysEveWinLockBgPic;
+import com.skyeye.win.enums.PicTypeEnum;
 import com.skyeye.win.service.SysEveWinLockBgPicService;
-import com.skyeye.jedis.JedisClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * @ClassName: SysEveWinLockBgPicServiceImpl
+ * @Description: win系统桌面锁屏图片服务层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/20 21:22
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Service
-public class SysEveWinLockBgPicServiceImpl implements SysEveWinLockBgPicService {
-
-    @Autowired
-    private SysEveWinLockBgPicDao sysEveWinLockBgPicDao;
-
-    @Autowired
-    public JedisClientService jedisClient;
+@SkyeyeService(name = "win系统桌面锁屏图片", groupName = "win系统桌面锁屏图片")
+public class SysEveWinLockBgPicServiceImpl extends SkyeyeBusinessServiceImpl<SysEveWinLockBgPicDao, SysEveWinLockBgPic> implements SysEveWinLockBgPicService {
 
     @Value("${IMAGES_PATH}")
     private String tPath;
 
-    /**
-     * 获取win系统锁屏桌面图片列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
+    @Autowired
+    private RedisCache redisCache;
+
     @Override
-    public void querySysEveWinLockBgPicList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Page pages = PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
-        List<Map<String, Object>> beans = sysEveWinLockBgPicDao.querySysEveWinLockBgPicList(map);
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
+    public QueryWrapper<SysEveWinLockBgPic> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<SysEveWinLockBgPic> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinLockBgPic::getPicType), PicTypeEnum.SYSTEM_PUBLISH.getKey());
+        return queryWrapper;
     }
 
-    /**
-     * 添加win系统锁屏桌面图片信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void insertSysEveWinLockBgPicMation(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        DataCommonUtil.setCommonData(map, inputObject.getLogParams().get("id").toString());
-        sysEveWinLockBgPicDao.insertSysEveWinLockBgPicMation(map);
-        jedisClient.del(Constants.getSysWinLockBgPicRedisKey());
+    public void createPostpose(SysEveWinLockBgPic entity, String userId) {
+        jedisClientService.del(Constants.SYS_WIN_LOCK_BG_PIC_REDIS_KEY);
     }
 
-    /**
-     * 删除win系统锁屏桌面图片信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteSysEveWinLockBgPicMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveWinLockBgPicDao.querySysEveMationById(map);
-        String basePath = tPath + bean.get("picUrl").toString().replace("/images/", "");
+    public void deletePostpose(SysEveWinLockBgPic entity) {
+        String basePath = tPath + entity.getPicUrl().replace("/images/", "");
         FileUtil.deleteFile(basePath);
-        sysEveWinLockBgPicDao.deleteSysEveWinLockBgPicMationById(map);
-        jedisClient.del(Constants.getSysWinLockBgPicRedisKey());
+        jedisClientService.del(Constants.SYS_WIN_LOCK_BG_PIC_REDIS_KEY);
     }
 
     /**
-     * 用户自定义上传win系统锁屏桌面图片信息
+     * 获取用户自定义的win系统桌面锁屏图片列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void insertSysEveWinBgPicMationByCustom(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        DataCommonUtil.setCommonData(map, inputObject.getLogParams().get("id").toString());
-        sysEveWinLockBgPicDao.insertSysEveWinBgPicMationByCustom(map);
+    public void querySysEveWinLockBgPicCustomList(InputObject inputObject, OutputObject outputObject) {
+        String userId = inputObject.getLogParams().get("id").toString();
+        QueryWrapper<SysEveWinLockBgPic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinLockBgPic::getCreateId), userId);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinLockBgPic::getPicType), PicTypeEnum.USER_UPLOAD.getKey());
+        List<SysEveWinLockBgPic> list = list(queryWrapper);
+        outputObject.setBeans(list);
+        outputObject.settotal(list.size());
     }
 
-    /**
-     * 获取win系统锁屏桌面图片列表用户自定义
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void querySysEveWinBgPicCustomList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("createId", user.get("id"));
-        List<Map<String, Object>> beans = sysEveWinLockBgPicDao.querySysEveWinBgPicCustomList(map);
-        if (beans != null && !beans.isEmpty()) {
-            outputObject.setBeans(beans);
-            outputObject.settotal(beans.size());
-        }
-    }
-
-    /**
-     * 删除win系统锁屏桌面图片信息用户自定义
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteSysEveWinBgPicMationCustomById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = sysEveWinLockBgPicDao.querySysEveMationById(map);
-        String basePath = tPath + bean.get("picUrl").toString().replace("/images/", "");
-        FileUtil.deleteFile(basePath);
-        sysEveWinLockBgPicDao.deleteSysEveWinBgPicMationCustomById(map);
+    public List<SysEveWinLockBgPic> querySystemSysEveWinLockBgPicList() {
+        return redisCache.getList(Constants.SYS_WIN_LOCK_BG_PIC_REDIS_KEY, key -> {
+            QueryWrapper<SysEveWinLockBgPic> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveWinLockBgPic::getPicType), PicTypeEnum.SYSTEM_PUBLISH.getKey());
+            List<SysEveWinLockBgPic> list = list(queryWrapper);
+            return list;
+        }, RedisConstants.THIRTY_DAY_SECONDS, SysEveWinLockBgPic.class);
     }
 
 }
