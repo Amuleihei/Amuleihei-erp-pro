@@ -11,7 +11,7 @@ import com.skyeye.annotation.api.ApiOperation;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.eve.entity.userauth.user.SysUserStaffMation;
+import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +38,7 @@ public class SysEveUserStaffController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "staff001", value = "查看所有员工列表", method = "POST", allUse = "2")
+    @ApiOperation(id = "querySysUserStaffList", value = "查看所有员工列表", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffList")
     public void querySysUserStaffList(InputObject inputObject, OutputObject outputObject) {
@@ -46,58 +46,30 @@ public class SysEveUserStaffController {
     }
 
     /**
-     * 新增员工信息
+     * 新增/编辑员工信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "staff002", value = "新增员工信息", method = "POST", allUse = "2")
-    @ApiImplicitParams(classBean = SysUserStaffMation.class)
-    @RequestMapping("/post/SysEveUserStaffController/insertSysUserStaffMation")
-    public void insertSysUserStaffMation(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.insertSysUserStaffMation(inputObject, outputObject);
+    @ApiOperation(id = "writeSysUserStaff", value = "新增/编辑员工信息", method = "POST", allUse = "2")
+    @ApiImplicitParams(classBean = SysEveUserStaff.class)
+    @RequestMapping("/post/SysEveUserStaffController/writeSysUserStaff")
+    public void writeSysUserStaff(InputObject inputObject, OutputObject outputObject) {
+        sysEveUserStaffService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
     /**
-     * 通过id查询一条员工信息回显编辑
+     * 根据id查询员工信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "staff003", value = "通过id查询一条员工信息回显编辑", method = "GET", allUse = "2")
+    @ApiOperation(id = "querySysUserStaffById", value = "根据id查询员工信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "员工id", required = "required")})
+        @ApiImplicitParam(id = "id", name = "id", value = "员工id", required = "required")})
     @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffById")
     public void querySysUserStaffById(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.querySysUserStaffById(inputObject, outputObject);
-    }
-
-    /**
-     * 编辑员工信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "staff004", value = "编辑员工信息", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = SysUserStaffMation.class, value = {
-        @ApiImplicitParam(id = "rowId", name = "id", value = "员工id", required = "required")})
-    @RequestMapping("/post/SysEveUserStaffController/editSysUserStaffById")
-    public void editSysUserStaffById(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.editSysUserStaffById(inputObject, outputObject);
-    }
-
-    /**
-     * 通过id查询一条员工信息展示详情
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "staff005", value = "通过id查询一条员工信息展示详情", method = "GET", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "员工id", required = "required")})
-    @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffByIdToDetails")
-    public void querySysUserStaffByIdToDetails(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserStaffService.querySysUserStaffByIdToDetails(inputObject, outputObject);
+        sysEveUserStaffService.selectById(inputObject, outputObject);
     }
 
     /**

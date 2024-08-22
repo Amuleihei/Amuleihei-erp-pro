@@ -2,65 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.personnel.dao.SysEveUserStaffDao">
 
-	<select id="querySysUserStaffList" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.job_number jobNumber,
-			a.user_name userName,
-			CONCAT_WS('_', a.job_number, a.user_name) `name`,
-			a.user_photo userPhoto,
-			a.user_idcard userIdCard,
-			a.user_sex userSex,
-			a.email,
-			a.phone,
-		    a.user_id userId,
-			a.home_phone homePhone,
-			a.qq,
-			a.state,
-			a.company_id companyId,
-			a.department_id departmentId,
-			a.job_id jobId,
-			a.job_score_id jobScoreId,
-			a.`type` staffType,
-			a.create_id createId,
-			CONVERT(a.create_time, char) createTime,
-			a.last_update_id lastUpdateId,
-			CONVERT(a.last_update_time, char) lastUpdateTime
-		FROM
-			sys_eve_user_staff a
-		<where>
-			<if test="sqlExtract != '' and sqlExtract != null">
-				${sqlExtract}
-			</if>
-			<if test="keyword != '' and keyword != null">
-				AND (a.user_name like '%${keyword}%' OR a.job_number like '%${keyword}%')
-			</if>
-		</where>
-		ORDER BY a.create_time DESC
-	</select>
-	
-	<select id="querySysUserStaffMationByIdCard" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id
-		FROM
-			sys_eve_user_staff a
-		WHERE 
-			a.user_idcard = #{userIdCard}
-	</select>
-	
-	<insert id="insertSysUserStaffMation" parameterType="java.util.Map">
-	    INSERT INTO sys_eve_user_staff
-	    (id, job_number,
-	    	user_name, user_photo, user_idcard, user_sex, email, phone, home_phone, qq, job_score_id,
-	    	company_id, department_id, job_id, user_sign, state, entry_time, `type`, user_id, work_time,
-	     	trial_time, interview_arrangement_id)
-	    VALUES(#{id},
-	    	(SELECT CONCAT_WS('', #{jobNumberPrefix}, a.job_number) FROM (SELECT max(0 + RIGHT(job_number, 6)) + 1 AS job_number FROM sys_eve_user_staff) a),
-	    	#{userName}, #{userPhoto}, #{userIdCard}, #{userSex}, #{email}, #{phone}, #{homePhone}, #{qq}, #{jobScoreId},
-	    	#{companyId}, #{departmentId}, #{jobId}, #{userSign}, #{state}, #{entryTime}, #{type}, #{userId}, #{workTime},
-	        #{trialTime}, #{interviewArrangementId})
-	</insert>
-
 	<select id="querySysUserStaffById" resultType="java.util.Map">
 		SELECT
 			a.id,
@@ -85,35 +26,6 @@
 			sys_eve_user_staff a	
 		WHERE a.id = #{staffId}
 	</select>
-	
-	<select id="querySysUserStaffMationByIdCardAndId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id
-		FROM
-			sys_eve_user_staff a
-		WHERE a.user_idcard = #{userIdCard}
-		AND a.id != #{id}
-	</select>
-	
-	<update id="editSysUserStaffById" parameterType="java.util.Map">
-		UPDATE sys_eve_user_staff
-		<set>
-			user_photo = #{userPhoto},
-			user_idcard = #{userIdCard},
-			email = #{email},
-			user_sex = #{userSex},
-			phone = #{phone},
-			home_phone = #{homePhone},
-			qq = #{qq},
-			user_sign = #{userSign},
-			company_id = #{companyId},
-			department_id = #{departmentId},
-			job_id = #{jobId},
-			job_score_id = #{jobScoreId},
-		    work_time = #{workTime},
-		</set>
-		WHERE id = #{id}
-	</update>
 	
 	<select id="querySysUserStaffByIdToDetails" resultType="java.util.Map">
 		SELECT
@@ -232,16 +144,6 @@
 			(#{item.staffId}, #{item.timeId})  
 		</foreach>  
 	</insert>
-	
-	<select id="queryStaffCheckWorkTimeRelationByStaffId" resultType="java.util.Map">
-		SELECT
-			a.staff_id staffId,
-			a.check_work_time_id timeId
-		FROM
-			sys_eve_user_staff_time a	
-		WHERE 
-			a.staff_id = #{staffId}
-	</select>
 	
 	<delete id="deleteStaffCheckWorkTimeRelationByStaffId">
 		DELETE

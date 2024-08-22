@@ -9,8 +9,6 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 
-import java.util.Map;
-
 /**
  * @ClassName: SysEveUserStaffService
  * @Description: 员工管理服务接口层
@@ -21,19 +19,9 @@ import java.util.Map;
  */
 public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUserStaff> {
 
-    void insertSysUserStaffMation(InputObject inputObject, OutputObject outputObject);
-
-    void querySysUserStaffById(InputObject inputObject, OutputObject outputObject);
-
-    void editSysUserStaffById(InputObject inputObject, OutputObject outputObject);
-
-    void querySysUserStaffByIdToDetails(InputObject inputObject, OutputObject outputObject);
-
     void editSysUserStaffState(InputObject inputObject, OutputObject outputObject);
 
     void updateStaffType(String id, Integer type);
-
-    void insertNewUserMation(Map<String, Object> map);
 
     void querySysUserStaffLogin(InputObject inputObject, OutputObject outputObject);
 

@@ -261,6 +261,8 @@ public class UploadServiceImpl implements UploadService {
             if (file == null) {
                 break;
             }
+            // 文件名称
+            fileName = file.getOriginalFilename();
             // 得到文件扩展名
             String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
             // 自定义的文件名称
@@ -272,9 +274,6 @@ public class UploadServiceImpl implements UploadService {
 //            } catch (Exception e) {
 //                throw new RuntimeException(e);
 //            }
-
-            // 文件名称
-            fileName = file.getOriginalFilename();
             FileUtil.createDirs(basePath);
             LOGGER.info("upload file type is: {}, path is: {}", type, path);
             // 上传

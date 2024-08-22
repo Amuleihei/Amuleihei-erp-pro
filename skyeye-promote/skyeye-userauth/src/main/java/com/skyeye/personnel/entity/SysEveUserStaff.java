@@ -4,6 +4,7 @@
 
 package com.skyeye.personnel.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,7 +12,14 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
 import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.organization.entity.Company;
+import com.skyeye.organization.entity.CompanyJob;
+import com.skyeye.organization.entity.Department;
+import com.skyeye.organization.entity.JobScore;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: SysEveUserStaff
@@ -31,13 +39,17 @@ public class SysEveUserStaff extends OperatorUserInfo {
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
-    @TableField("job_number")
-    @Property(value = "员工工号")
+    @TableField(value = "job_number", updateStrategy = FieldStrategy.NEVER)
+    @Property(value = "员工工号", fuzzyLike = true)
     private String jobNumber;
 
     @TableField("user_name")
-    @ApiModelProperty(value = "员工姓名", required = "required")
+    @ApiModelProperty(value = "员工姓名", required = "required", fuzzyLike = true)
     private String userName;
+
+    @TableField(exist = false)
+    @Property("员工工号+姓名")
+    private String name;
 
     @TableField("user_photo")
     @ApiModelProperty(value = "员工头像", required = "required")
@@ -45,7 +57,7 @@ public class SysEveUserStaff extends OperatorUserInfo {
 
     @TableField("user_idcard")
     @ApiModelProperty(value = "员工身份证", required = "idcard")
-    private String userIdcard;
+    private String userIdCard;
 
     @TableField("user_sex")
     @ApiModelProperty(value = "员工性别，参考#SexEnum", required = "required,num")
@@ -75,6 +87,10 @@ public class SysEveUserStaff extends OperatorUserInfo {
     @ApiModelProperty(value = "员工在职状态，参考#UserStaffState", required = "required,num")
     private Integer state;
 
+    @TableField(exist = false)
+    @Property(value = "员工在职状态名称")
+    private String stateName;
+
     @TableField("user_id")
     @ApiModelProperty(value = "用户id")
     private String userId;
@@ -83,17 +99,49 @@ public class SysEveUserStaff extends OperatorUserInfo {
     @ApiModelProperty(value = "所属公司id", required = "required")
     private String companyId;
 
+    @TableField(exist = false)
+    @Property(value = "所属公司信息")
+    private Company companyMation;
+
+    @TableField(exist = false)
+    @Property(value = "所属公司名称")
+    private String companyName;
+
     @TableField("department_id")
     @ApiModelProperty(value = "所属部门id", required = "required")
     private String departmentId;
+
+    @TableField(exist = false)
+    @Property(value = "所属部门信息")
+    private Department departmentMation;
+
+    @TableField(exist = false)
+    @Property(value = "所属部门名称")
+    private String departmentName;
 
     @TableField("job_id")
     @ApiModelProperty(value = "所属职位id", required = "required")
     private String jobId;
 
+    @TableField(exist = false)
+    @Property(value = "所属职位信息")
+    private CompanyJob jobMation;
+
+    @TableField(exist = false)
+    @Property(value = "所属职位名称")
+    private String jobName;
+
     @TableField("job_score_id")
     @ApiModelProperty(value = "职位定级id")
     private String jobScoreId;
+
+    @TableField(exist = false)
+    @Property(value = "职位定级信息")
+    private JobScore jobScoreMation;
+
+    @TableField(exist = false)
+    @Property(value = "职位定级名称")
+    private String jobScoreName;
 
     @TableField("quit_time")
     @ApiModelProperty(value = "离职时间")
@@ -128,7 +176,7 @@ public class SysEveUserStaff extends OperatorUserInfo {
     private String nativePlace;
 
     @TableField("marital_status")
-    @ApiModelProperty(value = "婚姻状况  1.已婚  2.未婚", required = "required,num")
+    @ApiModelProperty(value = "婚姻状况  1.已婚  2.未婚")
     private Integer maritalStatus;
 
     @TableField("politic_id")
@@ -140,7 +188,7 @@ public class SysEveUserStaff extends OperatorUserInfo {
     private String highestEducation;
 
     @TableField("design_wages")
-    @ApiModelProperty(value = "薪资设定情况  1.待设定2.已设定", required = "required,num", defaultValue = "1")
+    @ApiModelProperty(value = "薪资设定情况  1.待设定2.已设定", required = "num", defaultValue = "1")
     private Integer designWages;
 
     @TableField("act_wages")
@@ -174,5 +222,13 @@ public class SysEveUserStaff extends OperatorUserInfo {
     @TableField("interview_arrangement_id")
     @ApiModelProperty(value = "关联的面试安排信息id")
     private String interviewArrangementId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "员工考勤时间段", required = "json")
+    private List<String> timeIdList;
+
+    @TableField(exist = false)
+    @Property(value = "员工考勤时间段信息")
+    private List<Map<String, Object>> timeList;
 
 }

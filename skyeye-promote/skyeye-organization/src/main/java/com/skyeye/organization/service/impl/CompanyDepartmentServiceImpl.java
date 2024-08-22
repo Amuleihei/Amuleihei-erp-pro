@@ -5,6 +5,7 @@
 package com.skyeye.organization.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -13,11 +14,11 @@ import com.skyeye.common.enumeration.OvertimeSettlementType;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.ToolUtil;
-import com.skyeye.organization.entity.Department;
 import com.skyeye.exception.CustomException;
 import com.skyeye.organization.dao.CompanyDepartmentDao;
+import com.skyeye.organization.entity.Department;
 import com.skyeye.organization.service.CompanyDepartmentService;
-import com.skyeye.organization.service.ICompanyService;
+import com.skyeye.organization.service.CompanyMationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class CompanyDepartmentServiceImpl extends SkyeyeBusinessServiceImpl<Comp
     private CompanyDepartmentDao companyDepartmentDao;
 
     @Autowired
-    private ICompanyService iCompanyService;
+    private CompanyMationService companyMationService;
 
     /**
      * 获取公司部门信息列表
@@ -53,7 +54,7 @@ public class CompanyDepartmentServiceImpl extends SkyeyeBusinessServiceImpl<Comp
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
         List<Map<String, Object>> beans = companyDepartmentDao.queryCompanyDepartmentList(commonPageInfo);
-        iCompanyService.setNameForMap(beans, "companyId", "companyName");
+        companyMationService.setNameMationForMap(beans, "companyId", "companyName", StrUtil.EMPTY);
         beans.forEach(bean -> {
             Integer overtimeSettlementType = Integer.parseInt(bean.get("overtimeSettlementType").toString());
             bean.put("overtimeSettlementTypeName", OvertimeSettlementType.getTitleByType(overtimeSettlementType));
@@ -117,7 +118,7 @@ public class CompanyDepartmentServiceImpl extends SkyeyeBusinessServiceImpl<Comp
         CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
         Page pages = PageHelper.startPage(pageInfo.getPage(), pageInfo.getLimit());
         List<Map<String, Object>> beans = queryPageDataList(inputObject);
-        iCompanyService.setNameForMap(beans, "companyId", "companyName");
+        companyMationService.setNameMationForMap(beans, "companyId", "companyName", StrUtil.EMPTY);
         outputObject.setBeans(beans);
         outputObject.settotal(pages.getTotal());
     }

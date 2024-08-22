@@ -4,7 +4,6 @@
 
 package com.skyeye.personnel.dao;
 
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import org.apache.ibatis.annotations.Param;
@@ -22,15 +21,7 @@ import java.util.Map;
  */
 public interface SysEveUserStaffDao extends SkyeyeBaseMapper<SysEveUserStaff> {
 
-    List<Map<String, Object>> querySysUserStaffList(CommonPageInfo commonPageInfo);
-
-    Map<String, Object> querySysUserStaffMationByIdCard(Map<String, Object> map);
-
-    int insertSysUserStaffMation(Map<String, Object> map);
-
     Map<String, Object> querySysUserStaffById(@Param("staffId") String staffId);
-
-    int editSysUserStaffById(Map<String, Object> map);
 
     Map<String, Object> querySysUserStaffByIdToDetails(@Param("staffId") String staffId);
 
@@ -44,13 +35,9 @@ public interface SysEveUserStaffDao extends SkyeyeBaseMapper<SysEveUserStaff> {
      */
     List<Map<String, Object>> queryAllSysUserIsIncumbency(Map<String, Object> map);
 
-    Map<String, Object> querySysUserStaffMationByIdCardAndId(Map<String, Object> map);
-
     List<Map<String, Object>> queryUserMationList(@Param("userIds") String userIds, @Param("staffIds") String staffIds);
 
     int insertStaffCheckWorkTimeRelation(List<Map<String, Object>> staffTimeMation);
-
-    List<Map<String, Object>> queryStaffCheckWorkTimeRelationByStaffId(@Param("staffId") String staffId);
 
     int deleteStaffCheckWorkTimeRelationByStaffId(@Param("staffId") String staffId);
 

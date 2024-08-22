@@ -5,6 +5,8 @@
 package com.skyeye.personnel.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -15,17 +17,17 @@ import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.dao.WagesFieldTypeDao;
 import com.skyeye.exception.CustomException;
-import com.skyeye.organization.service.ICompanyJobScoreService;
-import com.skyeye.organization.service.ICompanyJobService;
-import com.skyeye.organization.service.ICompanyService;
-import com.skyeye.organization.service.IDepmentService;
+import com.skyeye.organization.service.CompanyDepartmentService;
+import com.skyeye.organization.service.CompanyJobScoreService;
+import com.skyeye.organization.service.CompanyJobService;
+import com.skyeye.organization.service.CompanyMationService;
 import com.skyeye.personnel.classenum.UserLockState;
-import com.skyeye.personnel.dao.SysEveUserDao;
 import com.skyeye.personnel.dao.SysEveUserStaffDao;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.SysEveUserService;
@@ -34,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,9 +56,6 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     private SysEveUserStaffDao sysEveUserStaffDao;
 
     @Autowired
-    private SysEveUserDao sysEveUserDao;
-
-    @Autowired
     private SysEveUserService sysEveUserService;
 
     @Autowired
@@ -67,68 +65,95 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     private String jobNumberPrefix;
 
     @Autowired
-    private ICompanyService iCompanyService;
+    private CompanyMationService companyMationService;
 
     @Autowired
-    private IDepmentService iDepmentService;
+    private CompanyDepartmentService companyDepartmentService;
 
     @Autowired
-    private ICompanyJobService iCompanyJobService;
+    private CompanyJobService companyJobService;
 
     @Autowired
-    private ICompanyJobScoreService iCompanyJobScoreService;
+    private CompanyJobScoreService companyJobScoreService;
+
+    @Override
+    public QueryWrapper<SysEveUserStaff> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<SysEveUserStaff> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        if (StrUtil.isNotEmpty(commonPageInfo.getType())) {
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), commonPageInfo.getType());
+        }
+        return queryWrapper;
+    }
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.querySysUserStaffList(commonPageInfo);
-        iCompanyService.setNameForMap(beans, "companyId", "companyName");
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
-        iCompanyJobScoreService.setNameForMap(beans, "jobScoreId", "jobScoreName");
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        beans.forEach(bean -> {
+            bean.put(CommonConstants.NAME, bean.get("jobNumber").toString() + "_" + bean.get("userName").toString());
+        });
+        // 设置组织信息
+        companyMationService.setNameMationForMap(beans, "companyId", "companyName", StrUtil.EMPTY);
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
+        companyJobService.setNameMationForMap(beans, "jobId", "jobName", StrUtil.EMPTY);
+        companyJobScoreService.setNameMationForMap(beans, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
         return beans;
     }
 
-    /**
-     * 新增员工
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
-    public void insertSysUserStaffMation(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String userIdCard = map.get("userIdCard").toString();
-        Map<String, Object> bean = null;
-        if (!ToolUtil.isBlank(userIdCard)) {
-            // 身份证不为空时进行校验
-            bean = sysEveUserStaffDao.querySysUserStaffMationByIdCard(map);
-        }
-        if (bean != null && !bean.isEmpty()) {
-            outputObject.setreturnMessage("该员工身份证已存在，不能重复添加！");
-        } else {
-            insertNewUserMation(map);
+    public void createPrepose(SysEveUserStaff entity) {
+        // 设置新的工号
+        QueryWrapper<SysEveUserStaff> queryWrapper = new QueryWrapper<>();
+        String jobNumberKey = MybatisPlusUtil.toColumns(SysEveUserStaff::getJobNumber);
+        queryWrapper.select("max(0 + RIGHT(" + jobNumberKey + ", 6)) AS " + jobNumberKey);
+        SysEveUserStaff sysEveUserStaff = getOne(queryWrapper, false);
+        entity.setJobNumber(jobNumberPrefix + CalculationUtil.add(sysEveUserStaff.getJobNumber(), CommonNumConstants.NUM_ONE.toString(), CommonNumConstants.NUM_ZERO));
+        entity.setActWages(CommonNumConstants.NUM_ZERO.toString());
+        entity.setAnnualLeave(CommonNumConstants.NUM_ZERO.toString());
+        entity.setHolidayNumber(CommonNumConstants.NUM_ZERO.toString());
+        entity.setRetiredHolidayNumber(CommonNumConstants.NUM_ZERO.toString());
+    }
+
+    @Override
+    public void createPostpose(SysEveUserStaff entity, String userId) {
+        // 新增员工薪资字段信息
+        createUserStaffWagesFieldType(entity.getId());
+    }
+
+    @Override
+    public void updatePrepose(SysEveUserStaff entity) {
+        SysEveUserStaff oldData = selectById(entity.getId());
+        entity.setUserId(oldData.getUserId());
+        entity.setQuitTime(oldData.getQuitTime());
+        entity.setQuitReason(oldData.getQuitReason());
+        entity.setBecomeWorkerTime(oldData.getBecomeWorkerTime());
+        entity.setType(oldData.getType());
+        entity.setDesignWages(oldData.getDesignWages());
+        entity.setActWages(oldData.getActWages());
+        entity.setAnnualLeave(oldData.getAnnualLeave());
+        entity.setAnnualLeaveStatisTime(oldData.getAnnualLeaveStatisTime());
+        entity.setHolidayNumber(oldData.getHolidayNumber());
+        entity.setHolidayStatisTime(oldData.getHolidayStatisTime());
+        entity.setRetiredHolidayNumber(oldData.getRetiredHolidayNumber());
+        entity.setRetiredHolidayStatisTime(oldData.getRetiredHolidayStatisTime());
+        entity.setInterviewArrangementId(oldData.getInterviewArrangementId());
+    }
+
+    @Override
+    public void updatePostpose(SysEveUserStaff entity, String userId) {
+        SysEveUserStaff oldData = selectById(entity.getId());
+        if (!StrUtil.equals(oldData.getDepartmentId(), entity.getDepartmentId())) {
+            // 新旧部门不一致，删除用户在redis中存储的好友组信息(旧的部门)
+            jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(oldData.getDepartmentId()) + "*");
+            // 删除用户在redis中存储的好友组信息(新的部门)
+            jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(entity.getDepartmentId()) + "*");
         }
     }
 
-    /**
-     * 新增员工信息
-     *
-     * @param map
-     */
     @Override
-    public void insertNewUserMation(Map<String, Object> map) {
-        String staffId;
-        staffId = ToolUtil.getSurFaceId();
-        map.put("id", staffId);
-        map.put("jobNumberPrefix", jobNumberPrefix);
-        // 1.新增员工信息
-        sysEveUserStaffDao.insertSysUserStaffMation(map);
-        // 2.新增员工考勤时间段
-        createUserStaffCheckWorkTime(map, staffId);
-        // 3.新增员工薪资字段信息
-        createUserStaffWagesFieldType(staffId);
+    public void writePostpose(SysEveUserStaff entity, String userId) {
+        super.writePostpose(entity, userId);
+        // 员工考勤时间段
+        saveUserStaffCheckWorkTime(entity.getTimeIdList(), entity.getId());
     }
 
     /**
@@ -149,22 +174,22 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     /**
      * 新增员工考勤时间段
      *
-     * @param map
-     * @param staffId
+     * @param timeIdList 班次id
+     * @param staffId    员工id
      */
-    private void createUserStaffCheckWorkTime(Map<String, Object> map, String staffId) {
+    private void saveUserStaffCheckWorkTime(List<String> timeIdList, String staffId) {
+        // 删除员工考勤时间段信息再重新添加
+        sysEveUserStaffDao.deleteStaffCheckWorkTimeRelationByStaffId(staffId);
         // 逗号隔开的多班次考勤
-        String str = map.containsKey("checkTimeStr") ? map.get("checkTimeStr").toString() : "";
-        if (!ToolUtil.isBlank(str)) {
-            List<String> timeIds = Arrays.asList(str.split(","));
+        if (CollectionUtil.isNotEmpty(timeIdList)) {
             // 校验多班次考勤是否有重复时间段
-            boolean repeat = judgeRepeatShift(timeIds);
+            boolean repeat = judgeRepeatShift(timeIdList);
             if (repeat) {
                 // 存在冲突的工作时间段
                 throw new CustomException("Conflicting working hours.");
             }
             List<Map<String, Object>> staffTimeMation = new ArrayList<>();
-            timeIds.stream().forEach(timeId -> {
+            timeIdList.stream().forEach(timeId -> {
                 if (!ToolUtil.isBlank(timeId)) {
                     Map<String, Object> bean = new HashMap<>();
                     bean.put("staffId", staffId);
@@ -230,91 +255,19 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         }
     }
 
-    /**
-     * 通过id查询一条员工信息回显编辑
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void querySysUserStaffById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String staffId = map.get("id").toString();
-        Map<String, Object> bean = sysEveUserStaffDao.querySysUserStaffById(staffId);
-        if (bean != null && !bean.isEmpty()) {
-            bean.put("stateName", UserStaffState.getNameByState(Integer.parseInt(bean.get("state").toString())));
-            // 1.员工考勤时间段信息
-            List<Map<String, Object>> staffTimeMation = sysEveUserStaffDao
-                .queryStaffCheckWorkTimeRelationByStaffId(bean.get("id").toString());
-            bean.put("checkTimeStr", staffTimeMation);
-            outputObject.setBean(bean);
-            outputObject.settotal(CommonNumConstants.NUM_ONE);
-        } else {
-            outputObject.setreturnMessage("The data does not exist");
-        }
-    }
-
-    /**
-     * 编辑员工信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
-    public void editSysUserStaffById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String staffId = map.get("id").toString();
-        String userIdCard = map.get("userIdCard").toString();
-        if (!ToolUtil.isBlank(userIdCard)) {
-            Map<String, Object> bean = sysEveUserStaffDao.querySysUserStaffMationByIdCardAndId(map);
-            if (bean != null && !bean.isEmpty()) {
-                throw new CustomException("该员工身份证已存在，不能重复添加！");
-            }
-        }
-
-        Map<String, Object> userMation = sysEveUserStaffDao.querySysUserStaffById(staffId);
-        if (CollectionUtils.isEmpty(userMation)) {
-            throw new CustomException("该员工不存在！");
-        }
-        // 1.编辑员工信息
-        sysEveUserStaffDao.editSysUserStaffById(map);
-        // 2.删除员工所在部门的缓存
-        jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(userMation.get("departmentId").toString()) + "*");
-        // 2.1删除用户在redis中存储的好友组信息
-        jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(map.get("departmentId").toString()) + "*");
-        // 3.删除员工考勤时间段信息再重新添加
-        sysEveUserStaffDao.deleteStaffCheckWorkTimeRelationByStaffId(staffId);
-        // 3.1.新增员工考勤时间段
-        createUserStaffCheckWorkTime(map, staffId);
-    }
-
-    /**
-     * 通过id查询一条员工信息展示详情
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void querySysUserStaffByIdToDetails(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String staffId = map.get("id").toString();
-        Map<String, Object> bean = sysEveUserStaffDao.querySysUserStaffByIdToDetails(staffId);
-        if (CollectionUtil.isNotEmpty(bean)) {
-            iCompanyService.setNameForMap(bean, "companyId", "companyName");
-            iDepmentService.setNameForMap(bean, "departmentId", "departmentName");
-            iCompanyJobService.setNameForMap(bean, "jobId", "jobName");
-            iCompanyJobScoreService.setNameForMap(bean, "jobScoreId", "jobScoreName");
-            bean.put("stateName", UserStaffState.getNameByState(Integer.parseInt(bean.get("state").toString())));
-            // 1.员工考勤时间段信息
-            List<Map<String, Object>> staffTimeMation = sysEveUserStaffDao
-                .queryStaffCheckWorkTimeRelationNameByStaffId(staffId);
-            bean.put("checkTimeStr", staffTimeMation);
-            outputObject.setBean(bean);
-            outputObject.settotal(CommonNumConstants.NUM_ONE);
-        } else {
-            outputObject.setreturnMessage("The data does not exist");
-        }
+    public SysEveUserStaff selectById(String id) {
+        SysEveUserStaff sysEveUserStaff = super.selectById(id);
+        sysEveUserStaff.setStateName(UserStaffState.getNameByState(sysEveUserStaff.getState()));
+        // 员工考勤时间段信息
+        List<Map<String, Object>> staffTimeMation = sysEveUserStaffDao.queryStaffCheckWorkTimeRelationNameByStaffId(id);
+        sysEveUserStaff.setTimeList(staffTimeMation);
+        // 设置组织信息
+        companyMationService.setNameDataMation(sysEveUserStaff, SysEveUserStaff::getCompanyId, StrUtil.EMPTY);
+        companyDepartmentService.setNameDataMation(sysEveUserStaff, SysEveUserStaff::getDepartmentId, StrUtil.EMPTY);
+        companyJobService.setNameDataMation(sysEveUserStaff, SysEveUserStaff::getJobId, StrUtil.EMPTY);
+        companyJobScoreService.setNameDataMation(sysEveUserStaff, SysEveUserStaff::getJobScoreId, StrUtil.EMPTY);
+        return sysEveUserStaff;
     }
 
     /**
@@ -367,10 +320,10 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     public void querySysUserStaffLogin(InputObject inputObject, OutputObject outputObject) {
         String staffId = inputObject.getLogParams().get("staffId").toString();
         Map<String, Object> bean = sysEveUserStaffDao.querySysUserStaffByIdToDetails(staffId);
-        iCompanyService.setNameForMap(bean, "companyId", "companyName");
-        iDepmentService.setNameForMap(bean, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(bean, "jobId", "jobName");
-        iCompanyJobScoreService.setNameForMap(bean, "jobScoreId", "jobScoreName");
+        companyMationService.setNameMationForMap(bean, "companyId", "companyName", StrUtil.EMPTY);
+        companyDepartmentService.setNameMationForMap(bean, "departmentId", "departmentName", StrUtil.EMPTY);
+        companyJobService.setNameMationForMap(bean, "jobId", "jobName", StrUtil.EMPTY);
+        companyJobScoreService.setNameMationForMap(bean, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
         outputObject.setBean(bean);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
@@ -390,10 +343,11 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         // 用户id和员工id只要有一个不为空就进行查询
         if (!ToolUtil.isBlank(userIds) || !ToolUtil.isBlank(staffIds)) {
             beans = sysEveUserStaffDao.queryUserMationList(userIds, staffIds);
-            iCompanyService.setNameForMap(beans, "companyId", "companyName");
-            iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
-            iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
-            iCompanyJobScoreService.setNameForMap(beans, "jobScoreId", "jobScoreName");
+            // 设置组织信息
+            companyMationService.setNameMationForMap(beans, "companyId", "companyName", StrUtil.EMPTY);
+            companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
+            companyJobService.setNameMationForMap(beans, "jobId", "jobName", StrUtil.EMPTY);
+            companyJobScoreService.setNameMationForMap(beans, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
         }
         outputObject.setBeans(beans);
         outputObject.settotal(beans.size());
