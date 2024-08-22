@@ -4,25 +4,17 @@
 
 package com.skyeye.win.dao;
 
-import java.util.List;
-import java.util.Map;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
+import com.skyeye.win.entity.SysEveWinThemeColor;
 
-public interface SysEveWinThemeColorDao {
-
-    List<Map<String, Object>> querySysEveWinThemeColorList(Map<String, Object> map);
-
-    int insertSysEveWinThemeColorMation(Map<String, Object> map);
-
-    Map<String, Object> querySysEveWinThemeColorMationByName(Map<String, Object> map);
-
-    int deleteSysEveWinThemeColorMationById(Map<String, Object> map);
-
-    Map<String, Object> querySysEveWinThemeColorMationToEditById(Map<String, Object> map);
-
-    Map<String, Object> querySysEveWinThemeColorMationByNameAndId(Map<String, Object> map);
-
-    int editSysEveWinThemeColorMationById(Map<String, Object> map);
-
-    List<Map<String, Object>> querySysEveWinThemeColorListToShow(Map<String, Object> map);
+/**
+ * @ClassName: SysEveWinThemeColorDao
+ * @Description: win系统主题颜色数据接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/22 12:49
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
+public interface SysEveWinThemeColorDao extends SkyeyeBaseMapper<SysEveWinThemeColor> {
 
 }

@@ -37,10 +37,6 @@ public class Constants {
     // win系统主题颜色列表的redis的key
     public static final String SYS_WIN_THEME_COLOR_REDIS_KEY = "sys_win_theme_color_redis_key";
 
-    public static String getSysWinThemeColorRedisKey() {
-        return SYS_WIN_THEME_COLOR_REDIS_KEY;
-    }
-
     // 开发文档获取一级分类列表的redis的key
     public static final String SYS_DEVE_LOP_DOC_FIRST_TYPE = "sys_deve_lop_doc_first_type";
 

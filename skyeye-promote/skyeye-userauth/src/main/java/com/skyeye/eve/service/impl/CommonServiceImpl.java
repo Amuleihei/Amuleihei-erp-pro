@@ -6,11 +6,8 @@ package com.skyeye.eve.service.impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.skyeye.cache.redis.RedisCache;
 import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.constans.Constants;
 import com.skyeye.common.constans.FileConstants;
-import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.object.PutObject;
@@ -21,11 +18,12 @@ import com.skyeye.common.util.ToolUtil;
 import com.skyeye.eve.dao.CommonDao;
 import com.skyeye.eve.service.CommonService;
 import com.skyeye.exception.CustomException;
-import com.skyeye.win.dao.SysEveWinThemeColorDao;
 import com.skyeye.win.entity.SysEveWinBgPic;
 import com.skyeye.win.entity.SysEveWinLockBgPic;
+import com.skyeye.win.entity.SysEveWinThemeColor;
 import com.skyeye.win.service.SysEveWinBgPicService;
 import com.skyeye.win.service.SysEveWinLockBgPicService;
+import com.skyeye.win.service.SysEveWinThemeColorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,13 +59,10 @@ public class CommonServiceImpl implements CommonService {
     private SysEveWinLockBgPicService sysEveWinLockBgPicService;
 
     @Autowired
-    private SysEveWinThemeColorDao sysEveWinThemeColorDao;
+    private SysEveWinThemeColorService sysEveWinThemeColorService;
 
     @Value("${IMAGES_PATH}")
     private String tPath;
-
-    @Autowired
-    private RedisCache redisCache;
 
     /**
      * 代码生成器生成下载文件
@@ -152,8 +147,7 @@ public class CommonServiceImpl implements CommonService {
         List<SysEveWinLockBgPic> winLockBgPic = sysEveWinLockBgPicService.querySystemSysEveWinLockBgPicList();
 
         // 获取win系统主题颜色列表供展示
-        List<Map<String, Object>> winThemeColor = redisCache.getList(Constants.getSysWinThemeColorRedisKey(), key ->
-            sysEveWinThemeColorDao.querySysEveWinThemeColorListToShow(map), RedisConstants.THIRTY_DAY_SECONDS);
+        List<SysEveWinThemeColor> winThemeColor = sysEveWinThemeColorService.querySysEveWinThemeColorList();
 
         map.put("winBgPic", winBgPic);
         map.put("winLockBgPic", winLockBgPic);
