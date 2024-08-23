@@ -21,8 +21,6 @@ import java.util.Map;
  */
 public interface SysEveUserStaffDao extends SkyeyeBaseMapper<SysEveUserStaff> {
 
-    Map<String, Object> querySysUserStaffByIdToDetails(@Param("staffId") String staffId);
-
     int editSysUserStaffState(Map<String, Object> map);
 
     List<Map<String, Object>> queryUserMationList(@Param("userIds") String userIds, @Param("staffIds") String staffIds);

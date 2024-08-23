@@ -8,10 +8,10 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.personnel.entity.SysEveUserStaff;
+import com.skyeye.personnel.entity.SysEveUserStaffQuery;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +39,7 @@ public class SysEveUserStaffController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "querySysUserStaffList", value = "查看所有员工列表", method = "POST", allUse = "2")
-    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @ApiImplicitParams(classBean = SysEveUserStaffQuery.class)
     @RequestMapping("/post/SysEveUserStaffController/querySysUserStaffList")
     public void querySysUserStaffList(InputObject inputObject, OutputObject outputObject) {
         sysEveUserStaffService.queryPageList(inputObject, outputObject);

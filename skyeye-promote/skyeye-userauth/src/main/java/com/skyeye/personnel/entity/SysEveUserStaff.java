@@ -188,7 +188,7 @@ public class SysEveUserStaff extends OperatorUserInfo {
     private String highestEducation;
 
     @TableField("design_wages")
-    @ApiModelProperty(value = "薪资设定情况  1.待设定2.已设定", required = "num", defaultValue = "1")
+    @ApiModelProperty(value = "薪资设定情况，参考#StaffWagesStateEnum", required = "num", defaultValue = "1")
     private Integer designWages;
 
     @TableField("act_wages")

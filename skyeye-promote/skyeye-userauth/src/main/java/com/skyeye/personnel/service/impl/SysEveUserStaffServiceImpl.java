@@ -13,7 +13,6 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.Constants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -27,9 +26,11 @@ import com.skyeye.organization.service.CompanyDepartmentService;
 import com.skyeye.organization.service.CompanyJobScoreService;
 import com.skyeye.organization.service.CompanyJobService;
 import com.skyeye.organization.service.CompanyMationService;
+import com.skyeye.personnel.classenum.StaffWagesStateEnum;
 import com.skyeye.personnel.classenum.UserLockState;
 import com.skyeye.personnel.dao.SysEveUserStaffDao;
 import com.skyeye.personnel.entity.SysEveUserStaff;
+import com.skyeye.personnel.entity.SysEveUserStaffQuery;
 import com.skyeye.personnel.service.SysEveUserService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +78,11 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     private CompanyJobScoreService companyJobScoreService;
 
     @Override
-    public QueryWrapper<SysEveUserStaff> getQueryWrapper(CommonPageInfo commonPageInfo) {
-        QueryWrapper<SysEveUserStaff> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        if (StrUtil.isNotEmpty(commonPageInfo.getType())) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), commonPageInfo.getType());
+    public void getQueryWrapper(InputObject inputObject, QueryWrapper<SysEveUserStaff> wrapper) {
+        SysEveUserStaffQuery sysEveUserStaffQuery = inputObject.getParams(SysEveUserStaffQuery.class);
+        if (sysEveUserStaffQuery.getDesignWages() != null) {
+            wrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getDesignWages), sysEveUserStaffQuery.getDesignWages());
         }
-        return queryWrapper;
     }
 
     @Override
@@ -111,6 +111,7 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         entity.setAnnualLeave(CommonNumConstants.NUM_ZERO.toString());
         entity.setHolidayNumber(CommonNumConstants.NUM_ZERO.toString());
         entity.setRetiredHolidayNumber(CommonNumConstants.NUM_ZERO.toString());
+        entity.setDesignWages(StaffWagesStateEnum.WAIT_DESIGN_WAGES.getKey());
     }
 
     @Override
@@ -283,16 +284,14 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         map.put("state", UserStaffState.QUIT.getKey());
         sysEveUserStaffDao.editSysUserStaffState(map);
         String staffId = map.get("id").toString();
-        Map<String, Object> staffMation = sysEveUserStaffDao.querySysUserStaffByIdToDetails(staffId);
-        String userId = staffMation.get("userId").toString();
-        if (!ToolUtil.isBlank(userId)) {
-            String departmentId = staffMation.get("departmentId").toString();
+        SysEveUserStaff staffMation = selectById(staffId);
+        if (!ToolUtil.isBlank(staffMation.getUserId())) {
             // 删除redis中缓存的单位下的用户
-            jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(departmentId) + "*");
+            jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(staffMation.getDepartmentId()) + "*");
             // 锁定帐号
-            sysEveUserService.editUserLockState(userId, UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
+            sysEveUserService.editUserLockState(staffMation.getUserId(), UserLockState.SYS_USER_LOCK_STATE_ISLOCK.getKey());
             // 退出登录
-            sysEveUserService.removeLogin(userId);
+            sysEveUserService.removeLogin(staffMation.getUserId());
         }
     }
 
@@ -319,12 +318,8 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     @Override
     public void querySysUserStaffLogin(InputObject inputObject, OutputObject outputObject) {
         String staffId = inputObject.getLogParams().get("staffId").toString();
-        Map<String, Object> bean = sysEveUserStaffDao.querySysUserStaffByIdToDetails(staffId);
-        companyMationService.setNameMationForMap(bean, "companyId", "companyName", StrUtil.EMPTY);
-        companyDepartmentService.setNameMationForMap(bean, "departmentId", "departmentName", StrUtil.EMPTY);
-        companyJobService.setNameMationForMap(bean, "jobId", "jobName", StrUtil.EMPTY);
-        companyJobScoreService.setNameMationForMap(bean, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
-        outputObject.setBean(bean);
+        SysEveUserStaff sysEveUserStaff = selectById(staffId);
+        outputObject.setBean(sysEveUserStaff);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
