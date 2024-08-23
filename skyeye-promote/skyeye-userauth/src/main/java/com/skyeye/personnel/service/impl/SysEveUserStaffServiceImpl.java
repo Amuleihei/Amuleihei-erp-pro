@@ -422,4 +422,28 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         update(updateWrapper);
     }
 
+    @Override
+    public void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject) {
+        List<Integer> list = new ArrayList<>();
+        list.add(UserStaffState.ON_THE_JOB.getKey());
+        list.add(UserStaffState.PROBATION.getKey());
+        list.add(UserStaffState.PROBATION_PERIOD.getKey());
+
+        QueryWrapper<SysEveUserStaff> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(SysEveUserStaff::getState), list);
+        String userIdKey = MybatisPlusUtil.toColumns(SysEveUserStaff::getUserId);
+        queryWrapper.isNotNull(userIdKey).ne(userIdKey, StrUtil.EMPTY);
+        List<SysEveUserStaff> userStaffList = list(queryWrapper);
+        List<Map<String, Object>> mapList = userStaffList.stream()
+            .map(userStaff -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", userStaff.getUserId());
+                map.put("name", userStaff.getUserName());
+                map.put("email", userStaff.getEmail());
+                return map;
+            }).collect(Collectors.toList());
+        outputObject.setBeans(mapList);
+        outputObject.settotal(mapList.size());
+    }
+
 }

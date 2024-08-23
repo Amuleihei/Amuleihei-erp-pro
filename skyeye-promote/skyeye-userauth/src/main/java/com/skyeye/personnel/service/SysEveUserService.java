@@ -82,8 +82,6 @@ public interface SysEveUserService extends SkyeyeBusinessService<SysEveUser> {
 
     void queryTalkGroupUserListByUserId(InputObject inputObject, OutputObject outputObject);
 
-    void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject);
-
     void queryPhoneToLogin(InputObject inputObject, OutputObject outputObject);
 
     void queryUserMationByOpenId(InputObject inputObject, OutputObject outputObject);

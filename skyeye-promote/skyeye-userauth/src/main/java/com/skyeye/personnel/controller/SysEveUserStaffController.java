@@ -177,4 +177,16 @@ public class SysEveUserStaffController {
         sysEveUserStaffService.queryStaffCheckWorkTimeRelationNameByStaffId(inputObject, outputObject);
     }
 
+    /**
+     * 获取所有在职的，拥有账号的员工
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "commonselpeople007", value = "获取所有在职的，拥有账号的员工", method = "POST", allUse = "2")
+    @RequestMapping("/post/SysEveUserStaffController/queryAllSysUserIsIncumbency")
+    public void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject) {
+        sysEveUserStaffService.queryAllSysUserIsIncumbency(inputObject, outputObject);
+    }
+
 }

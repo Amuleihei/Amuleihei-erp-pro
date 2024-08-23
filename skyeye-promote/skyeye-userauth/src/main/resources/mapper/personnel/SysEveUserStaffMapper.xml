@@ -2,31 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.personnel.dao.SysEveUserStaffDao">
 
-	<select id="querySysUserStaffById" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.user_name userName,
-			a.user_sex userSex,
-			a.user_photo userPhoto,
-			a.user_idcard userIdCard,
-			a.email,
-			a.phone,
-			a.home_phone homePhone,
-		    a.state,
-		    a.trial_time trialTime,
-			a.qq,
-			a.company_id companyId,
-			a.department_id departmentId,
-			a.job_id jobId,
-			a.job_score_id jobScoreId,
-			a.user_sign userSign,
-			a.work_time workTime,
-			a.entry_time entryTime
-		FROM
-			sys_eve_user_staff a	
-		WHERE a.id = #{staffId}
-	</select>
-	
 	<select id="querySysUserStaffByIdToDetails" resultType="java.util.Map">
 		SELECT
 			a.id,
@@ -75,23 +50,6 @@
 		WHERE a.id = #{id}
 	</update>
 	
-	<select id="queryAllSysUserIsIncumbency" parameterType="java.util.Map" resultType="java.util.Map">
-        SELECT
-            a.user_id id,
-            a.user_name `name`,
-            a.email
-        FROM
-            sys_eve_user_staff a
-        WHERE
-            LENGTH(a.user_id) > 0
-        AND a.user_id != ''
-        AND a.state = '1'
-		AND a.state IN
-		<foreach collection="state" item="item" index="index" open="(" close=")" separator=",">
-			#{item}
-		</foreach>
-    </select>
-    
 	<select id="queryUserMationList" resultType="java.util.Map">
 		SELECT
 			a.user_id id,

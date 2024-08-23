@@ -4,6 +4,8 @@
 
 package com.skyeye.personnel.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -13,7 +15,6 @@ import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.*;
 import com.skyeye.common.entity.search.CommonPageInfo;
-import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.*;
 import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.DateUtil;
@@ -26,8 +27,8 @@ import com.skyeye.organization.service.*;
 import com.skyeye.personnel.classenum.UserIsTermOfValidity;
 import com.skyeye.personnel.classenum.UserLockState;
 import com.skyeye.personnel.dao.SysEveUserDao;
-import com.skyeye.personnel.dao.SysEveUserStaffDao;
 import com.skyeye.personnel.entity.SysEveUser;
+import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.SysEveUserService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import com.skyeye.role.service.SysEveRoleService;
@@ -61,7 +62,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     private SysEveRoleService sysEveRoleService;
 
     @Autowired
-    private SysEveUserStaffDao sysEveUserStaffDao;
+    private SysEveUserStaffService sysEveUserStaffService;
 
     @Autowired
     private SysAuthorityService sysAuthorityService;
@@ -86,9 +87,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
 
     @Autowired
     private ICompanyJobScoreService iCompanyJobScoreService;
-
-    @Autowired
-    private SysEveUserStaffService sysEveUserStaffService;
 
     /**
      * 获取管理员用户列表
@@ -162,10 +160,10 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
             sysEveUser.setUserLock(UserLockState.SYS_USER_LOCK_STATE_ISUNLOCK.getKey());
 
             // 根据员工id获取员工所属部门
-            Map<String, Object> staffMation = sysEveUserStaffDao.querySysUserStaffById(sysEveUser.getStaffId());
-            if (staffMation != null && !staffMation.isEmpty()) {
+            SysEveUserStaff staff = sysEveUserStaffService.selectById(sysEveUser.getStaffId());
+            if (ObjectUtil.isNotEmpty(staff) && StrUtil.isNotEmpty(staff.getId())) {
                 // 删除redis中缓存的单位下的用户
-                jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(staffMation.get("departmentId").toString()) + "*");
+                jedisClientService.delKeys(Constants.getSysTalkGroupUserListMationById(staff.getDepartmentId()) + "*");
             } else {
                 outputObject.setreturnMessage("员工信息不存在.");
                 return;
@@ -866,30 +864,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         if (queryDo.getChooseOrNotEmail() == 1) {
             queryDo.setHasEmail(1);
         }
-    }
-
-    /**
-     * 获取所有在职的，拥有账号的员工
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        List<Integer> state = this.getIncumbencyState();
-        map.put("state", state);
-        List<Map<String, Object>> beans = sysEveUserStaffDao.queryAllSysUserIsIncumbency(map);
-        outputObject.setBeans(beans);
-        outputObject.settotal(beans.size());
-    }
-
-    private List<Integer> getIncumbencyState() {
-        List<Integer> list = new ArrayList<>();
-        list.add(UserStaffState.ON_THE_JOB.getKey());
-        list.add(UserStaffState.PROBATION.getKey());
-        list.add(UserStaffState.PROBATION_PERIOD.getKey());
-        return list;
     }
 
     /**
