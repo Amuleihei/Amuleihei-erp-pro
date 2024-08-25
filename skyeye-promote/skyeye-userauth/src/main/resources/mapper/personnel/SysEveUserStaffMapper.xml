@@ -2,16 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.personnel.dao.SysEveUserStaffDao">
 
-	<update id="editSysUserStaffState" parameterType="java.util.Map">
-		UPDATE sys_eve_user_staff a
-		<set>
-			a.state = #{state},
-			a.quit_time = #{quitTime},
-			a.quit_reason = #{quitReason}
-		</set>
-		WHERE a.id = #{id}
-	</update>
-	
 	<select id="queryUserMationList" resultType="java.util.Map">
 		SELECT
 			a.user_id id,

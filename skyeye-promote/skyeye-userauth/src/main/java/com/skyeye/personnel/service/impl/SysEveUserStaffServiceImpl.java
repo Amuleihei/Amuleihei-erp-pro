@@ -281,9 +281,15 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
     @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editSysUserStaffState(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
-        map.put("state", UserStaffState.QUIT.getKey());
-        sysEveUserStaffDao.editSysUserStaffState(map);
         String staffId = map.get("id").toString();
+        // 设置离职信息
+        UpdateWrapper<SysEveUserStaff> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, staffId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getState), UserStaffState.QUIT.getKey());
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getQuitTime), map.get("quitTime").toString());
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getQuitReason), map.get("quitReason").toString());
+        update(updateWrapper);
+
         SysEveUserStaff staffMation = selectById(staffId);
         if (!ToolUtil.isBlank(staffMation.getUserId())) {
             // 删除redis中缓存的单位下的用户

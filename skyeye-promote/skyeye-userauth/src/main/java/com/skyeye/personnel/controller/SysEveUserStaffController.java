@@ -80,7 +80,7 @@ public class SysEveUserStaffController {
      */
     @ApiOperation(id = "staff006", value = "员工离职", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "rowId", name = "id", value = "员工id", required = "required"),
+        @ApiImplicitParam(id = "id", name = "id", value = "员工id", required = "required"),
         @ApiImplicitParam(id = "quitTime", name = "quitTime", value = "离职时间"),
         @ApiImplicitParam(id = "quitReason", name = "quitReason", value = "离职原因")})
     @RequestMapping("/post/SysEveUserStaffController/editSysUserStaffState")
