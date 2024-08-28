@@ -447,4 +447,16 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         outputObject.settotal(mapList.size());
     }
 
+    @Override
+    public void editSysUserStaffActMoneyById(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        String staffId = map.get("staffId").toString();
+        String actMoney = map.get("actMoney").toString();
+        UpdateWrapper<SysEveUserStaff> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, staffId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getDesignWages), StaffWagesStateEnum.TOO_DESIGN_WAGES.getKey());
+        updateWrapper.set(MybatisPlusUtil.toColumns(SysEveUserStaff::getActWages), actMoney);
+        update(updateWrapper);
+    }
+
 }

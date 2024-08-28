@@ -38,4 +38,6 @@ public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUser
     void editSysUserStaffBindUserId(String staffId, String userId);
 
     void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject);
+
+    void editSysUserStaffActMoneyById(InputObject inputObject, OutputObject outputObject);
 }

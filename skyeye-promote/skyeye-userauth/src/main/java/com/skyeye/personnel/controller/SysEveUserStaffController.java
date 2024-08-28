@@ -189,4 +189,19 @@ public class SysEveUserStaffController {
         sysEveUserStaffService.queryAllSysUserIsIncumbency(inputObject, outputObject);
     }
 
+    /**
+     * 修改员工薪资设定信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "editSysUserStaffActMoneyById", value = "修改员工薪资设定信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "staffId", name = "staffId", value = "员工id", required = "required"),
+        @ApiImplicitParam(id = "actMoney", name = "actMoney", value = "员工月标准工资", required = "required,double")})
+    @RequestMapping("/post/SysEveUserStaffController/editSysUserStaffActMoneyById")
+    public void editSysUserStaffActMoneyById(InputObject inputObject, OutputObject outputObject) {
+        sysEveUserStaffService.editSysUserStaffActMoneyById(inputObject, outputObject);
+    }
+
 }
