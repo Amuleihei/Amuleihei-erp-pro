@@ -16,19 +16,23 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.*;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.*;
-import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.authority.service.SysAuthorityService;
 import com.skyeye.eve.entity.userauth.user.UserTreeQueryDo;
 import com.skyeye.exception.CustomException;
-import com.skyeye.organization.service.*;
+import com.skyeye.organization.service.CompanyDepartmentService;
+import com.skyeye.organization.service.CompanyJobScoreService;
+import com.skyeye.organization.service.CompanyJobService;
+import com.skyeye.organization.service.CompanyMationService;
 import com.skyeye.personnel.classenum.UserIsTermOfValidity;
 import com.skyeye.personnel.classenum.UserLockState;
 import com.skyeye.personnel.dao.SysEveUserDao;
 import com.skyeye.personnel.entity.SysEveUser;
+import com.skyeye.personnel.entity.SysEveUserInstall;
 import com.skyeye.personnel.entity.SysEveUserStaff;
+import com.skyeye.personnel.service.SysEveUserInstallService;
 import com.skyeye.personnel.service.SysEveUserService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import com.skyeye.role.service.SysEveRoleService;
@@ -43,7 +47,7 @@ import java.util.*;
 
 /**
  * @ClassName: SysEveUserServiceImpl
- * @Description: 系统用户管理服务类
+ * @Description: 用户管理服务类
  * @author: skyeye云系列--卫志强
  * @date: 2022/2/13 9:50
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -68,15 +72,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     private SysAuthorityService sysAuthorityService;
 
     @Autowired
-    private ICompanyService iCompanyService;
-
-    @Autowired
-    private IDepmentService iDepmentService;
-
-    @Autowired
-    private ICompanyJobService iCompanyJobService;
-
-    @Autowired
     private CompanyMationService companyMationService;
 
     @Autowired
@@ -86,7 +81,10 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     private CompanyJobService companyJobService;
 
     @Autowired
-    private ICompanyJobScoreService iCompanyJobScoreService;
+    private CompanyJobScoreService companyJobScoreService;
+
+    @Autowired
+    private SysEveUserInstallService sysEveUserInstallService;
 
     /**
      * 获取管理员用户列表
@@ -99,9 +97,9 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
         Page pages = PageHelper.startPage(pageInfo.getPage(), pageInfo.getLimit());
         List<Map<String, Object>> beans = sysEveUserDao.querySysUserList(pageInfo);
-        iCompanyService.setNameForMap(beans, "companyId", "companyName");
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(beans, "jobId", "jobName");
+        companyMationService.setNameMationForMap(beans, "companyId", "companyName", StrUtil.EMPTY);
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
+        companyJobService.setNameMationForMap(beans, "jobId", "jobName", StrUtil.EMPTY);
         beans.forEach(bean -> {
             bean.put("staffServiceClassName", sysEveUserStaffService.getServiceClassName());
         });
@@ -171,7 +169,9 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
             // 1.新增用户信息
             String id = createEntity(sysEveUser, currentUserId);
             // 2.新增用户设置信息
-            setUserBaseInstall(id);
+            SysEveUserInstall sysEveUserInstall = new SysEveUserInstall();
+            sysEveUserInstall.setUserId(id);
+            sysEveUserInstallService.createEntity(sysEveUserInstall, id);
             // 3.修改员工与账号的关系
             sysEveUserStaffService.editSysUserStaffBindUserId(sysEveUser.getStaffId(), id);
         } else {
@@ -192,23 +192,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         sysEveUser.setPassword(null);
         sysEveUser.setPwdNumEnc(null);
         return sysEveUser;
-    }
-
-    /**
-     * 设置用户基础配置信息
-     *
-     * @param userId 用户id
-     */
-    private void setUserBaseInstall(String userId) {
-        Map<String, Object> bean = new HashMap<>();
-        bean.put("userId", userId);
-        bean.put("winBgPicUrl", "/images/upload/winbgpic/default.jpg");
-        bean.put("winLockBgPicUrl", "/images/upload/winlockbgpic/default.jpg");
-        bean.put("winThemeColor", "31");
-        bean.put("winStartMenuSize", "sm");
-        bean.put("winTaskPosition", "bottom");
-        DataCommonUtil.setCommonData(bean, userId);
-        sysEveUserDao.insertSysUserInstallMation(bean);
     }
 
     /**
@@ -293,14 +276,15 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         }
     }
 
-    private void setUserLoginRedisMation(String userId, Map<String, Object> userMation) {
+    @Override
+    public void setUserLoginRedisMation(String userId, Map<String, Object> userMation) {
         SysUserAuthConstants.setUserLoginRedisCache(userId, userMation);
     }
 
     private void setUserOtherMation(Map<String, Object> userMation) {
-        iCompanyService.setNameForMap(userMation, "companyId", "companyName");
-        iDepmentService.setNameForMap(userMation, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(userMation, "jobId", "jobName");
+        companyMationService.setNameMationForMap(userMation, "companyId", "companyName", StrUtil.EMPTY);
+        companyDepartmentService.setNameMationForMap(userMation, "departmentId", "departmentName", StrUtil.EMPTY);
+        companyJobService.setNameMationForMap(userMation, "jobId", "jobName", StrUtil.EMPTY);
     }
 
     /**
@@ -459,96 +443,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     }
 
     /**
-     * 自定义设置主题颜色
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallThemeColor(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        //修改reids中的用户信息
-        user.put("winThemeColor", map.get("themeColor"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallThemeColor(map);
-    }
-
-    /**
-     * 自定义设置win背景图片
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallWinBgPic(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("winBgPicUrl", map.get("winBgPicUrl"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallWinBgPic(map);
-    }
-
-    /**
-     * 自定义设置win锁屏背景图片
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallWinLockBgPic(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("winLockBgPicUrl", map.get("winLockBgPicUrl"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallWinLockBgPic(map);
-    }
-
-    /**
-     * 自定义设置win开始菜单尺寸
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallWinStartMenuSize(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("winStartMenuSize", map.get("winStartMenuSize"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallWinStartMenuSize(map);
-    }
-
-    /**
-     * 自定义设置win任务栏在屏幕的位置
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallWinTaskPosition(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("winTaskPosition", map.get("winTaskPosition"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallWinTaskPosition(map);
-    }
-
-    /**
      * 修改密码
      *
      * @param inputObject  入参以及用户信息等获取对象
@@ -583,43 +477,6 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     }
 
     /**
-     * 自定义设置win雾化
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallVagueBgSrc(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("winBgPicVague", map.get("winBgPicVague"));
-        user.put("winBgPicVagueValue", map.get("winBgPicVagueValue"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallVagueBgSrc(map);
-    }
-
-    /**
-     * 自定义设置窗口下面展示的是图标还是图标+文字
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editUserInstallLoadMenuIconById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> user = inputObject.getLogParams();
-        map.put("userId", user.get("id"));
-        // 修改reids中的用户信息
-        user.put("loadBottomMenuIcon", map.get("loadBottomMenuIcon"));
-        setUserLoginRedisMation(user.get("id").toString(), user);
-        sysEveUserDao.editUserInstallLoadMenuIconById(map);
-    }
-
-    /**
      * 锁屏密码解锁
      *
      * @param inputObject  入参以及用户信息等获取对象
@@ -649,10 +506,10 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
     public void queryUserDetailsMationByUserId(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> user = inputObject.getLogParams();
         Map<String, Object> bean = sysEveUserDao.queryUserDetailsMationByUserId(user.get("id").toString());
-        iCompanyService.setNameForMap(bean, "companyId", "companyName");
-        iDepmentService.setNameForMap(bean, "departmentId", "departmentName");
-        iCompanyJobService.setNameForMap(bean, "jobId", "jobName");
-        iCompanyJobScoreService.setNameForMap(bean, "jobScoreId", "jobScoreName");
+        companyMationService.setNameMationForMap(bean, "companyId", "companyName", StrUtil.EMPTY);
+        companyDepartmentService.setNameMationForMap(bean, "departmentId", "departmentName", StrUtil.EMPTY);
+        companyJobService.setNameMationForMap(bean, "jobId", "jobName", StrUtil.EMPTY);
+        companyJobScoreService.setNameMationForMap(bean, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
         outputObject.setBean(bean);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
@@ -733,7 +590,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         List<Map<String, Object>> result = new ArrayList<>();
         setOrganization(result, StringUtils.EMPTY);
         List<Map<String, Object>> beans = sysEveUserDao.queryUserStaffToTree(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         result.addAll(beans);
         outputObject.setBeans(result);
     }
@@ -766,7 +623,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         List<Map<String, Object>> result = new ArrayList<>();
         setOrganization(result, companyId);
         List<Map<String, Object>> beans = sysEveUserDao.queryUserStaffToTree(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         result.addAll(beans);
         outputObject.setBeans(result);
     }
@@ -787,7 +644,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         result.addAll(companyMationService.queryCompanyList(companyId));
         result.addAll(companyDepartmentService.queryDepartmentList(Arrays.asList(companyId), new ArrayList<>()));
         List<Map<String, Object>> beans = sysEveUserDao.queryUserStaffDepToTree(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         result.addAll(beans);
         outputObject.setBeans(result);
     }
@@ -807,7 +664,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         List<Map<String, Object>> result = new ArrayList<>();
         setOrganization(result, companyId);
         List<Map<String, Object>> beans = sysEveUserDao.queryUserStaffToTree(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         result.addAll(beans);
         outputObject.setBeans(result);
     }
@@ -825,7 +682,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         String departmentId = inputObject.getLogParams().get("departmentId").toString();
         queryDo.setDepartmentId(departmentId);
         List<Map<String, Object>> beans = sysEveUserDao.queryUserStaffDepToTree(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         beans.addAll(companyDepartmentService.queryDepartmentList(new ArrayList<>(), Arrays.asList(inputObject.getLogParams().get("departmentId").toString())));
         outputObject.setBeans(beans);
     }
@@ -843,7 +700,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
         Map<String, Object> user = inputObject.getLogParams();
         queryDo.setUserId(user.get("id").toString());
         List<Map<String, Object>> beans = sysEveUserDao.queryTalkGroupUserListByUserId(queryDo);
-        iDepmentService.setNameForMap(beans, "departmentId", "departmentName");
+        companyDepartmentService.setNameMationForMap(beans, "departmentId", "departmentName", StrUtil.EMPTY);
         outputObject.setBeans(beans);
     }
 
@@ -899,8 +756,8 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
                     userMation.put("userToken", userToken);
 
                     String appUserId = userId + SysUserAuthConstants.APP_IDENTIFYING;
-                    iDepmentService.setNameForMap(userMation, "departmentId", "departmentName");
-                    iCompanyJobService.setNameForMap(userMation, "jobId", "jobName");
+                    companyDepartmentService.setNameMationForMap(userMation, "departmentId", "departmentName", StrUtil.EMPTY);
+                    companyJobService.setNameMationForMap(userMation, "jobId", "jobName", StrUtil.EMPTY);
                     SysUserAuthConstants.setUserLoginRedisCache(appUserId, userMation);
                     jedisClientService.set(ObjectConstant.getAllMenuCacheKey(userId), roleIds);
                     jedisClientService.set("authPointsMation:" + appUserId, roleIds);
@@ -939,8 +796,8 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
                 //如果已经绑定用户，则获取用户信息
                 if (bean.containsKey("userId") && !ToolUtil.isBlank(bean.get("userId").toString())) {
                     Map<String, Object> userMation = sysEveUserDao.queryUserMationByOpenId(openId);
-                    iCompanyService.setNameForMap(userMation, "companyId", "companyName");
-                    iDepmentService.setNameForMap(userMation, "departmentId", "departmentName");
+                    companyMationService.setNameMationForMap(userMation, "companyId", "companyName", StrUtil.EMPTY);
+                    companyDepartmentService.setNameMationForMap(userMation, "departmentId", "departmentName", StrUtil.EMPTY);
                     // 2.将账号的信息存入redis
                     SysUserAuthConstants.setUserLoginRedisCache(bean.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, userMation);
                     //3.将权限的信息存入redis
@@ -961,7 +818,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
             //如果已经绑定用户，则获取用户信息
             if (map.containsKey("userId") && !ToolUtil.isBlank(map.get("userId").toString())) {
                 Map<String, Object> userMation = sysEveUserDao.queryUserMationByOpenId(openId);
-                iCompanyService.setNameForMap(userMation, "companyId", "companyName");
+                companyMationService.setNameMationForMap(userMation, "companyId", "companyName", StrUtil.EMPTY);
                 //2.将账号的信息存入redis
                 SysUserAuthConstants.setUserLoginRedisCache(map.get("userId").toString() + SysUserAuthConstants.APP_IDENTIFYING, userMation);
                 //3.将权限的信息存入redis
@@ -1020,7 +877,7 @@ public class SysEveUserServiceImpl extends SkyeyeBusinessServiceImpl<SysEveUserD
                             if (isBindInWx != null && !isBindInWx.isEmpty()) {
                                 outputObject.setreturnMessage("该账号已被绑定.");
                             } else {
-                                iCompanyJobService.setNameForMap(userMation, "jobId", "jobName");
+                                companyJobService.setNameMationForMap(userMation, "jobId", "jobName", StrUtil.EMPTY);
                                 //构建绑定信息对象
                                 map = new HashMap<>();
                                 String userId = userMation.get("id").toString();

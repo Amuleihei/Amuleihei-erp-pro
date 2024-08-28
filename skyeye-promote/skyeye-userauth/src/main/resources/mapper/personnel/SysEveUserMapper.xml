@@ -54,7 +54,7 @@
 			b.win_task_position winTaskPosition,
 			b.win_bg_pic_vague winBgPicVague,
 			b.win_bg_pic_vague_value winBgPicVagueValue,
-			b.win_bottom_menu_icon loadBottomMenuIcon,
+			b.win_bottom_menu_icon winBottomMenuIcon,
 			c.id staffId,
 			c.job_number jobNumber,
 			c.user_name userName,
@@ -169,70 +169,6 @@
 				sys_eve_user_custom_menubox a
 			WHERE a.create_id = #{userId}
 	</select>
-	
-	<update id="editUserInstallThemeColor" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_theme_color = #{themeColor}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<update id="editUserInstallWinBgPic" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_bg_pic_url = #{winBgPicUrl}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<update id="editUserInstallWinLockBgPic" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_lock_bg_pic_url = #{winLockBgPicUrl}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<update id="editUserInstallWinStartMenuSize" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_start_menu_size = #{winStartMenuSize}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<update id="editUserInstallWinTaskPosition" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_task_position = #{winTaskPosition}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<insert id="insertSysUserInstallMation" parameterType="java.util.Map">
-	     INSERT into sys_eve_user_install 
-	     (id, user_id, win_bg_pic_url, win_lock_bg_pic_url, win_theme_color, win_start_menu_size, win_task_position, create_id, create_time)
-	     VALUES
-	     (#{id}, #{userId}, #{winBgPicUrl}, #{winLockBgPicUrl}, #{winThemeColor}, #{winStartMenuSize}, #{winTaskPosition}, #{createId}, #{createTime})
-	</insert>
-	
-	<update id="editUserInstallVagueBgSrc" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_bg_pic_vague = #{winBgPicVague},
-			win_bg_pic_vague_value = #{winBgPicVagueValue}
-		</set>
-		WHERE user_id = #{userId}
-	</update>
-	
-	<update id="editUserInstallLoadMenuIconById" parameterType="java.util.Map">
-		UPDATE sys_eve_user_install
-		<set>
-			win_bottom_menu_icon = #{loadBottomMenuIcon},
-		</set>
-		WHERE user_id = #{userId}
-	</update>
 	
 	<select id="queryUserDetailsMationByUserId" resultType="java.util.Map">
 		SELECT
@@ -462,7 +398,7 @@
 			b.win_task_position winTaskPosition,
 			b.win_bg_pic_vague winBgPicVague,
 			b.win_bg_pic_vague_value winBgPicVagueValue,
-			b.win_bottom_menu_icon loadBottomMenuIcon,
+			b.win_bottom_menu_icon winBottomMenuIcon,
 			c.user_name userName,
 			c.user_photo userPhoto,
 			c.company_id companyId,

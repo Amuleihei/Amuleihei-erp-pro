@@ -13,6 +13,14 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @ClassName: SysEveUserDao
+ * @Description: 用户管理数据接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/28 15:37
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 public interface SysEveUserDao extends SkyeyeBaseMapper<SysEveUser> {
 
     List<Map<String, Object>> querySysUserList(CommonPageInfo pageInfo);
@@ -24,22 +32,6 @@ public interface SysEveUserDao extends SkyeyeBaseMapper<SysEveUser> {
     int editRoleIdsByUserId(Map<String, Object> map);
 
     List<Map<String, Object>> queryDeskTopsMenuByUserId(@Param("userId") String userId);
-
-    int editUserInstallThemeColor(Map<String, Object> map);
-
-    int editUserInstallWinBgPic(Map<String, Object> map);
-
-    int editUserInstallWinLockBgPic(Map<String, Object> map);
-
-    int editUserInstallWinStartMenuSize(Map<String, Object> map);
-
-    int editUserInstallWinTaskPosition(Map<String, Object> map);
-
-    int insertSysUserInstallMation(Map<String, Object> map);
-
-    int editUserInstallVagueBgSrc(Map<String, Object> map);
-
-    int editUserInstallLoadMenuIconById(Map<String, Object> map);
 
     Map<String, Object> queryUserDetailsMationByUserId(@Param("userId") String userId);
 

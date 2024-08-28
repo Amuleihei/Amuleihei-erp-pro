@@ -9,6 +9,16 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.personnel.entity.SysEveUser;
 
+import java.util.Map;
+
+/**
+ * @ClassName: SysEveUserService
+ * @Description: 用户管理服务接口层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/28 16:07
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 public interface SysEveUserService extends SkyeyeBusinessService<SysEveUser> {
 
     void querySysUserList(InputObject inputObject, OutputObject outputObject);
@@ -40,23 +50,11 @@ public interface SysEveUserService extends SkyeyeBusinessService<SysEveUser> {
 
     void queryAllMenuBySession(InputObject inputObject, OutputObject outputObject);
 
-    void editUserInstallThemeColor(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallWinBgPic(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallWinLockBgPic(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallWinStartMenuSize(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallWinTaskPosition(InputObject inputObject, OutputObject outputObject);
+    void setUserLoginRedisMation(String userId, Map<String, Object> userMation);
 
     void insertSysUserMationById(InputObject inputObject, OutputObject outputObject);
 
     void editUserPassword(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallVagueBgSrc(InputObject inputObject, OutputObject outputObject);
-
-    void editUserInstallLoadMenuIconById(InputObject inputObject, OutputObject outputObject);
 
     void queryUserLockByLockPwd(InputObject inputObject, OutputObject outputObject);
 

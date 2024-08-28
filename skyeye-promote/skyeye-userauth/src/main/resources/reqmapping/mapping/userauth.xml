@@ -147,22 +147,6 @@
 		<property id="rowId" name="id" ref="required" var="账号ID" />
 	</url>
 
-	<url id="sys024" path="/post/SysEveUserController/editUserInstallThemeColor" val="自定义设置主题颜色" allUse="2" method="PUT" groupName="系统管理">
-		<property id="themeColor" name="themeColor" ref="required,num" var="颜色的color数字" />
-	</url>
-	<url id="sys027" path="/post/SysEveUserController/editUserInstallWinStartMenuSize" val="自定义设置win开始菜单尺寸" allUse="2" groupName="系统管理">
-		<property id="winStartMenuSize" name="winStartMenuSize" ref="required" var="尺寸size" />
-	</url>
-	<url id="sys028" path="/post/SysEveUserController/editUserInstallWinTaskPosition" val="自定义设置win任务栏在屏幕的位置" allUse="2" groupName="系统管理">
-		<property id="winTaskPosition" name="winTaskPosition" ref="required" var="位置属性" />
-	</url>
-	<url id="sys029" path="/post/SysEveUserController/editUserInstallVagueBgSrc" val="自定义设置win雾化" allUse="2" method="POST" groupName="系统管理">
-		<property id="winBgPicVague" name="winBgPicVague" ref="required,num" var="背景图片是否雾化  1正常0模糊" />
-		<property id="winBgPicVagueValue" name="winBgPicVagueValue" ref="required,num" var="雾化值  0~1" />
-	</url>
-	<url id="sys030" path="/post/SysEveUserController/editUserInstallLoadMenuIconById" val="自定义设置窗口下面展示的是图标还是图标+文字" allUse="2" groupName="系统管理">
-		<property id="loadBottomMenuIcon" name="loadBottomMenuIcon" ref="required,num" var="是否只展示图标，1是  0否" />
-	</url>
 	<url id="sys033" path="/post/SysEveUserController/editUserDetailsMationByUserId" val="修改个人信息" allUse="2" groupName="系统管理">
 		<property id="userSex" name="userSex" ref="required,num" var="性别" />
 		<property id="userIdCard" name="userIdCard" ref="idcard" var="身份证" />

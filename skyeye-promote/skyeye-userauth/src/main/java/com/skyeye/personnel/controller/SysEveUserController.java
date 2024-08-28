@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @ClassName: SysEveUserController
- * @Description: 系统用户管理控制类
+ * @Description: 用户管理控制类
  * @author: skyeye云系列--卫志强
  * @date: 2022/2/13 9:51
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -192,67 +192,6 @@ public class SysEveUserController {
     }
 
     /**
-     * 自定义设置主题颜色
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserController/editUserInstallThemeColor")
-    public void editUserInstallThemeColor(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallThemeColor(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置win背景图片
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "sys025", value = "自定义设置win背景图片", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "winBgPicUrl", name = "winBgPicUrl", value = "图片url链接", required = "required")})
-    @RequestMapping("/post/SysEveUserController/editUserInstallWinBgPic")
-    public void editUserInstallWinBgPic(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallWinBgPic(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置win锁屏背景图片
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "sys026", value = "自定义设置win锁屏背景图片", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "winLockBgPicUrl", name = "winLockBgPicUrl", value = "图片url链接", required = "required")})
-    @RequestMapping("/post/SysEveUserController/editUserInstallWinLockBgPic")
-    public void editUserInstallWinLockBgPic(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallWinLockBgPic(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置win开始菜单尺寸
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserController/editUserInstallWinStartMenuSize")
-    public void editUserInstallWinStartMenuSize(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallWinStartMenuSize(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置win任务栏在屏幕的位置
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserController/editUserInstallWinTaskPosition")
-    public void editUserInstallWinTaskPosition(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallWinTaskPosition(inputObject, outputObject);
-    }
-
-    /**
      * 修改密码
      *
      * @param inputObject  入参以及用户信息等获取对象
@@ -265,28 +204,6 @@ public class SysEveUserController {
     @RequestMapping("/post/SysEveUserController/editUserPassword")
     public void editUserPassword(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.editUserPassword(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置win雾化
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserController/editUserInstallVagueBgSrc")
-    public void editUserInstallVagueBgSrc(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallVagueBgSrc(inputObject, outputObject);
-    }
-
-    /**
-     * 自定义设置窗口下面展示的是图标还是图标+文字
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SysEveUserController/editUserInstallLoadMenuIconById")
-    public void editUserInstallLoadMenuIconById(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserInstallLoadMenuIconById(inputObject, outputObject);
     }
 
     /**
