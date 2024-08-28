@@ -5,6 +5,7 @@
 package com.skyeye.personnel.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -33,6 +34,7 @@ import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.entity.SysEveUserStaffQuery;
 import com.skyeye.personnel.service.SysEveUserService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -97,6 +99,22 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         companyJobService.setNameMationForMap(beans, "jobId", "jobName", StrUtil.EMPTY);
         companyJobScoreService.setNameMationForMap(beans, "jobScoreId", "jobScoreName", StrUtil.EMPTY);
         return beans;
+    }
+
+    @Override
+    public void validatorEntity(SysEveUserStaff entity) {
+        super.validatorEntity(entity);
+        if (StrUtil.isNotEmpty(entity.getPhone())) {
+            QueryWrapper<SysEveUserStaff> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getPhone), entity.getPhone());
+            if (StringUtils.isNotEmpty(entity.getId())) {
+                queryWrapper.ne(CommonConstants.ID, entity.getId());
+            }
+            SysEveUserStaff checkUserStaff = getOne(queryWrapper, false);
+            if (ObjectUtil.isNotEmpty(checkUserStaff)) {
+                throw new CustomException("该手机号已存在，请更换.");
+            }
+        }
     }
 
     @Override
