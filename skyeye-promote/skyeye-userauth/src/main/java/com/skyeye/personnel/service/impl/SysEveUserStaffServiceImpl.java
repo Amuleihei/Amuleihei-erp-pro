@@ -477,4 +477,12 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         update(updateWrapper);
     }
 
+    @Override
+    public boolean checkPhoneExists(String phone) {
+        QueryWrapper<SysEveUserStaff> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getPhone), phone);
+        long count = count(queryWrapper);
+        return count == 0 ? false : true;
+    }
+
 }

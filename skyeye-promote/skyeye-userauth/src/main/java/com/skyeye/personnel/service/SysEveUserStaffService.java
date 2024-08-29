@@ -40,4 +40,12 @@ public interface SysEveUserStaffService extends SkyeyeBusinessService<SysEveUser
     void queryAllSysUserIsIncumbency(InputObject inputObject, OutputObject outputObject);
 
     void editSysUserStaffActMoneyById(InputObject inputObject, OutputObject outputObject);
+
+    /**
+     * 检查手机号是否存在
+     *
+     * @param phone 手机号
+     * @return boolean 是否存在, true:存在, false:不存在
+     */
+    boolean checkPhoneExists(String phone);
 }

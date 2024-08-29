@@ -103,21 +103,6 @@ public class SysEveUserController {
     }
 
     /**
-     * 登录
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "login001", value = "登录", method = "POST", allUse = "0")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "userCode", name = "userCode", value = "账号", required = "required"),
-        @ApiImplicitParam(id = "password", name = "password", value = "密码", required = "required")})
-    @RequestMapping("/post/SysEveUserController/queryUserToLogin")
-    public void queryUserToLogin(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.queryUserToLogin(inputObject, outputObject);
-    }
-
-    /**
      * 从session中获取用户信息
      *
      * @param inputObject  入参以及用户信息等获取对象
@@ -127,18 +112,6 @@ public class SysEveUserController {
     @RequestMapping("/post/SysEveUserController/queryUserMationBySession")
     public void queryUserMationBySession(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.queryUserMationBySession(inputObject, outputObject);
-    }
-
-    /**
-     * 退出
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "login003", value = "退出", method = "POST", allUse = "2")
-    @RequestMapping("/post/SysEveUserController/deleteUserMationBySession")
-    public void deleteUserMationBySession(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.deleteUserMationBySession(inputObject, outputObject);
     }
 
     /**
@@ -189,21 +162,6 @@ public class SysEveUserController {
     @RequestMapping("/post/SysEveUserController/queryAllMenuBySession")
     public void queryAllMenuBySession(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.queryAllMenuBySession(inputObject, outputObject);
-    }
-
-    /**
-     * 修改密码
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "login007", value = "修改密码", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "newPassword", name = "newPassword", value = "新密码", required = "required"),
-        @ApiImplicitParam(id = "oldPassword", name = "oldPassword", value = "旧密码", required = "required")})
-    @RequestMapping("/post/SysEveUserController/editUserPassword")
-    public void editUserPassword(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.editUserPassword(inputObject, outputObject);
     }
 
     /**
@@ -357,22 +315,6 @@ public class SysEveUserController {
     @RequestMapping("/post/SysEveUserController/queryTalkGroupUserListByUserId")
     public void queryTalkGroupUserListByUserId(InputObject inputObject, OutputObject outputObject) {
         sysEveUserService.queryTalkGroupUserListByUserId(inputObject, outputObject);
-    }
-
-    /**
-     * 手机端用户登录
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "userphone001", value = "手机端用户登录", method = "POST", allUse = "0")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "userCode", name = "userCode", value = "账号", required = "required"),
-        @ApiImplicitParam(id = "password", name = "password", value = "密码", required = "required"),
-        @ApiImplicitParam(id = "cId", name = "cId", value = "cId,用于手机端消息通知")})
-    @RequestMapping("/post/SysEveUserController/queryPhoneToLogin")
-    public void queryPhoneToLogin(InputObject inputObject, OutputObject outputObject) {
-        sysEveUserService.queryPhoneToLogin(inputObject, outputObject);
     }
 
     /**

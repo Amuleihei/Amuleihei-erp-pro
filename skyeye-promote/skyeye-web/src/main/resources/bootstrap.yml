@@ -41,3 +41,5 @@ topic:
   ordinary-mail-delivery-service: ORDINARY_MAIL_DELIVERY_SERVICE
   # 消息通知的topic
   notice-send-service: NOTICE_SEND_SERVICE
+  # 短信通知的topic
+  sms-send-service: SMS_SEND_SERVICE
