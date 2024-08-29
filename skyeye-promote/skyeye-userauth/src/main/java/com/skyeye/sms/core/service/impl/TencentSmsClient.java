@@ -9,14 +9,14 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import cn.iocoder.yudao.framework.common.util.collection.ArrayUtils;
-import cn.iocoder.yudao.framework.common.util.http.HttpUtils;
 import com.google.common.annotations.VisibleForTesting;
+import com.skyeye.common.entity.KeyValue;
+import com.skyeye.common.enumeration.HttpMethodEnum;
+import com.skyeye.common.util.HttpRequestUtil;
 import com.skyeye.sms.classenum.SmsTemplateAuditStatusEnum;
 import com.skyeye.sms.core.entity.SmsReceiveResp;
 import com.skyeye.sms.core.entity.SmsSendResp;
 import com.skyeye.sms.core.entity.SmsTemplateResp;
-import com.skyeye.sms.entity.KeyValue;
 import com.skyeye.sms.entity.SmsChannel;
 
 import javax.crypto.Mac;
@@ -25,9 +25,9 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.hutool.crypto.digest.DigestUtil.sha256Hex;
-import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
 
 /**
  * @ClassName: TencentSmsClient
@@ -100,7 +100,8 @@ public class TencentSmsClient extends AbstractSmsClient {
         body.put("SmsSdkAppId", getSdkAppId());
         body.put("SignName", properties.getName());
         body.put("TemplateId", apiTemplateId);
-        body.put("TemplateParamSet", ArrayUtils.toArray(templateParams, param -> String.valueOf(param.getValue())));
+        List<String> templateParas = templateParams.stream().map(bean -> String.valueOf(bean.getValue())).collect(Collectors.toList());
+        body.put("TemplateParamSet", templateParas);
         JSONObject response = request("SendSms", body);
 
         // 2. 解析请求
@@ -122,16 +123,15 @@ public class TencentSmsClient extends AbstractSmsClient {
     @Override
     public List<SmsReceiveResp> parseSmsReceiveStatus(String text) {
         JSONArray statuses = JSONUtil.parseArray(text);
-        // 字段参考
-        return convertList(statuses, status -> {
-            JSONObject statusObj = (JSONObject) status;
+        return statuses.stream().map(bean -> {
+            JSONObject statusObj = (JSONObject) bean;
             return new SmsReceiveResp()
                 .setSuccess("SUCCESS".equals(statusObj.getStr("report_status"))) // 是否接收成功
                 .setErrorCode(statusObj.getStr("errmsg")) // 状态报告编码
                 .setMobile(statusObj.getStr("mobile")) // 手机号
                 .setReceiveTime(statusObj.getLocalDateTime("user_receive_time", null)) // 状态报告时间
                 .setSerialNo(statusObj.getStr("sid")); // 发送序列号
-        });
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -223,7 +223,7 @@ public class TencentSmsClient extends AbstractSmsClient {
         headers.put("X-TC-Version", VERSION);
         headers.put("X-TC-Region", REGION);
 
-        String responseBody = HttpUtils.post("https://" + host, headers, JSONUtil.toJsonStr(body));
+        String responseBody = HttpRequestUtil.getDataByRequest("https://" + host, HttpMethodEnum.POST_REQUEST.getKey(), headers, JSONUtil.toJsonStr(body));
 
         return JSONUtil.parseObj(responseBody);
     }

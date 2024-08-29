@@ -23,7 +23,7 @@ public interface SmsClientFactory {
      * @param channelId 渠道编号
      * @return 短信 Client
      */
-    SmsClient getSmsClient(Long channelId);
+    SmsClient getSmsClientById(String channelId);
 
     /**
      * 获得短信 Client

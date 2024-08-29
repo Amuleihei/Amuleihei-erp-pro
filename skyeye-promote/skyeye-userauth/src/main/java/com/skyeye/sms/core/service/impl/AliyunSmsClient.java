@@ -14,15 +14,17 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.annotations.VisibleForTesting;
+import com.skyeye.common.entity.KeyValue;
+import com.skyeye.common.enumeration.HttpMethodEnum;
+import com.skyeye.common.util.HttpRequestUtil;
+import com.skyeye.common.util.MapUtil;
 import com.skyeye.sms.classenum.SmsTemplateAuditStatusEnum;
 import com.skyeye.sms.core.entity.SmsReceiveResp;
 import com.skyeye.sms.core.entity.SmsSendResp;
 import com.skyeye.sms.core.entity.SmsTemplateResp;
-import com.skyeye.sms.entity.KeyValue;
 import com.skyeye.sms.entity.SmsChannel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.core.util.JsonUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -66,7 +68,7 @@ public class AliyunSmsClient extends AbstractSmsClient {
         queryParam.put("PhoneNumbers", mobile);
         queryParam.put("SignName", properties.getName());
         queryParam.put("TemplateCode", apiTemplateId);
-        queryParam.put("TemplateParam", JsonUtils.toJsonString(MapUtils.convertMap(templateParams)));
+        queryParam.put("TemplateParam", JSONUtil.toJsonStr(MapUtil.convertMap(templateParams)));
         JSONObject response = request("SendSms", queryParam);
 
         // 2. 解析请求
@@ -82,8 +84,8 @@ public class AliyunSmsClient extends AbstractSmsClient {
     public List<SmsReceiveResp> parseSmsReceiveStatus(String text) {
         JSONArray statuses = JSONUtil.parseArray(text);
         // 字段参考
-        return convertList(statuses, status -> {
-            JSONObject statusObj = (JSONObject) status;
+        return statuses.stream().map(bean -> {
+            JSONObject statusObj = (JSONObject) bean;
             return new SmsReceiveResp()
                 .setSuccess(statusObj.getBool("success")) // 是否接收成功
                 .setErrorCode(statusObj.getStr("err_code")) // 状态报告编码
@@ -92,7 +94,7 @@ public class AliyunSmsClient extends AbstractSmsClient {
                 .setReceiveTime(statusObj.getLocalDateTime("report_time", null)) // 状态报告时间
                 .setSerialNo(statusObj.getStr("biz_id")) // 发送序列号
                 .setLogId(statusObj.getLong("out_id")); // 用户序列号
-        });
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -179,7 +181,7 @@ public class AliyunSmsClient extends AbstractSmsClient {
             + ", " + "SignedHeaders=" + signedHeaders + ", " + "Signature=" + signature);
 
         // 5. 发起请求
-        String responseBody = HttpUtils.post(URL + "?" + queryString, headers, requestBody);
+        String responseBody = HttpRequestUtil.getDataByRequest(URL + "?" + queryString, HttpMethodEnum.POST_REQUEST.getKey(), headers, requestBody);
         return JSONUtil.parseObj(responseBody);
     }
 

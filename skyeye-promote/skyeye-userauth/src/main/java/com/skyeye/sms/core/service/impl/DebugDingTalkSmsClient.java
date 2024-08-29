@@ -11,13 +11,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.http.HttpUtil;
-import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
-import cn.iocoder.yudao.framework.common.util.json.JsonUtils;
+import cn.hutool.json.JSONUtil;
+import com.skyeye.common.entity.KeyValue;
 import com.skyeye.sms.classenum.SmsTemplateAuditStatusEnum;
 import com.skyeye.sms.core.entity.SmsReceiveResp;
 import com.skyeye.sms.core.entity.SmsSendResp;
 import com.skyeye.sms.core.entity.SmsTemplateResp;
-import com.skyeye.sms.entity.KeyValue;
 import com.skyeye.sms.entity.SmsChannel;
 
 import java.util.HashMap;
@@ -54,12 +53,12 @@ public class DebugDingTalkSmsClient extends AbstractSmsClient {
         Map<String, Object> params = new HashMap<>();
         params.put("msgtype", "text");
         String content = String.format("【模拟短信】\n手机号：%s\n模板参数：%s",
-            mobile, MapUtils.convertMap(templateParams));
+            mobile, com.skyeye.common.util.MapUtil.convertMap(templateParams));
         params.put("text", MapUtil.builder().put("content", content).build());
         // 执行请求
-        String responseText = HttpUtil.post(url, JsonUtils.toJsonString(params));
+        String responseText = HttpUtil.post(url, JSONUtil.toJsonStr(params));
         // 解析结果
-        Map<?, ?> responseObj = JsonUtils.parseObject(responseText, Map.class);
+        Map<?, ?> responseObj = JSONUtil.toBean(responseText, Map.class);
         String errorCode = MapUtil.getStr(responseObj, "errcode");
         return new SmsSendResp().setSuccess(Objects.equals(errorCode, "0")).setSerialNo(StrUtil.uuid())
             .setApiCode(errorCode).setApiMsg(MapUtil.getStr(responseObj, "errorMsg"));

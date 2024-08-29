@@ -1,8 +1,11 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.sms.core.service.impl;
 
-import cn.iocoder.yudao.module.system.framework.sms.core.client.SmsClient;
-import cn.iocoder.yudao.module.system.framework.sms.core.enums.SmsChannelEnum;
-import cn.iocoder.yudao.module.system.framework.sms.core.property.SmsChannelProperties;
+import com.skyeye.sms.classenum.SmsChannelEnum;
+import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.core.service.SmsClientFactory;
 import com.skyeye.sms.entity.SmsChannel;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 短信客户端工厂接口
- *
- * @author zzf
+ * @ClassName: SmsClientFactoryImpl
+ * @Description: 短信客户端工厂接口
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/8/28 22:21
+ * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Validated
 @Slf4j
@@ -24,13 +30,13 @@ public class SmsClientFactoryImpl implements SmsClientFactory {
 
     /**
      * 短信客户端 Map
-     * key：渠道编号，使用 {@link SmsChannelProperties#getId()}
+     * key：渠道编号，使用 {@link SmsChannel#getId()}
      */
     private final ConcurrentMap<String, AbstractSmsClient> channelIdClients = new ConcurrentHashMap<>();
 
     /**
      * 短信客户端 Map
-     * key：渠道编码，使用 {@link SmsChannelProperties#getCode()} ()}
+     * key：渠道编码，使用 {@link SmsChannel#getCodeNum()} ()} ()}
      * <p>
      * 注意，一些场景下，需要获得某个渠道类型的客户端，所以需要使用它。
      * 例如说，解析短信接收结果，是相对通用的，不需要使用某个渠道编号的 {@link #channelIdClients}
@@ -41,16 +47,16 @@ public class SmsClientFactoryImpl implements SmsClientFactory {
         // 初始化 channelCodeClients 集合
         Arrays.stream(SmsChannelEnum.values()).forEach(channel -> {
             // 创建一个空的 SmsChannelProperties 对象
-            SmsChannelProperties properties = new SmsChannelProperties().setCode(channel.getCode())
+            SmsChannel properties = new SmsChannel().setCodeNum(channel.getKey())
                 .setApiKey("default default").setApiSecret("default");
             // 创建 Sms 客户端
             AbstractSmsClient smsClient = createSmsClient(properties);
-            channelCodeClients.put(channel.getCode(), smsClient);
+            channelCodeClients.put(channel.getKey(), smsClient);
         });
     }
 
     @Override
-    public SmsClient getSmsClient(Long channelId) {
+    public SmsClient getSmsClientById(String channelId) {
         return channelIdClients.get(channelId);
     }
 
@@ -71,8 +77,8 @@ public class SmsClientFactoryImpl implements SmsClientFactory {
         }
     }
 
-    private AbstractSmsClient createSmsClient(SmsChannelProperties properties) {
-        SmsChannelEnum channelEnum = SmsChannelEnum.getByCode(properties.getCode());
+    private AbstractSmsClient createSmsClient(SmsChannel properties) {
+        SmsChannelEnum channelEnum = SmsChannelEnum.getByCode(properties.getCodeNum());
         Assert.notNull(channelEnum, String.format("渠道类型(%s) 为空", channelEnum));
         // 创建客户端
         switch (channelEnum) {

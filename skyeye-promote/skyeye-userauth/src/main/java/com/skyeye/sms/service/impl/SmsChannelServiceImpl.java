@@ -4,12 +4,16 @@
 
 package com.skyeye.sms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.sms.core.service.SmsClient;
+import com.skyeye.sms.core.service.SmsClientFactory;
 import com.skyeye.sms.dao.SmsChannelDao;
 import com.skyeye.sms.entity.SmsChannel;
 import com.skyeye.sms.service.SmsChannelService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,9 +28,33 @@ import org.springframework.stereotype.Service;
 @SkyeyeService(name = "短信渠道", groupName = "短信渠道")
 public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelDao, SmsChannel> implements SmsChannelService {
 
+    @Autowired
+    private SmsClientFactory smsClientFactory;
+
     @Override
-    public SmsClient getSmsClient(Long channelId) {
-        return null;
+    public SmsClient getSmsClientById(String channelId) {
+        SmsChannel smsChannel = selectById(channelId);
+        if (smsChannel != null) {
+            smsClientFactory.createOrUpdateSmsClient(smsChannel);
+        }
+        return smsClientFactory.getSmsClientById(channelId);
+    }
+
+    @Override
+    public SmsClient getSmsClient(String channelCode) {
+        SmsChannel smsChannel = selectByCodeNum(channelCode);
+        if (smsChannel != null) {
+            smsClientFactory.createOrUpdateSmsClient(smsChannel);
+        }
+        return smsClientFactory.getSmsClient(channelCode);
+    }
+
+    @Override
+    public SmsChannel selectByCodeNum(String codeNum) {
+        QueryWrapper<SmsChannel> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(SmsChannel::getCodeNum), codeNum);
+        SmsChannel smsChannel = getOne(wrapper, false);
+        return smsChannel;
     }
 
 }

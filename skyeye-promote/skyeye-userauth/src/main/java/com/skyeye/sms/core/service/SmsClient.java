@@ -4,10 +4,10 @@
 
 package com.skyeye.sms.core.service;
 
+import com.skyeye.common.entity.KeyValue;
 import com.skyeye.sms.core.entity.SmsReceiveResp;
 import com.skyeye.sms.core.entity.SmsSendResp;
 import com.skyeye.sms.core.entity.SmsTemplateResp;
-import com.skyeye.sms.entity.KeyValue;
 
 import java.util.List;
 

@@ -10,6 +10,7 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @ClassName: SmsChannel
@@ -22,6 +23,7 @@ import lombok.Data;
 @Data
 @TableName(value = "skyeye_sms_channel")
 @ApiModel("短信模板")
+@Accessors(chain = true)
 public class SmsChannel extends BaseGeneralInfo {
 
     @TableField("code_num")

@@ -5,6 +5,7 @@
 package com.skyeye.sms.entity;
 
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.common.entity.KeyValue;
 import lombok.Data;
 
 import java.util.List;

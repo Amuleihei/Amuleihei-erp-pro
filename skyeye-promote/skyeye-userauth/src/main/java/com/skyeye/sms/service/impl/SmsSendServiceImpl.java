@@ -5,11 +5,13 @@
 package com.skyeye.sms.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.annotations.VisibleForTesting;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.MqConstants;
+import com.skyeye.common.entity.KeyValue;
 import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.eve.rest.mq.JobMateMation;
@@ -17,7 +19,7 @@ import com.skyeye.eve.service.IJobMateMationService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.SysEveUserStaffService;
-import com.skyeye.sms.entity.KeyValue;
+import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.entity.SmsChannel;
 import com.skyeye.sms.entity.SmsSendMessage;
 import com.skyeye.sms.entity.SmsTemplate;
@@ -61,9 +63,9 @@ public class SmsSendServiceImpl implements SmsSendService {
     public void sendSingleSmsToAdmin(String mobile, String staffId, String templateCode, Map<String, Object> templateParams) {
         // 如果 mobile 为空，则加载用户编号对应的手机号
         if (StrUtil.isEmpty(mobile)) {
-            SysEveUserStaff user = sysEveUserStaffService.selectById(staffId);
-            if (user != null) {
-                mobile = user.getPhone();
+            SysEveUserStaff userStaff = sysEveUserStaffService.selectById(staffId);
+            if (userStaff != null) {
+                mobile = userStaff.getPhone();
             }
         }
         // 执行发送
@@ -72,7 +74,15 @@ public class SmsSendServiceImpl implements SmsSendService {
 
     @Override
     public void sendSingleSmsToMember(String mobile, String staffId, String templateCode, Map<String, Object> templateParams) {
-
+        // 如果 mobile 为空，则加载用户编号对应的手机号
+        if (StrUtil.isEmpty(mobile)) {
+            SysEveUserStaff userStaff = sysEveUserStaffService.selectById(staffId);
+            if (userStaff != null) {
+                mobile = userStaff.getPhone();
+            }
+        }
+        // 执行发送
+        sendSingleSms(mobile, staffId, templateCode, templateParams);
     }
 
     @Override
@@ -158,11 +168,24 @@ public class SmsSendServiceImpl implements SmsSendService {
 
     @Override
     public void doSendSms(SmsSendMessage message) {
-
+        // 获得渠道对应的 SmsClient 客户端
+        SmsClient smsClient = smsChannelService.getSmsClientById(message.getChannelId());
+        Assert.notNull(smsClient, "短信客户端({}) 不存在", message.getChannelId());
+        // 发送短信
+        try {
+            smsClient.sendSms(message.getMobile(),
+                message.getApiTemplateId(), message.getTemplateParams());
+        } catch (Throwable ex) {
+            log.error("[doSendSms][发送短信异常]", ex);
+        }
     }
 
     @Override
     public void receiveSmsStatus(String channelCode, String text) throws Throwable {
-
+        // 获得渠道对应的 SmsClient 客户端
+        SmsClient smsClient = smsChannelService.getSmsClient(channelCode);
+        Assert.notNull(smsClient, "短信客户端({}) 不存在", channelCode);
+        // 解析内容
+        smsClient.parseSmsReceiveStatus(text);
     }
 }

@@ -11,15 +11,14 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
-import cn.iocoder.yudao.framework.common.util.json.JsonUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.skyeye.common.entity.KeyValue;
+import com.skyeye.common.util.DateUtil;
 import com.skyeye.sms.classenum.SmsTemplateAuditStatusEnum;
 import com.skyeye.sms.core.entity.SmsReceiveResp;
 import com.skyeye.sms.core.entity.SmsSendResp;
 import com.skyeye.sms.core.entity.SmsTemplateResp;
-import com.skyeye.sms.entity.KeyValue;
 import com.skyeye.sms.entity.SmsChannel;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +28,9 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.hutool.crypto.digest.DigestUtil.sha256Hex;
-import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
-import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
-import static cn.iocoder.yudao.framework.common.util.date.DateUtils.TIME_ZONE_DEFAULT;
 
 // todo @scholar：参考阿里云在优化下
 
@@ -66,7 +63,7 @@ public class HuaweiSmsClient extends AbstractSmsClient {
     }
 
     @Override
-    public SmsSendResp sendSms(Long sendLogId, String mobile, String apiTemplateId,
+    public SmsSendResp sendSms(String mobile, String apiTemplateId,
                                List<KeyValue<String, Object>> templateParams) throws Throwable {
         // 参考链接 https://support.huaweicloud.com/api-msgsms/sms_05_0001.html
         // 相比较阿里短信，华为短信发送的时候需要额外的参数“通道号”，考虑到不破坏原有的的结构
@@ -77,7 +74,7 @@ public class HuaweiSmsClient extends AbstractSmsClient {
         //选填,短信状态报告接收地址,推荐使用域名,为空或者不填表示不接收状态报告
         String statusCallBack = properties.getCallbackUrl();
 
-        List<String> templateParas = CollectionUtils.convertList(templateParams, kv -> String.valueOf(kv.getValue()));
+        List<String> templateParas = templateParams.stream().map(bean -> String.valueOf(bean.getValue())).collect(Collectors.toList());
 
         JSONObject JsonResponse = sendSmsRequest(sender, mobile, templateId, templateParas, statusCallBack);
         SmsResponse smsResponse = getSmsSendResponse(JsonResponse);
@@ -149,7 +146,7 @@ public class HuaweiSmsClient extends AbstractSmsClient {
         appendToBody(body, "from=", sender);
         appendToBody(body, "&to=", receiver);
         appendToBody(body, "&templateId=", templateId);
-        appendToBody(body, "&templateParas=", JsonUtils.toJsonString(templateParas));
+        appendToBody(body, "&templateParas=", JSONUtil.toJsonStr(templateParas));
         appendToBody(body, "&statusCallback=", statusCallBack);
         appendToBody(body, "&signature=", signature);
         return body.toString();
@@ -163,11 +160,13 @@ public class HuaweiSmsClient extends AbstractSmsClient {
 
     @Override
     public List<SmsReceiveResp> parseSmsReceiveStatus(String text) {
-        List<SmsReceiveStatus> statuses = JsonUtils.parseArray(text, SmsReceiveStatus.class);
-        return convertList(statuses, status -> new SmsReceiveResp().setSuccess(Objects.equals(status.getStatus(), "DELIVRD"))
-            .setErrorCode(status.getStatus()).setErrorMsg(status.getStatus())
-            .setMobile(status.getPhoneNumber()).setReceiveTime(status.getUpdateTime())
-            .setSerialNo(status.getSmsMsgId()));
+        List<SmsReceiveStatus> statuses = JSONUtil.toList(text, SmsReceiveStatus.class);
+        return statuses.stream().map(status -> {
+            return new SmsReceiveResp().setSuccess(Objects.equals(status.getStatus(), "DELIVRD"))
+                .setErrorCode(status.getStatus()).setErrorMsg(status.getStatus())
+                .setMobile(status.getPhoneNumber()).setReceiveTime(status.getUpdateTime())
+                .setSerialNo(status.getSmsMsgId());
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -213,7 +212,7 @@ public class HuaweiSmsClient extends AbstractSmsClient {
         /**
          * 短信资源的更新时间，通常为短信平台接收短信状态报告的时间
          */
-        @JsonFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND, timezone = TIME_ZONE_DEFAULT)
+        @JsonFormat(pattern = DateUtil.YYYY_MM_DD_HH_MM_SS, timezone = DateUtil.TIME_ZONE_DEFAULT)
         private LocalDateTime updateTime;
 
         /**

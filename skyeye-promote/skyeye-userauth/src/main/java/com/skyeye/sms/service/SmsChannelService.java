@@ -18,5 +18,9 @@ import com.skyeye.sms.entity.SmsChannel;
  */
 public interface SmsChannelService extends SkyeyeBusinessService<SmsChannel> {
 
-    SmsClient getSmsClient(Long channelId);
+    SmsClient getSmsClientById(String channelId);
+
+    SmsClient getSmsClient(String channelCode);
+
+    SmsChannel selectByCodeNum(String codeNum);
 }
