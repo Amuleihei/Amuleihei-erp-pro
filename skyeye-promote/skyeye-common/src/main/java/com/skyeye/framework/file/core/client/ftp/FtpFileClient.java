@@ -42,7 +42,7 @@ public class FtpFileClient extends AbstractFileClient<FtpFileClientConfig> {
 
         // 初始化 Ftp 对象
         this.ftp = new Ftp(config.getHost(), config.getPort(), config.getUsername(), config.getPassword(),
-            CharsetUtil.CHARSET_UTF_8, FtpMode.valueOf(config.getMode()));
+            CharsetUtil.CHARSET_UTF_8, null, null, FtpMode.valueOf(config.getMode()));
     }
 
     @Override
