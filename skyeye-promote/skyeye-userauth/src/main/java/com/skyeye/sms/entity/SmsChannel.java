@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.cache.RedisCacheField;
+import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
+@RedisCacheField(name = "sms:channel", cacheTime = RedisConstants.HALF_A_YEAR_SECONDS)
 @TableName(value = "skyeye_sms_channel")
 @ApiModel("短信模板")
 @Accessors(chain = true)

@@ -5,6 +5,8 @@
 package com.skyeye.sms.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
 import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.entity.SmsChannel;
 
@@ -23,4 +25,6 @@ public interface SmsChannelService extends SkyeyeBusinessService<SmsChannel> {
     SmsClient getSmsClient(String channelCode);
 
     SmsChannel selectByCodeNum(String codeNum);
+
+    void queryEnabledSmsChannelList(InputObject inputObject, OutputObject outputObject);
 }

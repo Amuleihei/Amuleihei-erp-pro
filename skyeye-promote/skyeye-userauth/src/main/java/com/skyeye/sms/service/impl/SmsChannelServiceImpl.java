@@ -9,6 +9,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.enumeration.EnableEnum;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.sms.core.service.SmsClient;
@@ -19,6 +22,8 @@ import com.skyeye.sms.service.SmsChannelService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @ClassName: SmsChannelServiceImpl
@@ -73,6 +78,15 @@ public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelD
         wrapper.eq(MybatisPlusUtil.toColumns(SmsChannel::getCodeNum), codeNum);
         SmsChannel smsChannel = getOne(wrapper, false);
         return smsChannel;
+    }
+
+    @Override
+    public void queryEnabledSmsChannelList(InputObject inputObject, OutputObject outputObject) {
+        QueryWrapper<SmsChannel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SmsChannel::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        List<SmsChannel> smsChannelList = list(queryWrapper);
+        outputObject.setBeans(smsChannelList);
+        outputObject.settotal(smsChannelList.size());
     }
 
 }

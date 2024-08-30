@@ -68,6 +68,13 @@ public class SmsTemplateServiceImpl extends SkyeyeBusinessServiceImpl<SmsTemplat
         entity.setParams(parseTemplateContentParams(entity.getContent()));
     }
 
+    @Override
+    public SmsTemplate selectById(String id) {
+        SmsTemplate smsTemplate = super.selectById(id);
+        smsChannelService.setDataMation(smsTemplate, SmsTemplate::getChannelId);
+        return smsTemplate;
+    }
+
     /**
      * 校验 API 短信平台的模板是否有效
      *

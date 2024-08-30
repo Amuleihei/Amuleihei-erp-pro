@@ -5,8 +5,16 @@
 package com.skyeye.sms.controller;
 
 import com.skyeye.annotation.api.Api;
+import com.skyeye.annotation.api.ApiImplicitParam;
+import com.skyeye.annotation.api.ApiImplicitParams;
+import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
+import com.skyeye.sms.entity.SmsChannel;
 import com.skyeye.sms.service.SmsChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,5 +31,33 @@ public class SmsChannelController {
 
     @Autowired
     private SmsChannelService smsChannelService;
+
+    @ApiOperation(id = "querySmsChannelList", value = "获取短信渠道列表", method = "POST", allUse = "1")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/SmsChannelController/querySmsChannelList")
+    public void querySmsChannelList(InputObject inputObject, OutputObject outputObject) {
+        smsChannelService.queryPageList(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "writeSmsChannel", value = "新增/编辑短信渠道", method = "POST", allUse = "1")
+    @ApiImplicitParams(classBean = SmsChannel.class)
+    @RequestMapping("/post/SmsChannelController/writeSmsChannel")
+    public void writeSmsChannel(InputObject inputObject, OutputObject outputObject) {
+        smsChannelService.saveOrUpdateEntity(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "deleteSmsChannelById", value = "删除短信渠道", method = "DELETE", allUse = "1")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/SmsChannelController/deleteSmsChannelById")
+    public void deleteSmsChannelById(InputObject inputObject, OutputObject outputObject) {
+        smsChannelService.deleteById(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryEnabledSmsChannelList", value = "获取所有启动的短信渠道列表", method = "GET", allUse = "2")
+    @RequestMapping("/post/SmsChannelController/queryEnabledSmsChannelList")
+    public void queryEnabledSmsChannelList(InputObject inputObject, OutputObject outputObject) {
+        smsChannelService.queryEnabledSmsChannelList(inputObject, outputObject);
+    }
 
 }
