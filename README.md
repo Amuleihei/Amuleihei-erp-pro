@@ -8,7 +8,7 @@
 
 **2. [开发文档](https://articles.zsxq.com/id_xi3xhacte72g.html)**
 
-**3. [常见问题](https://gitee.com/doc_wei01/skyeye/blob/company_server/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.md)，优先看这个。**
+**3. [常见问题](https://gitee.com/dromara/skyeye/blob/company_server/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.md)，优先看这个。**
 
 **4. **体验地址** ：右上角`Star`后，关注下方微信公众号，回复`skyeye`获取**
 
@@ -26,7 +26,7 @@
 
 | |   知识星球   | 微信公众号(Skyeye智能制造云办公) | QQ交流群 |
 |:---------------------:|:---------------------:|:--------------------------------:|:--------------------------------:|
-| 微信扫码 | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/知识星球.png) | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/微信公众号.jpg) | ![](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/Dromara-Skyeye云交流群群聊二维码.png) |
+| 微信扫码 | ![](https://gitee.com/dromara/skyeye/raw/company_server/images/mindMap/知识星球.png) | ![](https://gitee.com/dromara/skyeye/raw/company_server/images/mindMap/微信公众号.jpg) | ![](https://gitee.com/dromara/skyeye/raw/company_server/images/mindMap/Dromara-Skyeye云交流群群聊二维码.png) |
 
 ## 项目框架介绍
 
@@ -83,11 +83,11 @@
 
 > 功能结构图内容较多，加载可能会有点慢，请耐心等待。
 
-![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/out_www.yalijuda.com_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240730093239_Ee37d6NUHo.png)
+![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/mindMap/out_www.yalijuda.com_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240730093239_Ee37d6NUHo.png)
 
 ##  :tw-1f31e:  架构介绍
 
-![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/mindMap/image11.png)
+![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/mindMap/image11.png)
 
 ###  :jack_o_lantern:  技术选型
 
@@ -124,59 +124,59 @@
 ### 基础内容
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|组件管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/20240802001image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/2024080202image.png)||
-|布局/操作/属性管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/2024080203image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/2024080204image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/20240802005image.png)|
-|菜单/角色/编码管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/20240802010image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/20240802011image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/base/20240802012image.png)|
+|组件管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/20240802001image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/2024080202image.png)||
+|布局/操作/属性管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/2024080203image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/2024080204image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/20240802005image.png)|
+|菜单/角色/编码管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/20240802010image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/20240802011image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/base/20240802012image.png)|
 
 ### CRM
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|客户管理(包括合同、跟单、文档等)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/1image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/2image.png)|
-|客户管理(包括合同、跟单、文档等)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/3image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/4image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/5image.png)|
-|报表分析|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/6image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/7image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/crm/8image.png)|
+|客户管理(包括合同、跟单、文档等)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/1image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/2image.png)|
+|客户管理(包括合同、跟单、文档等)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/3image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/4image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/5image.png)|
+|报表分析|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/6image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/7image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/crm/8image.png)|
 
 ### ERP
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|商品管理 **(支持一物一码)** |![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/08image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/07image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/09image.png)|
-|采购模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/01image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/02image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/03image.png)|
-|采购模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/04image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/05image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/06image.png)|
-|销售模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/10image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/11image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/12image.png)|
-|报表模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/13image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/14image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erp/15image.png)|
+|商品管理 **(支持一物一码)** |![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/08image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/07image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/09image.png)|
+|采购模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/01image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/02image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/03image.png)|
+|采购模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/04image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/05image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/06image.png)|
+|销售模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/10image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/11image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/12image.png)|
+|报表模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/13image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/14image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erp/15image.png)|
 
 ### ERP仓库
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|其他单据管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/1image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/2image.png)|
-|仓库管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/3image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/4image.png)||
-|盘点管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/5image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/6image.png)||
-|出入库管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/7image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/8image.png)||
-|商品条形码|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/9image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/erpDepot/10image.png)||
+|其他单据管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/1image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/2image.png)|
+|仓库管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/3image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/4image.png)||
+|盘点管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/5image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/6image.png)||
+|出入库管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/7image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/8image.png)||
+|商品条形码|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/9image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/erpDepot/10image.png)||
 
 ### MES生产
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|生产管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/1image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/2image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/3image.png)|
-|设置中心|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/4image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/5image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/6image.png)|
-|物料管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/7image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/8image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/9image.png)|
-|生产执行|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/10image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/11image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/12image.png)|
-|物料确认|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/13image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/14image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/mes/15image.png)|
+|生产管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/1image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/2image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/3image.png)|
+|设置中心|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/4image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/5image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/6image.png)|
+|物料管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/7image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/8image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/9image.png)|
+|生产执行|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/10image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/11image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/12image.png)|
+|物料确认|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/13image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/14image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/mes/15image.png)|
 
 ### 行政办公
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|会议室模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/1image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/2image.png)||
-|用品模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/3image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/4image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/5image.png)|
-|资产模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/6image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/7image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/8image.png)|
-|公文模块|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/9image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/10image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/11image.png)|
-|印章，证照，车辆|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/12image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/13image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/oa/14image.png)|
+|会议室模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/1image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/2image.png)||
+|用品模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/3image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/4image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/5image.png)|
+|资产模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/6image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/7image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/8image.png)|
+|公文模块|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/9image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/10image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/11image.png)|
+|印章，证照，车辆|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/12image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/13image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/oa/14image.png)|
 
 ### 售后管理模块
 |功能| 效果图 | 效果图 | 效果图 |
 |----|-------|-----|------|
-|工单管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/1image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/2image.png)||
-|配件管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/3image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/4image.png)||
-|工人管理|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/5image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/6image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/sealService/7image.png)|
+|工单管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/1image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/2image.png)||
+|配件管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/3image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/4image.png)||
+|工人管理|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/5image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/6image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/sealService/7image.png)|
 
 ##  :tw-1f30f:  移动端效果图
 
@@ -185,22 +185,22 @@
 ### 基础模块
 | 效果图  | 效果图  | 效果图  | 效果图  |
 |--------|-------|-------|-------|
-|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/20240730image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073002image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073003image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073004image.png)|
+|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/20240730image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073002image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073003image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073004image.png)|
 
 ### ERP
 
 | 效果图  | 效果图  | 效果图  | 效果图  |
 |--------|-------|-------|-------|
-|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073005image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073006image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073007image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073008image.png)|
+|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073005image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073006image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073007image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073008image.png)|
 
 ### CRM
 
 | 效果图  | 效果图  | 效果图  | 效果图  |
 |--------|-------|-------|-------|
-|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073012image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073009image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073010image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073011image.png)|
+|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073012image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073009image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073010image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073011image.png)|
 
 ### OA
 
 | 效果图  | 效果图  | 效果图  | 效果图  |
 |--------|-------|-------|-------|
-|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073013image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073014image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073015image.png)|![输入图片说明](https://gitee.com/doc_wei01/skyeye/raw/company_server/images/show/phone/2024073016image.png)|
+|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073013image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073014image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073015image.png)|![输入图片说明](https://gitee.com/dromara/skyeye/raw/company_server/images/show/phone/2024073016image.png)|
