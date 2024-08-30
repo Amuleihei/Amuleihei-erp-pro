@@ -1,0 +1,15 @@
+diff a/skyeye-wall/wall-pro/pom.xml b/skyeye-wall/wall-pro/pom.xml	(rejected hunks)
+@@ -25,12 +25,6 @@
+             <artifactId>wall-common</artifactId>
+             <version>1.0-SNAPSHOT</version>
+         </dependency>
+-        <dependency>
+-            <groupId>org.jboss.logging</groupId>
+-            <artifactId>jboss-logging</artifactId>
+-            <version>3.3.2.Final</version>
+-        </dependency>
+-
+     </dependencies>
+ 
+ </project>
+\ No newline at end of file

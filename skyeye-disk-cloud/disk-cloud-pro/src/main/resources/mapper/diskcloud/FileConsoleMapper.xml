@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.dao.FileConsoleDao">
+	
+	<select id="queryFileFolderByUserIdAndParentId" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			#{parentId} pId,
+			'../../assets/images/cloud/my-folder-icon.png' icon,
+			1 isParent
+		FROM
+			file_catalog a
+		WHERE a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM file_catalog t WHERE t.id = #{parentId}), ''), #{parentId}, ',')
+		<if test="folderType != '1'.toString()">
+			AND a.create_id = #{userId}
+		</if>
+		AND a.id NOT IN (SELECT m.file_id FROM file_catelog_recycle_bin m WHERE m.file_type = '1' AND m.create_id = #{userId})
+		AND a.delete_flag = #{deleteFlag}
+		ORDER BY a.`name` ASC
+	</select>
+	
+	<select id="queryFilesListByFolderId" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			*
+		FROM (
+				SELECT
+					a.id,
+					a.`name`,
+					#{folderId} pId,
+					'../../assets/images/icon/folder-show.png' icon,
+					1 isParent,
+					'folder' type,
+					if((SELECT COUNT(*) FROM file_catalog_share l WHERE l.file_id = a.id AND l.file_type = '1') > 0, 'block', 'none') isShow,
+					1 `orderBy`,
+					0 size,
+					a.create_id createId,
+					CONVERT(a.create_time, char) createTime
+				FROM
+					file_catalog a
+				WHERE
+					a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM file_catalog t WHERE t.id = #{folderId}), ''), #{folderId}, ',')
+				<if test="folderType != '1'.toString()">
+					AND a.create_id = #{userId}
+				</if>
+				AND a.id NOT IN (SELECT m.file_id FROM file_catelog_recycle_bin m WHERE m.file_type = '1' AND m.create_id = #{userId})
+				AND a.delete_flag = #{deleteFlag}
+				UNION ALL
+					SELECT
+						a.id,
+						a.`name`,
+						#{folderId} pId,
+						a.thumbnail icon,
+						0 isParent,
+						a.type,
+						if((SELECT COUNT(*) FROM file_catalog_share l WHERE l.file_id = a.id AND l.file_type = '2') > 0, 'block', 'none') isShow,
+						2 `orderBy`,
+						a.size,
+						a.create_id createId,
+						CONVERT(a.create_time, char) createTime
+					FROM
+						file_catelog_papers a
+					WHERE
+						a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM file_catalog t WHERE t.id = #{folderId}), ''), #{folderId}, ',')
+					<if test="folderType != '1'.toString()">
+						AND a.create_id = #{userId}
+					</if>
+					AND a.id NOT IN (SELECT m.file_id FROM file_catelog_recycle_bin m WHERE m.file_type = '2' AND m.create_id = #{userId})
+					AND a.delete_flag = #{deleteFlag}
+			) k
+		<if test="orderByStr != '' and orderByStr != null">
+			ORDER BY ${orderByStr}
+		</if>
+	</select>
+	
+	<select id="queryChildFileListByFolder" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.thumbnail,
+			a.address,
+			a.type,
+			a.size,
+			a.size_type sizeType,
+			a.chunk,
+			a.chunk_size chunkSize,
+			a.parent_id parentId,
+			a.delete_flag deleteFlag
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		AND
+		<foreach collection="list" item="item" index="index" open="(" close=")" separator="OR">
+			a.parent_id = CONCAT(#{item.parentId}, #{item.id}, ',')
+		</foreach>
+		ORDER BY LENGTH(a.parent_id) ASC
+	</select>
+	
+	<insert id="insertFolderList" parameterType="java.util.Map">
+	     insert into file_catalog
+	     (id, `name`, parent_id, delete_flag, source_id, create_id, create_time, last_update_id ,last_update_time)
+	     values
+		<foreach collection="list" item="item" index="index" separator="," >  
+			(#{item.newId}, #{item.name}, #{item.newParentId}, #{item.deleteFlag}, #{item.id}, #{item.createId}, #{item.createTime}, #{item.createId}, #{item.createTime})
+		</foreach>  
+	</insert>
+	
+	<insert id="insertShareFileListByList" parameterType="java.util.Map">
+	     insert into file_catelog_papers
+	     (id, `name`, thumbnail, address, type, size, size_type, chunk, chunk_size, parent_id, delete_flag, source_id, create_id, create_time, last_update_id, last_update_time)
+	     values
+		<foreach collection="list" item="item" index="index" separator="," >  
+			(#{item.newId}, #{item.name}, #{item.thumbnail}, #{item.address}, #{item.type}, #{item.size}, #{item.sizeType}, #{item.chunk}, #{item.chunkSize},
+			#{item.newParentId}, #{item.deleteFlag}, #{item.id}, #{item.createId}, #{item.createTime}, #{item.createId}, #{item.createTime})
+		</foreach>  
+	</insert>
+	
+	<select id="queryShareFileListByFileList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.thumbnail,
+			a.address,
+			a.type,
+			a.size,
+			a.size_type sizeType,
+			a.chunk,
+			a.chunk_size chunkSize,
+			a.parent_id parentId,
+			a.delete_flag deleteFlag
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		AND
+		<foreach collection="ids" item="id" index="index" open="(" close=")" separator="OR">
+			a.id = #{id}
+		</foreach>
+		ORDER BY LENGTH(a.parent_id) ASC
+	</select>
+	
+    <select id="queryAllNumFile" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			IFNULL(COUNT(a.id), 0) fileNum,
+			IFNULL(SUM(a.size), 0) fileSize
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+    </select>
+    
+    <select id="queryAllNumFileToday" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			IFNULL(COUNT(a.id), 0) fileNum,
+			IFNULL(SUM(a.size), 0) fileSize
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		AND to_days(a.create_time) = to_days(now())
+    </select>
+    
+    <select id="queryAllNumFileThisWeek" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			IFNULL(COUNT(a.id), 0) fileNum,
+			IFNULL(SUM(a.size), 0) fileSize
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		AND YEARWEEK(date_format(a.create_time, '%Y-%m-%d')) = YEARWEEK(now())
+    </select>
+    
+    <select id="queryFileTypeNum" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			CASE WHEN a.type IN('png', 'jpg', 'xbm', 'bmp', 'webp', 'jpeg', 'svgz', 'git', 'ico', 'tiff', 'svg', 'jiff', 'pjpeg', 'pjp', 'tif') THEN '图片'
+				 WHEN a.type IN('docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'wps', 'et', 'dps', 'csv', 'pdf') THEN '文档'
+				 WHEN a.type IN('mp4', 'rm', 'rmvb', 'wmv', 'avi', '3gp', 'mkv') THEN '视频'
+				 WHEN a.type IN('zip', 'rar') THEN '压缩包'
+				 WHEN a.type IN('epub') THEN '电子书'
+				 WHEN a.type IN('txt', 'sql', 'java', 'css', 'html', 'htm', 'json', 'js', 'tpl') THEN '简易文档'
+				 ELSE '其他' END AS `name`,
+			COUNT(a.id) `value`
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		GROUP BY `name`
+    </select>
+    
+    <select id="queryFileStorageNum" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			CASE WHEN a.type IN('png', 'jpg', 'xbm', 'bmp', 'webp', 'jpeg', 'svgz', 'git', 'ico', 'tiff', 'svg', 'jiff', 'pjpeg', 'pjp', 'tif') THEN '图片'
+				 WHEN a.type IN('docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'wps', 'et', 'dps', 'csv', 'pdf') THEN '文档'
+				 WHEN a.type IN('mp4', 'rm', 'rmvb', 'wmv', 'avi', '3gp', 'mkv') THEN '视频'
+				 WHEN a.type IN('zip', 'rar') THEN '压缩包'
+				 WHEN a.type IN('epub') THEN '电子书'
+				 WHEN a.type IN('txt', 'sql', 'java', 'css', 'html', 'htm', 'json', 'js', 'tpl') THEN '简易文档'
+				 ELSE '其他' END AS typeName,
+			SUM(a.type) fileSize
+		FROM
+			file_catelog_papers a
+		WHERE a.delete_flag = #{deleteFlag}
+		GROUP BY typeName
+		ORDER BY fileSize DESC
+		LIMIT 3
+    </select>
+    
+    <select id="queryNewFileNum" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			IFNULL(COUNT(b.id), 0) fileNum,
+			a.monthName
+		FROM
+			(
+		    SELECT 1 AS month, '一月' monthName
+				UNION SELECT 2 AS month, '二月' monthName
+				UNION SELECT 3 AS month, '三月' monthName
+				UNION SELECT 4 AS month, '四月' monthName
+				UNION SELECT 5 AS month, '五月' monthName
+				UNION SELECT 6 AS month, '六月' monthName
+				UNION SELECT 7 AS month, '七月' monthName
+				UNION SELECT 8 AS month, '八月' monthName
+				UNION SELECT 9 AS month, '九月' monthName
+				UNION SELECT 10 AS month, '十月' monthName
+				UNION SELECT 11 AS month, '十一月' monthName
+				UNION SELECT 12 AS month, '十二月' monthName
+			) a
+			LEFT JOIN file_catelog_papers b ON b.delete_flag = #{deleteFlag} AND MONTH(b.create_time) = a.`month` AND DATE_FORMAT(NOW(), '%Y') = YEAR(b.create_time)
+		GROUP BY a.`month` ORDER BY a.`month`
+    </select>
+    
+    <select id="queryFileTypeNumSevenDay" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			CASE WHEN b.type IN('png', 'jpg', 'xbm', 'bmp', 'webp', 'jpeg', 'svgz', 'git', 'ico', 'tiff', 'svg', 'jiff', 'pjpeg', 'pjp', 'tif') THEN '图片'
+					WHEN b.type IN('docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx', 'wps', 'et', 'dps', 'csv', 'pdf') THEN '文档'
+					WHEN b.type IN('mp4', 'rm', 'rmvb', 'wmv', 'avi', '3gp', 'mkv') THEN '视频'
+					WHEN b.type IN('zip', 'rar') THEN '压缩包'
+					WHEN b.type IN('epub') THEN '电子书'
+					WHEN b.type IN('txt', 'sql', 'java', 'css', 'html', 'htm', 'json', 'js', 'tpl') THEN '简易文档'
+					ELSE '其他' END AS typeName,
+			IFNULL(COUNT(b.id), 0) fileNum,
+			DATE_FORMAT(a.click_date, '%Y-%m-%d') clickDate
+		FROM
+			(
+		    SELECT curdate() as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 1 day) as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 2 day) as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 3 day) as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 4 day) as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 5 day) as click_date
+		    union all
+		    SELECT date_sub(curdate(), interval 6 day) as click_date
+			) a
+			LEFT JOIN file_catelog_papers b ON b.delete_flag = #{deleteFlag} AND to_days(b.create_time) = to_days(a.click_date)
+		GROUP BY a.click_date, typeName
+    </select>
+	
+</mapper>

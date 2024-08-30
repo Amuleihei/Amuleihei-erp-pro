@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.dao.JobDiaryDao">
+
+	<select id="queryMysendJobDiaryList" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.type,
+			a.state,
+			a.create_id createId,
+			CONVERT(a.create_time, char) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, char) lastUpdateTime
+		FROM
+			job_diary a
+		<where>
+			a.create_id = #{createId}
+			AND a.delete_flag = #{deleteFlag}
+			AND a.type = #{type}
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+	
+	<select id="queryMyReceivedJobDiaryList" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.type,
+			b.state,
+			a.create_id createId,
+			CONVERT(a.create_time, char) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, char) lastUpdateTime
+		FROM
+			job_diary a,
+			job_diary_received b
+		<where>
+			b.received_id = #{createId}
+			AND b.diary_id = a.id
+			AND a.delete_flag = #{deleteFlag}
+			<if test="type != '' and type != null">
+				AND a.type = #{type}
+			</if>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+
+</mapper>

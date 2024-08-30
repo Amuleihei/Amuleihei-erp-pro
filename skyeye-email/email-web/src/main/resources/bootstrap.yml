@@ -1,0 +1,54 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: skyeye-email-${spring.profiles.active} # 服务名
+  profiles:
+    active: public
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:9000 # 配置服务注册nacos地址
+        namespace: ${spring.profiles.active} # 配置命名空间
+        service: ${spring.application.name} # 配置服务名
+      config:
+        # 指定nacos server的地址
+        server-addr: localhost:9000
+        # 配置文件后缀
+        file-extension: yml
+        # 命名空间 常用场景之一是不同环境的配置的区分隔离，例如开发测试环境和生产环境的资源（如配置、服务）隔离等
+        namespace: ${spring.profiles.active} # 配置命名空间
+        # 支持多个共享 Data Id 的配置，优先级小于ext-config,自定义 Data Id 配置 属性是个集合，内部由 Config POJO 组成。Config 有 3 个属性，分别是 dataId, group 以及 refresh
+        ext-config:
+          - data-id: skyeye-common.yml # 配置文件名-Data Id
+            group: DEFAULT_GROUP # 默认为DEFAULT_GROUP
+            refresh: false # 是否动态刷新，默认为false
+logging:
+  level:
+    com.skyeye: debug
+
+feign:
+  client:
+    config:
+      # 全局配置
+      default:
+        loggerLevel: FULL
+
+topic:
+  # 收件箱邮件获取的topic
+  mail-access-inbox-service: MAIL_ACCESS_INBOX_SERVICE
+  # 已发送邮件获取的TOPIC
+  mail-access-sended-service: MAIL_ACCESS_SENDED_SERVICE
+  # 已删除邮件获取的topic
+  mail-access-delete-service: MAIL_ACCESS_DELETE_SERVICE
+  # 草稿箱邮件获取的topic
+  mail-access-drafts-service: MAIL_ACCESS_DRAFTS_SERVICE
+  # 邮件发送的topic
+  complex-mail-delivery-service: COMPLEX_MAIL_DELIVERY_SERVICE
+  # 保存草稿同步的topic
+  mail-drafts-save-service: MAIL_DRAFTS_SAVE_SERVICE
+  # 草稿编辑同步的topic
+  mail-drafts-edit-service: MAIL_DRAFTS_EDIT_SERVICE
+  # 草稿箱邮件发送的topic
+  mail-drafts-send-service: MAIL_DRAFTS_SEND_SERVICE

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.dao.StatisticsDao">
+
+    <select id="queryErpOrderItem" resultType="java.util.Map">
+        SELECT
+			b.id,
+			b.id_key idKey,
+			b.odd_number oddNumber,
+			b.oper_time operTime,
+			a.material_id materialId,
+			a.norms_id normsId,
+			a.depot_id depotId,
+			a.oper_number operNumber,
+			a.unit_price unitPrice,
+			a.all_price allPrice
+		FROM
+			erp_depotitem a
+			LEFT JOIN erp_depot d ON a.depot_id = d.id,
+			erp_depothead b
+		<where>
+			a.parent_id = b.id
+			AND b.state = #{state}
+			<foreach collection="objectBusiness" item="subType" separator="," open=" AND b.id_key in(" close=")">
+				#{subType}
+			</foreach>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND b.odd_number like '%${keyword}%'
+			</if>
+		</where>
+        ORDER BY b.oper_time DESC
+    </select>
+    
+    <select id="queryPointSubTypeOrder" resultType="java.util.Map">
+		SELECT
+		    q.material_id materialId,
+			q.norms_id normsId,
+			IFNULL(SUM(q.oper_number), 0) currentTock,
+			FORMAT(IFNULL(SUM(p.total_price), 0), 2) currentTockMoney
+		FROM
+			erp_depothead p,
+			erp_depotitem q
+		<where>
+			q.parent_id = p.id
+			<foreach collection="objectBusiness" item="subType" separator="," open=" AND p.id_key in(" close=")">
+				#{subType}
+			</foreach>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND DATE_FORMAT(p.oper_time, '%Y-%m') = #{keyword}
+			</if>
+		</where>
+		GROUP BY q.norms_id
+    </select>
+    
+    <select id="queryErpOrderListByIdKey" resultType="java.util.Map">
+    	SELECT
+			a.id,
+			a.id_key idKey,
+			a.holder_id holderId,
+			a.odd_number oddNumber,
+			a.total_price totalPrice,
+			a.oper_time operTime
+		FROM
+			erp_depothead a
+		<where>
+			a.holder_key = #{holderKey}
+			AND a.state = #{state}
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND DATE_FORMAT(a.oper_time, '%Y-%m') = #{keyword}
+			</if>
+		</where>
+    </select>
+    
+</mapper>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.meal.dao.StatisticsShopDao">
+
+    <select id="queryMealOrderMemberByNum" resultType="java.lang.String">
+        SELECT
+            COUNT(1) mealOrderMemberByNum
+        FROM
+            (SELECT
+                 COUNT(1)
+             FROM
+                 shop_meal_order a,
+                 shop_store b
+             WHERE a.store_id = b.id
+             AND a.state IN (2, 3)
+            <if test="areaId != '' and areaId != null">
+                AND b.area_id = #{areaId}
+            </if>
+            <if test="storeId != '' and storeId != null">
+                AND a.store_id = #{storeId}
+            </if>
+            <if test="natureId != '' and natureId != null">
+                AND a.nature_id = #{natureId}
+            </if>
+            <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+                AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+                AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+            </if>
+             GROUP BY a.object_id) b
+    </select>
+
+    <select id="queryMealOrderNum" resultType="java.lang.String">
+        SELECT
+            COUNT(1) mealOrderNum
+        FROM
+            shop_meal_order a,
+            shop_store b
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND a.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+    </select>
+
+    <select id="queryKeepFitOrderNum" resultType="java.lang.String">
+        SELECT
+            COUNT(1) keepFitOrderNum
+        FROM
+            shop_keepfit_order a,
+            shop_store b,
+            shop_meal_order_child f,
+            shop_meal_order g
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        AND f.order_id = g.id
+        AND f.id = a.meal_order_child_id
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND g.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+    </select>
+
+    <select id="queryKeepFitOrderPrice" resultType="java.lang.String">
+        SELECT
+            FORMAT(IFNULL(SUM(a.pay_price), 0), 2) keepFitOrderNum
+        FROM
+            shop_keepfit_order a,
+            shop_store b,
+            shop_meal_order_child f,
+            shop_meal_order g
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        AND f.order_id = g.id
+        AND f.id = a.meal_order_child_id
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND g.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+    </select>
+
+    <select id="queryMonthMealOrderNum" resultType="java.util.Map">
+        SELECT
+            c.`year_month` name,
+            IFNULL(COUNT(d.id), 0) value
+        FROM
+            (
+            <foreach collection="month" item="item" index="index" separator="UNION">
+                SELECT #{item} AS `year_month`
+            </foreach>
+            ) c
+            LEFT JOIN
+                (SELECT
+                    a.id,
+                    a.create_time
+                FROM
+                    shop_meal_order a,
+                    shop_store b
+                WHERE a.store_id = b.id
+                AND a.state IN (2, 3)
+                <if test="areaId != '' and areaId != null">
+                    AND b.area_id = #{areaId}
+                </if>
+                <if test="natureId != '' and natureId != null">
+                    AND a.nature_id = #{natureId}
+                </if>
+                <if test="storeId != '' and storeId != null">
+                    AND a.store_id = #{storeId}
+                </if>) d ON DATE_FORMAT(d.create_time, '%Y-%m') = c.year_month
+        GROUP BY c.`year_month`
+    </select>
+
+    <select id="queryStoreMealOrderNum" resultType="java.util.Map">
+        SELECT
+            b.`name`,
+            COUNT(1) value
+        FROM
+            shop_meal_order a,
+            shop_store b
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND a.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+        GROUP BY a.store_id
+    </select>
+
+    <select id="queryStoreKeepFitOrderNum" resultType="java.util.Map">
+        SELECT
+            b.`name`,
+            COUNT(1) value
+        FROM
+            shop_keepfit_order a,
+            shop_store b,
+            shop_meal_order_child f,
+            shop_meal_order g
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        AND f.order_id = g.id
+        AND f.id = a.meal_order_child_id
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND g.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+        GROUP BY a.store_id
+    </select>
+
+    <select id="queryNatureMealOrderNum" resultType="java.util.Map">
+        SELECT
+            a.nature_id natureId,
+            COUNT(1) value
+        FROM
+            shop_meal_order a,
+            shop_store b
+        WHERE a.store_id = b.id
+        AND a.state IN (2, 3)
+        <if test="areaId != '' and areaId != null">
+            AND b.area_id = #{areaId}
+        </if>
+        <if test="storeId != '' and storeId != null">
+            AND a.store_id = #{storeId}
+        </if>
+        <if test="natureId != '' and natureId != null">
+            AND a.nature_id = #{natureId}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND DATE_FORMAT(a.create_time, '%Y-%m') >= #{startTime}
+            AND #{endTime} >= DATE_FORMAT(a.create_time, '%Y-%m')
+        </if>
+        GROUP BY b.id
+    </select>
+
+    <select id="queryMonthKeepFitOrderNum" resultType="java.util.Map">
+        SELECT
+            c.`year_month` name,
+            IFNULL(COUNT(d.id), 0) value
+        FROM
+            (
+            <foreach collection="month" item="item" index="index" separator="UNION">
+                SELECT #{item} AS `year_month`
+            </foreach>
+            ) c
+            LEFT JOIN
+            (SELECT
+                a.id,
+                a.create_time
+            FROM
+                shop_keepfit_order a,
+                shop_store b,
+                shop_meal_order_child f,
+                shop_meal_order g
+            WHERE a.store_id = b.id
+            AND a.state IN (2, 3)
+            AND f.order_id = g.id
+            AND f.id = a.meal_order_child_id
+            <if test="areaId != '' and areaId != null">
+                AND b.area_id = #{areaId}
+            </if>
+            <if test="natureId != '' and natureId != null">
+                AND g.nature_id = #{natureId}
+            </if>
+            <if test="storeId != '' and storeId != null">
+                AND a.store_id = #{storeId}
+            </if>) d ON DATE_FORMAT(d.create_time, '%Y-%m') = c.year_month
+        GROUP BY c.`year_month`
+    </select>
+
+</mapper>

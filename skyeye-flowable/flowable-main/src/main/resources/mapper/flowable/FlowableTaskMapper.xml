@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.activiti.mapper.FlowableTaskDao">
+
+    <select id="getApplyingTasks" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            DISTINCT t1.ID_ AS taskId,
+            t1.NAME_ AS taskName,
+            t2.NAME_ AS formName,
+            t2.TENANT_ID_ AS systemSn,
+            t2.BUSINESS_KEY_ AS businessKey,
+            t2.PROC_INST_ID_ AS processInstanceId,
+            t1.CREATE_TIME_ AS startTime,
+            t1.SCOPE_TYPE_ scopeType
+        FROM
+            act_ru_task t1
+            INNER JOIN act_ru_execution t2 ON t1.PROC_INST_ID_ = t2.PROC_INST_ID_
+            LEFT JOIN act_ru_identitylink t3 ON t3.TASK_ID_ = t1.ID_
+        <where>
+            <if test="createId != '' and createId != null">
+                t1.ASSIGNEE_ = #{createId}
+            </if>
+            <if test="sqlExtract != '' and sqlExtract != null">
+                ${sqlExtract}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (t1.PROC_INST_ID_ LIKE '%${keyword}%' OR t1.NAME_ LIKE '%${keyword}%')
+            </if>
+        </where>
+        ORDER BY t1.CREATE_TIME_ DESC
+    </select>
+
+</mapper>

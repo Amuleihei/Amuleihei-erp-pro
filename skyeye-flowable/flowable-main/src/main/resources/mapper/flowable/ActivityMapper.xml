@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.activiti.mapper.ActivityMapper">
+
+    <update id="updateProcessDefinitionName">
+        UPDATE ACT_RE_PROCDEF
+        <set>
+            NAME_ = #{name}
+        </set>
+        WHERE ID_ = #{processDefinitionId}
+    </update>
+
+    <delete id="deleteHisActivityInstanceByTaskId">
+        DELETE
+        FROM
+            ACT_HI_ACTINST
+        where
+            TASK_ID_ = #{taskId}
+    </delete>
+
+    <delete id="deleteHisTaskInstanceByTaskId">
+        DELETE
+        FROM
+            ACT_HI_TASKINST
+        where
+            ID_ = #{taskId}
+    </delete>
+
+</mapper>

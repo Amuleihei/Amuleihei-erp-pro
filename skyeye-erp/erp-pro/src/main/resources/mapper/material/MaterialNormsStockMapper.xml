@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.material.dao.MaterialNormsStockDao">
+
+    <select id="queryMaterialStockByNormsId" resultType="java.util.Map">
+        SELECT
+            SUM(IFNULL(a.stock, 0)) stock,
+            a.norms_id normsId
+        FROM
+            erp_material_norms_stock a
+        <where>
+            <foreach collection="normsIds" item="normsId" separator="," open=" AND a.norms_id in(" close=")">
+                #{normsId}
+            </foreach>
+            <if test="depotId != '' and depotId != null">
+                AND a.depot_id = #{depotId}
+            </if>
+        </where>
+        GROUP BY a.norms_id
+    </select>
+
+    <select id="queryNormsStockByNormsId" resultType="com.skyeye.material.entity.MaterialNormsStock">
+        SELECT
+            a.depot_id depotId,
+            a.norms_id normsId,
+            a.stock,
+            a.type
+        FROM
+            erp_material_norms_stock a
+        <where>
+            <foreach collection="normsIds" item="normsId" separator="," open=" AND a.norms_id in(" close=")">
+                #{normsId}
+            </foreach>
+            <if test="depotId != '' and depotId != null">
+                AND a.depot_id = #{depotId}
+            </if>
+            <if test="type != '' and type != null">
+                AND a.type = #{type}
+            </if>
+        </where>
+    </select>
+
+</mapper>

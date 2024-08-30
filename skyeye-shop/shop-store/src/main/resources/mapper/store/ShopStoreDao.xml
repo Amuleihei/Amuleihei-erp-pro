@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.store.dao.ShopStoreDao">
+
+    <select id="queryOnlineAppointmentMation" resultType="java.util.Map">
+        SELECT
+            a.online_time onlineTime,
+            COUNT(1) onlineOrderNum
+        FROM
+            shop_keepfit_order a
+        WHERE a.online_day = #{onlineDay}
+        <if test="list != null and list.size > 0">
+            AND a.online_time IN
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY a.online_time
+    </select>
+
+</mapper>

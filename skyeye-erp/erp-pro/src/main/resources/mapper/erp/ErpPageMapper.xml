@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.dao.ErpPageDao">
+
+	<select id="queryThisMonthErpOrder" resultType="String">
+		SELECT
+			IFNULL(SUM(a.total_price), 0) money
+		FROM
+			erp_depothead a
+		<where>
+			date_format(a.create_time, '%Y-%m') = date_format(now(), '%Y-%m')
+			<foreach collection="states" item="state" separator="," open=" AND a.state in(" close=")">
+				#{state}
+			</foreach>
+			AND a.id_key = #{idKey}
+		</where>
+	</select>
+
+	<select id="querySixMonthOrderMoneyList" resultType="java.util.Map">
+		SELECT
+			a.`year_month` yearMonth,
+			SUM(b.total_price) money
+		FROM
+			(SELECT DATE_FORMAT(CURDATE(), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%Y-%m') AS `year_month`) a
+			LEFT JOIN erp_depothead b ON date_format(b.create_time, '%Y-%m') = a.`year_month`
+				<foreach collection="states" item="state" separator="," open=" AND b.state in(" close=")">
+					#{state}
+				</foreach>
+				AND b.id_key = #{idKey}
+		GROUP BY a.`year_month`
+	</select>
+
+	<select id="queryTwelveMonthProfitMoneyList" resultType="java.util.Map">
+		SELECT
+			a.`year_month` yearMonth,
+			SUM(b.total_price *
+				(CASE b.id_key WHEN 'com.skyeye.purchase.service.impl.PurchaseOrderServiceImpl' THEN -1 ELSE 1 END)) profitMoney
+		FROM
+			(SELECT DATE_FORMAT(CURDATE(), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 6 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 7 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 8 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 9 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 10 MONTH), '%Y-%m') AS `year_month`
+			UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') AS `year_month`) a
+			LEFT JOIN erp_depothead b ON date_format(b.create_time, '%Y-%m') = a.`year_month`
+                <foreach collection="states" item="state" separator="," open=" AND b.state in(" close=")">
+                    #{state}
+                </foreach>
+                <foreach collection="idKeys" item="idKey" separator="," open=" AND b.id_key in(" close=")">
+                    #{idKey}
+                </foreach>
+		GROUP BY a.`year_month`
+	</select>
+
+</mapper>

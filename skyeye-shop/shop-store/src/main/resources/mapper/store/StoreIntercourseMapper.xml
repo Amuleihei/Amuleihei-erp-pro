@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.store.dao.StoreIntercourseDao">
+
+    <select id="queryStoreIntercourseByDay" resultType="java.util.Map">
+        SELECT
+            a.store_id keepfitStoreId,
+            c.store_id mealByStoreId,
+            IFNULL(SUM(IFNULL(a.meal_single_price, 0)), 0) mealAllSinglePrice,
+            DATE_FORMAT(a.create_time, '%Y-%m-%d') createTime
+        FROM
+            shop_keepfit_order a
+            LEFT JOIN shop_meal_order_child b ON a.meal_order_child_id = b.id
+            LEFT JOIN shop_meal_order c ON b.order_id = c.id
+        WHERE a.state IN(2, 3)
+        AND DATE_FORMAT(a.create_time, '%Y-%m-%d') = #{day}
+        AND a.store_id != c.store_id
+        GROUP BY a.store_id, c.store_id
+    </select>
+
+    <insert id="insertStoreIntercourse" parameterType="java.util.Map">
+        INSERT INTO shop_store_intercourse
+        (id, keepfi_store_id, meal_by_store_id, meal_all_single_price, intercourse_time, state)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator="," >
+        (#{item.id}, #{item.keepfitStoreId}, #{item.mealByStoreId}, #{item.mealAllSinglePrice}, #{item.createTime}, #{item.state})
+        </foreach>
+    </insert>
+
+    <select id="queryStoreIntercourseList" resultType="java.util.Map">
+        SELECT
+            s.id,
+            s.keepfi_store_id keepfiStoreId,
+            b.name keepfiStoreName,
+            s.meal_by_store_id mealByStoreId,
+            c.name mealByStoreName,
+            s.meal_all_single_price mealAllSinglePrice,
+            s.intercourse_time intercourseTime,
+            s.state
+        FROM
+            shop_store_intercourse s
+            LEFT JOIN shop_store b ON s.keepfi_store_id = b.id
+            LEFT JOIN shop_store c ON s.meal_by_store_id = c.id
+        WHERE 1=1
+        <if test="keepfitStoreId != '' and keepfitStoreId != null">
+            AND s.keepfi_store_id = #{keepfitStoreId}
+        </if>
+        <if test="keepfitStoreName != '' and keepfitStoreName != null">
+            AND b.name LIKE '%${keepfitStoreName}%'
+        </if>
+        <if test="mealByStoreId != '' and mealByStoreId != null">
+            AND s.meal_by_store_id = #{mealByStoreId}
+        </if>
+        <if test="mealByStoreName != '' and mealByStoreName != null">
+            AND c.name LIKE '%${mealByStoreName}%'
+        </if>
+        <if test="state != '' and state != null and mealByStoreId != '' and mealByStoreId != null">
+            <if test="state == '1'.toString()">
+                AND s.state = 1
+            </if>
+            <if test="state == '2'.toString()">
+                AND s.state IN(2, 3)
+            </if>
+        </if>
+        <if test="state != '' and state != null and keepfitStoreId != '' and keepfitStoreId != null">
+            <if test="state == '1'.toString()">
+                AND s.state IN(1, 2)
+            </if>
+            <if test="state == '2'.toString()">
+                AND s.state = 3
+            </if>
+        </if>
+        <if test="day != '' and day != null">
+            AND s.intercourse_time = #{day}
+        </if>
+        <if test="startTime != '' and startTime != null and endTime != '' and endTime != null">
+            AND s.intercourse_time >= #{startTime} AND #{endTime} >= s.intercourse_time
+        </if>
+        ORDER BY s.intercourse_time DESC
+    </select>
+
+    <select id="queryStoreIntercourseById" resultType="java.util.Map">
+        SELECT
+            s.id,
+            s.keepfi_store_id keepfiStoreId,
+            s.meal_by_store_id mealByStoreId,
+            s.meal_all_single_price mealAllSinglePrice,
+            s.intercourse_time intercourseTime,
+            s.state
+        FROM
+            shop_store_intercourse s
+        WHERE s.id = #{id}
+    </select>
+
+    <update id="editStoreIntercourseState">
+        UPDATE shop_store_intercourse
+        <set>
+            state = #{state},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

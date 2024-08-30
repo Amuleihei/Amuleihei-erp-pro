@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.personrequire.dao.PersonRequireDao">
+
+    <select id="queryPersonRequireList" resultType="java.util.Map">
+        SELECT
+            a.id,
+            a.odd_number oddNumber,
+            IFNULL(a.process_instance_id, '') processInstanceId,
+            a.state,
+            a.recruit_num recruitNum,
+            a.recruited_num recruitedNum,
+            a.wages,
+            a.recruit_department_id recruitDepartmentId,
+            a.recruit_job_id recruitJobId,
+            a.create_id createId,
+            CONVERT(a.create_time, char) createTime,
+            a.last_update_id lastUpdateId,
+            CONVERT(a.last_update_time, char) lastUpdateTime
+        FROM
+            boss_person_require a
+        <where>
+            <if test="createId != '' and createId != null">
+                AND a.create_id = #{createId}
+            </if>
+            <if test="sqlExtract != '' and sqlExtract != null">
+                ${sqlExtract}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND a.odd_number like '%${keyword}%'
+            </if>
+            <if test="stateList != null and stateList.size() &gt; 0">
+                <foreach collection="stateList" item="state" separator="," open=" AND a.state in(" close=")">
+                    #{state}
+                </foreach>
+            </if>
+            <if test="chargePersonId != '' and chargePersonId != null">
+                AND JSON_CONTAINS(a.person_liable, JSON_ARRAY(#{chargePersonId}))
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+</mapper>

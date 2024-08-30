@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.customer.dao.CustomerDao">
+
+    <select id="queryInternationalCustomerList" resultType="java.util.Map">
+        SELECT
+			a.id,
+			a.`name`,
+			a.group_id groupId,
+			a.type_id typeId,
+			a.from_id fromId,
+			a.industry_id industryId,
+			IFNULL(datediff(NOW(), cdo.create_time), datediff(NOW(), a.create_time)) noDocumentaryDayNum,
+			a.create_id createId,
+			CONVERT(a.create_time, CHAR) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, CHAR) lastUpdateTime
+		FROM
+			crm_customer a
+			LEFT JOIN (SELECT max(cd.create_time) create_time, cd.object_id FROM crm_documentary cd GROUP BY cd.object_id DESC) cdo ON cdo.object_id = a.id
+		<where>
+			a.delete_flag = #{deleteFlag}
+            <if test="noDocumentaryDayNum != '' and noDocumentaryDayNum != null">
+            	AND IFNULL(datediff(NOW(), cdo.create_time), datediff(NOW(), a.create_time)) >= #{noDocumentaryDayNum}
+            </if>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+		</where>
+        ORDER BY a.create_time desc
+    </select>
+
+</mapper>

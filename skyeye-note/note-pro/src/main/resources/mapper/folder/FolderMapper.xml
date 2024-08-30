@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.folder.dao.FolderDao">
+
+    <select id="queryFolderByUserId" resultType="java.util.Map">
+        SELECT
+            a.id,
+            a.`name`,
+            #{parentId} parentId,
+            '../../assets/images/cloud/my-folder-icon.png' icon,
+            1 isParent
+        FROM
+            note_folder a
+        <where>
+            a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM note_folder t WHERE t.id = #{parentId}), ''), #{parentId}, ',')
+            AND a.create_id = #{createId}
+            AND a.delete_flag = #{deleteFlag}
+            <if test="moveId != null and moveId != ''">
+                AND a.id != #{moveId}
+            </if>
+        </where>
+        ORDER BY a.`name` ASC
+    </select>
+
+    <select id="queryFolderAndChildList" resultType="java.util.Map">
+        SELECT
+            a.id,
+            a.`name`,
+            a.parent_id parentId,
+            a.delete_flag deleteFlag,
+            'folder' type,
+            a.create_id createId,
+            a.create_time createTime,
+            a.last_update_id lastUpdateId,
+            a.last_update_time lastUpdateTime
+        FROM
+            note_folder a
+        <where>
+            a.delete_flag = #{deleteFlag}
+            AND
+            <foreach collection="ids" item="id" index="index" open="(" close=")" separator="OR">
+                INSTR(CONCAT(',', a.parent_id, ','), CONCAT(',', #{id}, ',')) OR a.id = #{id}
+            </foreach>
+        </where>
+        ORDER BY LENGTH(a.parent_id) ASC
+    </select>
+
+    <insert id="insertFileFolderList" parameterType="java.util.Map">
+        insert into note_folder
+        (id, `name`, parent_id, delete_flag, create_id, create_time, last_update_id, last_update_time)
+        values
+        <foreach collection="folderList" item="item" index="index" separator="," >
+            (#{item.newId}, #{item.name}, #{item.newParentId}, #{item.deleteFlag}, #{item.createId}, #{item.createTime}, #{item.lastUpdateId}, #{item.lastUpdateTime})
+        </foreach>
+    </insert>
+</mapper>
