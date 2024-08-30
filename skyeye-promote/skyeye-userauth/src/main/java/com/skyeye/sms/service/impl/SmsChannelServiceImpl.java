@@ -4,15 +4,19 @@
 
 package com.skyeye.sms.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.exception.CustomException;
 import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.core.service.SmsClientFactory;
 import com.skyeye.sms.dao.SmsChannelDao;
 import com.skyeye.sms.entity.SmsChannel;
 import com.skyeye.sms.service.SmsChannelService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,20 @@ public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelD
 
     @Autowired
     private SmsClientFactory smsClientFactory;
+
+    @Override
+    public void validatorEntity(SmsChannel entity) {
+        // 校验渠道编码是否重复
+        QueryWrapper<SmsChannel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SmsChannel::getCodeNum), entity.getCodeNum());
+        if (StringUtils.isNotEmpty(entity.getId())) {
+            queryWrapper.ne(CommonConstants.ID, entity.getId());
+        }
+        SmsChannel checkSmsChannel = getOne(queryWrapper, false);
+        if (ObjectUtil.isNotEmpty(checkSmsChannel)) {
+            throw new CustomException("渠道编码已存在.");
+        }
+    }
 
     @Override
     public SmsClient getSmsClientById(String channelId) {
