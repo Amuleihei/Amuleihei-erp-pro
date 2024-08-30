@@ -12,6 +12,8 @@ import com.skyeye.personnel.classenum.SmsSceneEnum;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.AppAuthService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
+import com.skyeye.sms.entity.SmsCodeSendReq;
+import com.skyeye.sms.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,9 @@ public class AppAuthServiceImpl implements AppAuthService {
 
     @Autowired
     private SysEveUserStaffService sysEveUserStaffService;
+
+    @Autowired
+    private SmsCodeService smsCodeService;
 
     @Override
     public void sendSmsCode(InputObject inputObject, OutputObject outputObject) {
@@ -61,7 +66,8 @@ public class AppAuthServiceImpl implements AppAuthService {
             throw new CustomException("手机号不能为空");
         }
         // 发送短信验证码
-        // TODO 发送短信验证码
+        SmsCodeSendReq smsCodeSendReq = new SmsCodeSendReq().setMobile(mobile).setScene(scene);
+        smsCodeService.sendSmsCodeReq(smsCodeSendReq);
 
     }
 }
