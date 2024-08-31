@@ -17,7 +17,7 @@
 			CONVERT(a.last_update_time, CHAR) lastUpdateTime
 		FROM
 			crm_customer a
-			LEFT JOIN (SELECT max(cd.create_time) create_time, cd.object_id FROM crm_documentary cd GROUP BY cd.object_id DESC) cdo ON cdo.object_id = a.id
+			LEFT JOIN (SELECT max(cd.create_time) create_time, cd.object_id FROM crm_documentary cd GROUP BY cd.object_id) cdo ON cdo.object_id = a.id
 		<where>
 			a.delete_flag = #{deleteFlag}
             <if test="noDocumentaryDayNum != '' and noDocumentaryDayNum != null">
