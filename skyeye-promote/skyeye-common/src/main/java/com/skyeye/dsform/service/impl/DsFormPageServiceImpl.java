@@ -154,7 +154,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
         }
         if (CollectionUtil.isNotEmpty(dsFormPage.getOperateIdList())) {
             // 获取操作信息
-            List<Operate> operateList = operateService.getOperatesByClassName(dsFormPage.getClassName());
+            List<Operate> operateList = operateService.getOperatesByClassName(dsFormPage.getAppId(), dsFormPage.getClassName());
             operateList = operateList.stream().filter(operate -> dsFormPage.getOperateIdList().contains(operate.getId())).collect(Collectors.toList());
             dsFormPage.setOperateList(operateList);
         }
@@ -190,7 +190,7 @@ public class DsFormPageServiceImpl extends SkyeyeBusinessServiceImpl<DsFormPageD
         // 获取属性信息
         List<String> attrKeys = tableColumnList.stream().map(TableColumn::getAttrKey).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(attrKeys)) {
-            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getAppId(),dsFormPage.getClassName(), attrKeys);
+            Map<String, AttrDefinition> attrDefinitionMap = attrDefinitionService.queryAttrDefinitionMap(dsFormPage.getAppId(), dsFormPage.getClassName(), attrKeys);
             tableColumnList.forEach(tableColumn -> {
                 tableColumn.setAttrDefinition(attrDefinitionMap.get(tableColumn.getAttrKey()));
             });

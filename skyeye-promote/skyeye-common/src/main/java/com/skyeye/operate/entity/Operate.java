@@ -62,6 +62,10 @@ public class Operate extends OperatorUserInfo {
     @ApiModelProperty(value = "服务类的className", required = "required")
     private String className;
 
+    @TableField("app_id")
+    @ApiModelProperty(value = "应用的appId", required = "required")
+    private String appId;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "当事件类型为请求事件时，填写的接口信息")
     private BusinessApi businessApi;

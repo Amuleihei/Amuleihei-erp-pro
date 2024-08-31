@@ -71,8 +71,9 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
     @Override
     public void queryOperateList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
+        String appId = params.get("appId").toString();
         String className = params.get("className").toString();
-        List<Operate> operateList = getOperatesByClassName(className);
+        List<Operate> operateList = getOperatesByClassName(appId, className);
 
         iAuthUserService.setName(operateList, "createId", "createName");
         iAuthUserService.setName(operateList, "lastUpdateId", "lastUpdateName");
@@ -81,8 +82,8 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
     }
 
     @Override
-    public List<Operate> getOperatesByClassName(String className) {
-        String cacheKey = getCacheKeyByClassName(className);
+    public List<Operate> getOperatesByClassName(String appId, String className) {
+        String cacheKey = getCacheKeyByClassName(appId, className);
         List<Operate> operateList = redisCache.getList(cacheKey, key -> {
             QueryWrapper<Operate> wrapper = new QueryWrapper<>();
             wrapper.orderByAsc(MybatisPlusUtil.toColumns(Operate::getOrderBy));
@@ -128,7 +129,7 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
             operateOpenPage.setOperateId(entity.getId());
             operateOpenPageService.createEntity(operateOpenPage, userId);
         }
-        String cacheKey = getCacheKeyByClassName(entity.getClassName());
+        String cacheKey = getCacheKeyByClassName(entity.getAppId(), entity.getClassName());
         jedisClientService.del(cacheKey);
     }
 
@@ -180,12 +181,12 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
         businessApiService.deleteByObjectId(entity.getId());
         operateOpenPageService.deleteByOperateId(entity.getId());
         // 清空缓存
-        String cacheKey = getCacheKeyByClassName(entity.getClassName());
+        String cacheKey = getCacheKeyByClassName(entity.getAppId(), entity.getClassName());
         jedisClientService.del(cacheKey);
     }
 
-    private String getCacheKeyByClassName(String className) {
-        return String.format(Locale.ROOT, "skyeye:operate:className:%s", className);
+    private String getCacheKeyByClassName(String appId, String className) {
+        return String.format(Locale.ROOT, "skyeye:operate:className:%s:%s", appId, className);
     }
 
 }

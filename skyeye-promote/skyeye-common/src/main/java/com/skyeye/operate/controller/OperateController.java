@@ -39,6 +39,7 @@ public class OperateController {
      */
     @ApiOperation(id = "queryOperateList", value = "获取操作列表", method = "POST", allUse = "2")
     @ApiImplicitParams({
+        @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required"),
         @ApiImplicitParam(id = "className", name = "className", value = "service的className", required = "required")})
     @RequestMapping("/post/OperateController/queryOperateList")
     public void queryOperateList(InputObject inputObject, OutputObject outputObject) {

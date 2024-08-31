@@ -23,6 +23,6 @@ public interface OperateService extends SkyeyeBusinessService<Operate> {
 
     void queryOperateList(InputObject inputObject, OutputObject outputObject);
 
-    List<Operate> getOperatesByClassName(String className);
+    List<Operate> getOperatesByClassName(String appId, String className);
 
 }
