@@ -15,7 +15,7 @@
 
         <dependency>
             <groupId>com.skyeye</groupId>
-            <artifactId>adm-common</artifactId>
+            <artifactId>adm-survey</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

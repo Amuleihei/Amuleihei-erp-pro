@@ -8,6 +8,7 @@
         <module>adm-common</module>
         <module>adm-pro</module>
         <module>adm-web</module>
+        <module>adm-survey</module>
     </modules>
 
     <parent>
