@@ -2,7 +2,7 @@
  * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
  ******************************************************************************/
 
-package com.skyeye.eve.service.impl;
+package com.skyeye.eve.businessflow.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -10,9 +10,9 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.DateUtil;
-import com.skyeye.eve.dao.PlanProjectDao;
+import com.skyeye.eve.businessflow.dao.PlanProjectDao;
 import com.skyeye.eve.service.IAuthUserService;
-import com.skyeye.eve.service.PlanProjectService;
+import com.skyeye.eve.businessflow.service.PlanProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
