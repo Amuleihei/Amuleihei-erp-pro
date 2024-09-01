@@ -47,6 +47,8 @@ topic:
   mail-drafts-edit-service: MAIL_DRAFTS_EDIT_SERVICE
   # 草稿箱邮件发送的topic
   mail-drafts-send-service: MAIL_DRAFTS_SEND_SERVICE
+  # 笔记输出为压缩包的topic
+  output-notes-is-zip-service: OUTPUT_NOTES_IS_ZIP_SERVICE
 
 feign:
   client:
