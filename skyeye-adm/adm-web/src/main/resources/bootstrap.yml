@@ -5,7 +5,7 @@ spring:
   application:
     name: skyeye-adm-${spring.profiles.active} # 服务名
   profiles:
-    active: public
+    active: dev
   cloud:
     nacos:
       discovery:
@@ -31,6 +31,22 @@ logging:
 topic:
   # 资产生成条形码的消息
   asset-generate-barcode: ASSET_GENERATE_BARCODE
+  # 收件箱邮件获取的topic
+  mail-access-inbox-service: MAIL_ACCESS_INBOX_SERVICE
+  # 已发送邮件获取的TOPIC
+  mail-access-sended-service: MAIL_ACCESS_SENDED_SERVICE
+  # 已删除邮件获取的topic
+  mail-access-delete-service: MAIL_ACCESS_DELETE_SERVICE
+  # 草稿箱邮件获取的topic
+  mail-access-drafts-service: MAIL_ACCESS_DRAFTS_SERVICE
+  # 邮件发送的topic
+  complex-mail-delivery-service: COMPLEX_MAIL_DELIVERY_SERVICE
+  # 保存草稿同步的topic
+  mail-drafts-save-service: MAIL_DRAFTS_SAVE_SERVICE
+  # 草稿编辑同步的topic
+  mail-drafts-edit-service: MAIL_DRAFTS_EDIT_SERVICE
+  # 草稿箱邮件发送的topic
+  mail-drafts-send-service: MAIL_DRAFTS_SEND_SERVICE
 
 feign:
   client:

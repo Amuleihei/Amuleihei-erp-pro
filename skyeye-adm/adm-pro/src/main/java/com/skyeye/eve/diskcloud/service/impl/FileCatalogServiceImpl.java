@@ -11,16 +11,16 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
-import com.skyeye.common.constans.DiskCloudConstants;
 import com.skyeye.common.enumeration.DeleteFlagEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.diskcloud.classenum.DefaultFolder;
 import com.skyeye.eve.diskcloud.dao.FileCatalogDao;
-import com.skyeye.eve.diskcloud.service.FileCatalogService;
 import com.skyeye.eve.diskcloud.entity.FileCatalog;
+import com.skyeye.eve.diskcloud.service.FileCatalogService;
 import com.skyeye.exception.CustomException;
+import com.skyeye.util.DiskCloudConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

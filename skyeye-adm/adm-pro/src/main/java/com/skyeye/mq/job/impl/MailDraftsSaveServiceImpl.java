@@ -1,15 +1,16 @@
 /*******************************************************************************
  * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
  ******************************************************************************/
+
 package com.skyeye.mq.job.impl;
 
 import cn.hutool.json.JSONUtil;
 import com.skyeye.common.constans.MqConstants;
 import com.skyeye.common.util.MailUtil;
 import com.skyeye.common.util.ToolUtil;
-import com.skyeye.eve.dao.EmailDao;
+import com.skyeye.eve.email.dao.EmailDao;
 import com.skyeye.eve.service.ISystemFoundationSettingsService;
-import com.skyeye.eve.util.MqSendUtil;
+import com.skyeye.util.MqSendUtil;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
