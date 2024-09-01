@@ -57,7 +57,6 @@
 |skyeye-survey |8086 |问卷模块 |survey-web.jar |
 |skyeye-note |8087 |笔记模块 |note-web.jar |
 |skyeye-rmprogram |8089 |小程序设计器模块 |rmprogram-web.jar |
-|skyeye-disk-cloud |8092 |云盘模块 |disk-cloud-web.jar |
 |skyeye-notice |8096 |公告模块 |notice-web.jar |
 |skyeye-forum |8097 |论坛模块 |forum-web.jar |
 |skyeye-jobdiary |8098 |工作日报模块 |jobdiary-web.jar |

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.diskcloud.dao.FileShareDao">
+
+    <select id="queryShareFileList" resultType="java.util.Map">
+        SELECT
+            a.id,
+            a.file_id fileId,
+            a.share_name shareName,
+            a.share_type shareType,
+            a.share_url shareUrl,
+            a.share_password sharePassword,
+            a.file_type fileType,
+            a.state,
+            a.create_id createId,
+            CONVERT(a.create_time, char) createTime,
+            a.last_update_id lastUpdateId,
+            CONVERT(a.last_update_time, char) lastUpdateTime
+        FROM
+            file_catalog_share a
+        <where>
+            a.create_id = #{createId}
+            <if test="sqlExtract != '' and sqlExtract != null">
+                ${sqlExtract}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND a.share_name like '%${keyword}%'
+            </if>
+        </where>
+        ORDER BY a.create_time DESC
+    </select>
+
+    <select id="queryShareFileFirstListByParentId" resultType="java.util.Map">
+        SELECT
+            b.id,
+            b.name fileName,
+            0 fileSize,
+            'folder' fileType,
+            '../../assets/images/share-folder.png' iconPath,
+            DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i') createTime
+        FROM
+            file_catalog_share a,
+            file_catalog b
+        WHERE a.id = #{id}
+          AND a.file_id = b.id
+          AND a.file_type = 'folder'
+        UNION ALL
+        SELECT
+            b.id,
+            b.name fileName,
+            b.size fileSize,
+            b.type fileType,
+            '../../assets/images/share-file.png' iconPath,
+            DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i') createTime
+        FROM
+            file_catalog_share a,
+            file_catelog_papers b
+        WHERE a.id = #{id}
+          AND a.file_id = b.id
+          AND a.file_type = 'file'
+    </select>
+
+    <select id="queryShareFileListByParentId" resultType="java.util.Map">
+        SELECT
+            *
+        FROM (
+                 SELECT
+                     a.id,
+                     a.name fileName,
+                     'folder' fileType,
+                     0 fileSize,
+                     '../../assets/images/share-folder.png' iconPath,
+                     CONVERT(a.create_time, char) createTime
+                 FROM
+                     file_catalog a
+                 WHERE a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM file_catalog t WHERE t.id = #{folderId}), ''), #{folderId}, ',')
+                   AND a.id NOT IN (SELECT m.file_id FROM file_catelog_recycle_bin m WHERE m.file_type = 'folder')
+                   AND a.delete_flag = #{deleteFlag}
+                 UNION ALL
+                 SELECT
+                     a.id,
+                     a.name fileName,
+                     a.type fileType,
+                     a.size fileSize,
+                     '../../assets/images/share-file.png' iconPath,
+                     CONVERT(a.create_time, char) createTime
+                 FROM
+                     file_catelog_papers a
+                 WHERE a.parent_id = CONCAT(IFNULL((SELECT t.parent_id FROM file_catalog t WHERE t.id = #{folderId}), ''), #{folderId}, ',')
+                   AND a.id NOT IN (SELECT m.file_id FROM file_catelog_recycle_bin m WHERE m.file_type = 'file')
+                   AND a.delete_flag = #{deleteFlag}
+             ) k
+    </select>
+</mapper>
