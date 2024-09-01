@@ -2,7 +2,7 @@
  * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
  ******************************************************************************/
 
-package com.skyeye.eve.service.impl;
+package com.skyeye.eve.knowlg.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,10 +20,10 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.FileUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.eve.classenum.KnowlgContentState;
-import com.skyeye.eve.dao.KnowledgeContentDao;
-import com.skyeye.eve.entity.KnowledgeContent;
-import com.skyeye.eve.service.KnowledgeContentService;
+import com.skyeye.eve.knowlg.classenum.KnowlgContentState;
+import com.skyeye.eve.knowlg.dao.KnowledgeContentDao;
+import com.skyeye.eve.knowlg.entity.KnowledgeContent;
+import com.skyeye.eve.knowlg.service.KnowledgeContentService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.knowlg.util.Word2Html;
 import org.springframework.beans.factory.annotation.Value;
