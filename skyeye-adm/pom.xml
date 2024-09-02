@@ -9,6 +9,7 @@
         <module>adm-pro</module>
         <module>adm-web</module>
         <module>adm-survey</module>
+        <module>adm-ehr</module>
     </modules>
 
     <parent>

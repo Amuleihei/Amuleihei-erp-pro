@@ -39,7 +39,8 @@ import java.util.Properties;
 
 @Configuration
 @MapperScan(basePackages = {
-    "com.skyeye.eve.*.dao"}, sqlSessionFactoryRef = "baseSqlSessionFactory")
+    "com.skyeye.eve.*.dao",
+    "com.skyeye.*.dao"}, sqlSessionFactoryRef = "baseSqlSessionFactory")
 public class BaseDataSourceConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDataSourceConfig.class);

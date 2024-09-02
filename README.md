@@ -57,8 +57,6 @@
 |skyeye-rmprogram |8089 |小程序设计器模块 |rmprogram-web.jar |
 |skyeye-notice |8096 |公告模块 |notice-web.jar |
 |skyeye-forum |8097 |论坛模块 |forum-web.jar |
-|skyeye-jobdiary |8098 |工作日报模块 |jobdiary-web.jar |
-|skyeye-ehr |8100 |EHR模块 |ehr-web.jar |
 |skyeye-wages |8101 |薪资模块 |wages-web.jar |
 |skyeye-deploy |8010 |部署模块 |deploy-web.war |
 |skyeye-schedule |8095 |日程模块 |schedule-web.jar |
