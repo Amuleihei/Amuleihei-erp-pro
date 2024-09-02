@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.schedule.dao.ScheduleDayDao">
+	
+	<select id="queryScheduleDayMationByUserId" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.`name` title,
+			a.start_time startTime,
+			a.end_time endTime,
+			a.start_time `start`,
+			a.end_time `end`,
+			CASE a.all_day WHEN '0' THEN false WHEN '1' THEN true ELSE true END allDay,
+			'1' showBg,
+			CASE WHEN DATE_FORMAT(a.start_time, '%Y-%m-%d') > DATE_FORMAT(NOW(), '%Y-%m-%d') THEN true ELSE false END editable, #是否可编辑
+			a.type
+		FROM
+			schedule_day a
+		WHERE a.create_id = #{userId}
+		AND a.type != '3'
+		AND (
+		<foreach collection="list" item="item" index="index" >
+			DATE_FORMAT(a.start_time, '%Y-%m') = #{item} OR DATE_FORMAT(a.end_time, '%Y-%m') = #{item} OR
+		</foreach>
+		1 = 0)
+	</select>
+	
+	<select id="queryIsnullThistime" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			a.id
+		FROM 
+			schedule_day a,
+			schedule_day b
+		WHERE a.type = 3 
+		AND b.type = 3
+		AND ((#{startTime} >= a.start_time AND a.end_time >= #{startTime}) OR (#{endTime} >= b.start_time AND b.end_time >= #{endTime}))
+		ORDER BY a.start_time DESC, b.start_time DESC
+		LIMIT 1
+	</select>
+	
+	<select id="queryScheduleList" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.start_time startTime,
+			a.end_time endTime,
+			CONVERT(a.remind_time, char) remindTime,
+			a.imported,
+			a.remind_type remindType,
+			a.all_day allDay,
+			a.type,
+			a.create_id createId,
+			CONVERT(a.create_time, char) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, char) lastUpdateTime
+		FROM
+			schedule_day a
+		<where>
+			<if test="type != '' and type != null">
+				AND a.type = #{type}
+			</if>
+			<if test="createId != '' and createId != null">
+				AND a.create_id = #{createId} AND a.type != '3'
+			</if>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+
+	<select id="queryAllUserAndEmailISNotNull" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.user_id userId,
+			a.user_name userName,
+			a.email
+		FROM
+			sys_eve_user_staff a
+		WHERE a.email IS NOT NULL
+		  AND LENGTH(a.email) > 0
+		GROUP BY a.email
+	</select>
+
+	<select id="queryMyAgencyList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			CONVERT(a.start_time, char) startTime,
+			CONVERT(a.end_time, char) endTime,
+			CONVERT(a.remind_time, char) remindTime,
+			a.`type`
+		FROM
+			schedule_day a
+		<where>
+			a.remind_type != 0
+			<if test="createId != '' and createId != null">
+				AND a.create_id = #{createId} AND a.type != '3'
+			</if>
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+
+</mapper>
