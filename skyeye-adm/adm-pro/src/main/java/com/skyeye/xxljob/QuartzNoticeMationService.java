@@ -5,7 +5,7 @@
 package com.skyeye.xxljob;
 
 import cn.hutool.json.JSONUtil;
-import com.skyeye.eve.service.NoticeService;
+import com.skyeye.eve.notice.service.NoticeService;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.slf4j.Logger;

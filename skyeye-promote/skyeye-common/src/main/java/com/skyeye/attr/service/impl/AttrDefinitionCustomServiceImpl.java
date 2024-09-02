@@ -71,6 +71,9 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
 
     @Override
     public List<AttrDefinitionCustom> queryAttrDefinitionCustomList(String appId, String className, List<String> attrKey) {
+        if (CollectionUtil.isEmpty(attrKey)) {
+            return CollectionUtil.newArrayList();
+        }
         QueryWrapper<AttrDefinitionCustom> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getAppId), appId);
         wrapper.eq(MybatisPlusUtil.toColumns(AttrDefinitionCustom::getClassName), className);
