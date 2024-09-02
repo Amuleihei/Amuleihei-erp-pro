@@ -22,4 +22,14 @@
     <artifactId>skyeye-adm</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+
+        <!-- solr客户 -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+
+    </dependencies>
+
 </project>

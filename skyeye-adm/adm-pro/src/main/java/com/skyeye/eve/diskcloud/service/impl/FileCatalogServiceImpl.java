@@ -20,7 +20,7 @@ import com.skyeye.eve.diskcloud.dao.FileCatalogDao;
 import com.skyeye.eve.diskcloud.entity.FileCatalog;
 import com.skyeye.eve.diskcloud.service.FileCatalogService;
 import com.skyeye.exception.CustomException;
-import com.skyeye.util.DiskCloudConstants;
+import com.skyeye.constans.DiskCloudConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

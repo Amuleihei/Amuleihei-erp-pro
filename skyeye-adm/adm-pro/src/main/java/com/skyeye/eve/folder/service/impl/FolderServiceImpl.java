@@ -19,7 +19,7 @@ import com.skyeye.eve.folder.dao.FolderDao;
 import com.skyeye.eve.folder.entity.Folder;
 import com.skyeye.eve.folder.service.FolderService;
 import com.skyeye.exception.CustomException;
-import com.skyeye.util.NoteConstants;
+import com.skyeye.constans.NoteConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
