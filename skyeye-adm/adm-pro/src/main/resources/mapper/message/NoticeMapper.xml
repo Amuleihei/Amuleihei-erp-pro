@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skyeye.eve.notice.dao.NoticeDao">
+	
+	<select id="queryNoticeList" resultType="java.util.Map">
+		SELECT
+			a.id,
+			a.`name`,
+			a.whether_email whetherEmail,
+			a.time_send timeSend,
+			CONVERT(a.delayed_time, char) delayedTime,
+			a.send_type sendType,
+			a.type_id typeId,
+			a.real_lines_type realLinesType,
+			CONVERT(a.real_lines_time, char) realLinesTime,
+			a.state,
+			a.order_by orderBy,
+			a.create_id createId,
+			CONVERT(a.create_time, char) createTime,
+			a.last_update_id lastUpdateId,
+			CONVERT(a.last_update_time, char) lastUpdateTime
+		FROM
+			sys_notice a
+			<if test="objectId != null and objectId != ''">
+				,sys_notice_user c
+			</if>
+		<where>
+			a.delete_flag = #{deleteFlag}
+			<if test="sqlExtract != '' and sqlExtract != null">
+				${sqlExtract}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND a.`name` like '%${keyword}%'
+			</if>
+			<if test="objectId != null and objectId != ''">
+				AND c.user_id = #{objectId}
+				AND c.notice_id = a.id
+				AND a.state = #{state}
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+	
+	<select id="queryAllUserList" resultType="java.util.Map">
+		SELECT
+			a.user_id userId,
+			a.email
+		FROM
+			sys_eve_user_staff a
+		<where>
+			<if test="stateList != null and stateList.size() &gt; 0">
+				<foreach collection="stateList" item="state" separator="," open=" AND a.state in(" close=")">
+					#{state}
+				</foreach>
+			</if>
+			AND a.user_id IS NOT NULL AND LENGTH(a.user_id) > 0
+			<if test="userIds != null and userIds.size() &gt; 0">
+				<foreach collection="userIds" item="userId" separator="," open=" AND a.user_id in(" close=")">
+					#{userId}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>
