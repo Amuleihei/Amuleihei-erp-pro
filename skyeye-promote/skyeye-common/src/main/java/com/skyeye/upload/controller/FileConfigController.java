@@ -46,6 +46,14 @@ public class FileConfigController {
         fileConfigService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
+    @ApiOperation(id = "queryFileConfigById", value = "根据id查询文件配置", method = "GET", allUse = "2")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/FileConfigController/queryFileConfigById")
+    public void queryFileConfigById(InputObject inputObject, OutputObject outputObject) {
+        fileConfigService.selectById(inputObject, outputObject);
+    }
+
     @ApiOperation(id = "deleteFileConfigById", value = "删除文件配置", method = "DELETE", allUse = "1")
     @ApiImplicitParams(value = {
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
