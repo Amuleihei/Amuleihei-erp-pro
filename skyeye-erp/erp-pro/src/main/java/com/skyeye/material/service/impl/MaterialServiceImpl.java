@@ -25,6 +25,7 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.depot.entity.Depot;
 import com.skyeye.depot.service.ErpDepotService;
 import com.skyeye.exception.CustomException;
+import com.skyeye.material.classenum.MaterialShelvesState;
 import com.skyeye.material.classenum.MaterialUnit;
 import com.skyeye.material.dao.MaterialDao;
 import com.skyeye.material.entity.*;
@@ -110,6 +111,7 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
             throw new CustomException("请选择条形码开启类型.");
         }
         entity.setIsUsed(IsUsedEnum.NOT_USED.getKey());
+        entity.setShelvesState(MaterialShelvesState.NOT_ON_SHELVE.getKey());
     }
 
     @Override

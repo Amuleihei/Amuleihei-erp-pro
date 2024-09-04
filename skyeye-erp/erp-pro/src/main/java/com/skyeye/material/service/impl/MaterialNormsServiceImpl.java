@@ -16,6 +16,7 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
+import com.skyeye.material.classenum.MaterialNormsShelvesState;
 import com.skyeye.material.classenum.MaterialNormsStockType;
 import com.skyeye.material.dao.MaterialNormsDao;
 import com.skyeye.material.entity.Material;
@@ -144,6 +145,13 @@ public class MaterialNormsServiceImpl extends SkyeyeBusinessServiceImpl<Material
             }
         }
         return result;
+    }
+
+    @Override
+    public void createPrepose(List<MaterialNorms> entity) {
+        entity.forEach(item -> {
+            item.setShelvesState(MaterialNormsShelvesState.NOT_ON_SHELVE.getKey());
+        });
     }
 
     /**
