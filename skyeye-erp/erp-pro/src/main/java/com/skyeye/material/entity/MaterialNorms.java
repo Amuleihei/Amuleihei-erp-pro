@@ -40,6 +40,7 @@ public class MaterialNorms extends OperatorUserInfo {
     private String name;
 
     @TableField(value = "material_id")
+    @Property(value = "商品id")
     private String materialId;
 
     @TableField(value = "logo")
