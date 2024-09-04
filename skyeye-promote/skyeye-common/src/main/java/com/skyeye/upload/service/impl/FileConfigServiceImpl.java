@@ -5,6 +5,7 @@
 package com.skyeye.upload.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.cache.redis.RedisCache;
@@ -39,6 +40,15 @@ public class FileConfigServiceImpl extends SkyeyeBusinessServiceImpl<FileConfigD
     private FileClientFactory fileClientFactory;
 
     private static final String FILE_CONFIG_IS_DEFAULT_CACHE_KEY = "skyeye:fileConfig:isDefault";
+
+    @Override
+    public void createPrepose(FileConfig entity) {
+        if (entity.getIsDefault() == IsDefaultEnum.IS_DEFAULT.getKey()) {
+            UpdateWrapper<FileConfig> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set(MybatisPlusUtil.toColumns(FileConfig::getIsDefault), IsDefaultEnum.NOT_DEFAULT.getKey());
+            update(updateWrapper);
+        }
+    }
 
     @Override
     public void writePostpose(FileConfig entity, String userId) {
