@@ -54,9 +54,6 @@ import java.util.stream.Collectors;
 public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, Material> implements MaterialService {
 
     @Autowired
-    private MaterialDao materialDao;
-
-    @Autowired
     private MaterialNormsService materialNormsService;
 
     @Autowired
@@ -269,10 +266,10 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
     @Override
     public void queryMaterialListToTable(InputObject inputObject, OutputObject outputObject) {
         MaterialChooseQueryDo queryDo = inputObject.getParams(MaterialChooseQueryDo.class);
-        queryDo.setEnabled(EnableEnum.ENABLE_USING.getKey());
-        queryDo.setDeleteFlag(DeleteFlagEnum.NOT_DELETE.getKey());
         Page pages = PageHelper.startPage(queryDo.getPage(), queryDo.getLimit());
-        List<Material> beans = materialDao.queryMaterialListToTable(queryDo);
+        QueryWrapper<Material> queryWrapper = super.getQueryWrapper(queryDo);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Material::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        List<Material> beans = list(queryWrapper);
 
         // 获取规格单位信息
         List<String> materialIdList = beans.stream().map(Material::getId).collect(Collectors.toList());
@@ -312,9 +309,9 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
     @Override
     public void queryMaterialReserveList(InputObject inputObject, OutputObject outputObject) {
         MaterialChooseQueryDo queryDo = inputObject.getParams(MaterialChooseQueryDo.class);
-        queryDo.setDeleteFlag(DeleteFlagEnum.NOT_DELETE.getKey());
         Page pages = PageHelper.startPage(queryDo.getPage(), queryDo.getLimit());
-        List<Material> beans = materialDao.queryMaterialReserveList(queryDo);
+        QueryWrapper<Material> queryWrapper = super.getQueryWrapper(queryDo);
+        List<Material> beans = list(queryWrapper);
 
         // 获取规格单位信息
         List<String> materialIdList = beans.stream().map(Material::getId).collect(Collectors.toList());
@@ -339,7 +336,7 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
         pageInfo.setDeleteFlag(DeleteFlagEnum.NOT_DELETE.getKey());
         pageInfo.setEnabled(EnableEnum.ENABLE_USING.getKey());
         Page pages = PageHelper.startPage(pageInfo.getPage(), pageInfo.getLimit());
-        List<Map<String, Object>> beans = materialDao.queryMaterialInventoryWarningList(pageInfo);
+        List<Map<String, Object>> beans = skyeyeBaseMapper.queryMaterialInventoryWarningList(pageInfo);
         outputObject.setBeans(beans);
         outputObject.settotal(pages.getTotal());
     }
