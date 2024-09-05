@@ -65,6 +65,18 @@ public class SysEveRoleServiceImpl extends SkyeyeBusinessServiceImpl<SysEveRoleD
     }
 
     @Override
+    public List<Role> getDataFromDb(List<String> idList) {
+        List<Role> roles = super.getDataFromDb(idList);
+        for (Role role : roles) {
+            List<String> menuIds = sysEveRoleDao.querySysRoleMenuIdByRoleId(role.getId());
+            List<String> appMenuIds = sysEveRoleDao.querySysRoleAppMenuIdByRoleId(role.getId());
+            role.setMenuIds(menuIds);
+            role.setAppMenuIds(appMenuIds);
+        }
+        return roles;
+    }
+
+    @Override
     public void updatePostpose(Role entity, String userId) {
         // 删除缓存
         deleteRoleCache(entity.getId(), "delete");
