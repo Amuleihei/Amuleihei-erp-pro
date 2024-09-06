@@ -5,8 +5,16 @@
 package com.skyeye.upload.controller;
 
 import com.skyeye.annotation.api.Api;
+import com.skyeye.annotation.api.ApiImplicitParam;
+import com.skyeye.annotation.api.ApiImplicitParams;
+import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.object.InputObject;
+import com.skyeye.common.object.OutputObject;
+import com.skyeye.upload.entity.FileConfig;
 import com.skyeye.upload.service.FileConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,5 +31,35 @@ public class FileConfigController {
 
     @Autowired
     private FileConfigService fileConfigService;
+
+    @ApiOperation(id = "queryFileConfigList", value = "获取文件配置列表", method = "POST", allUse = "1")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/FileConfigController/queryFileConfigList")
+    public void queryFileConfigList(InputObject inputObject, OutputObject outputObject) {
+        fileConfigService.queryPageList(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "writeFileConfig", value = "新增/编辑文件配置", method = "POST", allUse = "1")
+    @ApiImplicitParams(classBean = FileConfig.class)
+    @RequestMapping("/post/FileConfigController/writeFileConfig")
+    public void writeFileConfig(InputObject inputObject, OutputObject outputObject) {
+        fileConfigService.saveOrUpdateEntity(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryFileConfigById", value = "根据id查询文件配置", method = "GET", allUse = "2")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/FileConfigController/queryFileConfigById")
+    public void queryFileConfigById(InputObject inputObject, OutputObject outputObject) {
+        fileConfigService.selectById(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "deleteFileConfigById", value = "删除文件配置", method = "DELETE", allUse = "1")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/FileConfigController/deleteFileConfigById")
+    public void deleteFileConfigById(InputObject inputObject, OutputObject outputObject) {
+        fileConfigService.deleteById(inputObject, outputObject);
+    }
 
 }

@@ -40,6 +40,7 @@ public class MaterialNorms extends OperatorUserInfo {
     private String name;
 
     @TableField(value = "material_id")
+    @Property(value = "商品id")
     private String materialId;
 
     @TableField(value = "logo")
@@ -93,5 +94,9 @@ public class MaterialNorms extends OperatorUserInfo {
     @TableField(exist = false)
     @Property(value = "指定仓库的库存")
     private NormsCalcStock depotTock;
+
+    @TableField(value = "shelves_state")
+    @Property(value = "上下架状态")
+    private Integer shelvesState;
 
 }

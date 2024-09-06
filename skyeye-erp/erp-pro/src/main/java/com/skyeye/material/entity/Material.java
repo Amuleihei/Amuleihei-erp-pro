@@ -112,4 +112,12 @@ public class Material extends BaseGeneralInfo {
     @Property(value = "是否使用中，参考#IsUsedEnum")
     private Integer isUsed;
 
+    @TableField(value = "shelves_state")
+    @Property(value = "上下架状态")
+    private Integer shelvesState;
+
+    @TableField(value = "brand_id")
+    @ApiModelProperty(value = "品牌id")
+    private String brandId;
+
 }

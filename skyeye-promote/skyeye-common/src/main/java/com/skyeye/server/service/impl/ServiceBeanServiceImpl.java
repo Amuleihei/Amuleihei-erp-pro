@@ -159,6 +159,7 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
                 tree.setId(treeNode.get("key").toString());
                 tree.setParentId(treeNode.get("parentKey").toString());
                 tree.setName(treeNode.get("name").toString());
+                tree.putExtra("appId", treeNode.get("appId"));
                 tree.putExtra("isParent", treeNode.get("isParent"));
                 tree.putExtra("disabled", treeNode.get("disabled"));
                 tree.putExtra("nocheck", treeNode.get("nocheck"));
@@ -200,7 +201,8 @@ public class ServiceBeanServiceImpl extends SkyeyeBusinessServiceImpl<ServiceBea
         serviceClass.forEach(bean -> {
             String id = bean.get("id").toString();
             if (classNameIds.indexOf(id) >= 0) {
-                Map<String, Object> resultMap = getResultMap(bean.get("className").toString(), bean.get("name").toString(), groupKey, false);
+                String key = bean.get("appId").toString() + bean.get("className").toString();
+                Map<String, Object> resultMap = getResultMap(key, bean.get("name").toString(), groupKey, false);
                 resultMap.put("classMation", bean);
                 result.add(resultMap);
             }

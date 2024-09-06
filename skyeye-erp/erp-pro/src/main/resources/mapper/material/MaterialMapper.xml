@@ -2,62 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.material.dao.MaterialDao">
 
-	<select id="queryMaterialListToTable" resultType="com.skyeye.material.entity.Material">
-    	SELECT
-			a.id,
-			a.`name`,
-			a.model,
-			a.category_id categoryId,
-			a.enabled,
-			a.unit,
-			a.`type`,
-			a.from_type fromType
-		FROM
-			erp_material a
-		<where>
-			a.delete_flag = #{deleteFlag}
-			AND a.enabled = #{enabled}
-			<if test="categoryId != '' and categoryId != null">
-				AND a.category_id = #{categoryId}
-			</if>
-			<if test="sqlExtract != '' and sqlExtract != null">
-				${sqlExtract}
-			</if>
-			<if test="keyword != null and keyword != ''">
-				AND (a.`name` like '%${keyword}%' OR a.model LIKE '%${keyword}%')
-			</if>
-		</where>
-        ORDER BY a.create_time DESC
-    </select>
-    
-    <select id="queryMaterialReserveList" resultType="com.skyeye.material.entity.Material">
-        SELECT
-			a.id,
-			a.`name`,
-			a.model,
-			a.category_id categoryId,
-			a.enabled,
-			a.unit,
-			a.`type`,
-			a.from_type fromType,
-			a.norms_spec normsSpec
-		FROM
-			erp_material a
-		<where>
-			a.delete_flag = #{deleteFlag}
-			<if test="categoryId != '' and categoryId != null">
-				AND a.category_id = #{categoryId}
-			</if>
-			<if test="sqlExtract != '' and sqlExtract != null">
-				${sqlExtract}
-			</if>
-			<if test="keyword != null and keyword != ''">
-				AND (a.`name` like '%${keyword}%' OR a.model LIKE '%${keyword}%')
-			</if>
-		</where>
-        ORDER BY a.create_time DESC
-    </select>
-    
     <select id="queryMaterialInventoryWarningList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
 			*
