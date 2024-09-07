@@ -69,7 +69,7 @@ public class ShopMaterialNorms extends OperatorUserInfo {
     private String logo;
 
     @TableField(value = "carousel_img")
-    @ApiModelProperty(value = "商品轮播图，多个逗号隔开", required = "required")
+    @ApiModelProperty(value = "商品轮播图，多个逗号隔开")
     private String carouselImg;
 
     @TableField(value = "real_sales")

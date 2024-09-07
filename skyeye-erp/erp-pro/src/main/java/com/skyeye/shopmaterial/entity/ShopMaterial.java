@@ -58,7 +58,7 @@ public class ShopMaterial extends OperatorUserInfo {
     private String logo;
 
     @TableField(value = "carousel_img")
-    @ApiModelProperty(value = "商品轮播图，多个逗号隔开", required = "required")
+    @ApiModelProperty(value = "商品轮播图，多个逗号隔开")
     private String carouselImg;
 
     @TableField(value = "distribution_type")
@@ -86,7 +86,7 @@ public class ShopMaterial extends OperatorUserInfo {
     private String realSales;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "上架的规格信息", required = "required,json")
+    @ApiModelProperty(value = "上架的规格信息", required = "json")
     private List<ShopMaterialNorms> shopMaterialNormsList;
 
 }

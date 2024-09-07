@@ -35,4 +35,6 @@ public interface MaterialService extends SkyeyeBusinessService<Material> {
      * @param id
      */
     void setUsed(String id);
+
+    void setShelvesState(String id, Integer shelvesState);
 }
