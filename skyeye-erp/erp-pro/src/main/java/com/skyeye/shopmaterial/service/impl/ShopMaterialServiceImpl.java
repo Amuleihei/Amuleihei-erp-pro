@@ -8,9 +8,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -125,6 +129,28 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
             shopMaterial.setShopMaterialNormsList(collectMap.get(shopMaterial.getMaterialId()));
         });
         return shopMaterialList;
+    }
+
+    @Override
+    public List<ShopMaterial> selectByIds(String... ids) {
+        List<ShopMaterial> shopMaterialList = super.selectByIds(ids);
+        materialService.setDataMation(shopMaterialList, ShopMaterial::getMaterialId);
+        return shopMaterialList;
+    }
+
+    @Override
+    public void queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
+        MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
+            .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
+            .like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
+
+        List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
+        List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
+        List<ShopMaterial> shopMaterials = selectByIds(idList.toArray(new String[]{}));
+        outputObject.setBeans(shopMaterials);
+        outputObject.settotal(pages.getTotal());
     }
 
 }
