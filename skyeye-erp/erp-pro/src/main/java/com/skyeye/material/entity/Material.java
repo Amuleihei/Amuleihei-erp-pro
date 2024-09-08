@@ -113,7 +113,7 @@ public class Material extends BaseGeneralInfo {
     private Integer isUsed;
 
     @TableField(value = "shelves_state")
-    @Property(value = "上下架状态")
+    @Property(value = "上下架状态，参考#MaterialShelvesState")
     private Integer shelvesState;
 
     @TableField(value = "brand_id")

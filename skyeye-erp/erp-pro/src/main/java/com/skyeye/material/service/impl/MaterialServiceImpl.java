@@ -369,4 +369,14 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
         }
     }
 
+    @Override
+    public void setShelvesState(String id, Integer shelvesState) {
+        UpdateWrapper<Material> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Material::getShelvesState), shelvesState);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Material::getIsUsed), IsUsedEnum.IN_USE.getKey());
+        update(updateWrapper);
+        refreshCache(id);
+    }
+
 }

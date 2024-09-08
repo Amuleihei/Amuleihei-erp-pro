@@ -7,11 +7,19 @@ package com.skyeye.shopmaterial.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.material.classenum.MaterialShelvesState;
 import com.skyeye.material.entity.Material;
 import com.skyeye.material.service.MaterialService;
 import com.skyeye.shopmaterial.dao.ShopMaterialDao;
@@ -50,18 +58,25 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     }
 
     @Override
-    public void createPostpose(ShopMaterial entity, String userId) {
-        List<ShopMaterialNorms> shopMaterialNormsList = entity.getShopMaterialNormsList();
-        shopMaterialNormsList.forEach(shopMaterialNorms -> {
-            shopMaterialNorms.setRealSales(CommonNumConstants.NUM_ZERO.toString());
-        });
-        shopMaterialNormsService.saveList(entity.getMaterialId(), shopMaterialNormsList);
+    public void writePostpose(ShopMaterial entity, String userId) {
+        // 保存商城商品规格
+        shopMaterialNormsService.saveList(entity.getMaterialId(), entity.getShopMaterialNormsList());
+
+        // 更新商品的上架状态
+        Material material = materialService.selectById(entity.getMaterialId());
+        if (CollectionUtil.isEmpty(entity.getShopMaterialNormsList())) {
+            materialService.setShelvesState(material.getId(), MaterialShelvesState.NOT_ON_SHELVE.getKey());
+        } else if (material.getMaterialNorms().size() > entity.getShopMaterialNormsList().size()) {
+            materialService.setShelvesState(material.getId(), MaterialShelvesState.PART_ON_SHELVE.getKey());
+        } else if (material.getMaterialNorms().size() == entity.getShopMaterialNormsList().size()) {
+            materialService.setShelvesState(material.getId(), MaterialShelvesState.ON_SHELVE.getKey());
+        }
     }
 
     @Override
     public void queryTransMaterialById(InputObject inputObject, OutputObject outputObject) {
         String materialId = inputObject.getParams().get("id").toString();
-        ShopMaterial shopMaterial = selectById(materialId);
+        ShopMaterial shopMaterial = selectByMaterialId(materialId);
         if (ObjectUtil.isEmpty(shopMaterial) || StrUtil.isEmpty(shopMaterial.getId())) {
             shopMaterial = new ShopMaterial();
             Material material = materialService.selectById(materialId);
@@ -78,9 +93,19 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         if (ObjectUtil.isEmpty(shopMaterial) || StrUtil.isEmpty(shopMaterial.getId())) {
             return shopMaterial;
         }
-        List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.selectByMaterialId(id);
+        List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.selectByMaterialId(shopMaterial.getMaterialId());
         shopMaterial.setShopMaterialNormsList(shopMaterialNormsList);
         return shopMaterial;
+    }
+
+    private ShopMaterial selectByMaterialId(String materialId) {
+        QueryWrapper<ShopMaterial> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMaterial::getMaterialId), materialId);
+        ShopMaterial shopMaterial = super.getOne(queryWrapper);
+        if (ObjectUtil.isEmpty(shopMaterial)) {
+            return null;
+        }
+        return selectById(shopMaterial.getId());
     }
 
     @Override
@@ -105,6 +130,36 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
             shopMaterial.setShopMaterialNormsList(collectMap.get(shopMaterial.getMaterialId()));
         });
         return shopMaterialList;
+    }
+
+    @Override
+    public List<ShopMaterial> selectByIds(String... ids) {
+        List<ShopMaterial> shopMaterialList = super.selectByIds(ids);
+        materialService.setDataMation(shopMaterialList, ShopMaterial::getMaterialId);
+        return shopMaterialList;
+    }
+
+    @Override
+    public void queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
+        MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
+            .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
+            .like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
+
+        List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
+        List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
+        List<ShopMaterial> shopMaterials = selectByIds(idList.toArray(new String[]{}));
+        outputObject.setBeans(shopMaterials);
+        outputObject.settotal(pages.getTotal());
+    }
+
+    @Override
+    public void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject) {
+        List<String> normsIdList = JSONUtil.toList(inputObject.getParams().get("normsIds").toString(), null);
+        List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.queryShopMaterialByNormsIdList(normsIdList);
+        outputObject.setBeans(shopMaterialNormsList);
+        outputObject.settotal(shopMaterialNormsList.size());
     }
 
 }

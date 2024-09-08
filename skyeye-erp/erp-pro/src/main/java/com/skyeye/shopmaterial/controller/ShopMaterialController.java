@@ -8,6 +8,7 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.shopmaterial.entity.ShopMaterial;
@@ -44,6 +45,29 @@ public class ShopMaterialController {
     @RequestMapping("/post/ShopMaterialController/saveShopMaterial")
     public void saveShopMaterial(InputObject inputObject, OutputObject outputObject) {
         shopMaterialService.saveOrUpdateEntity(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryShopMaterialById", value = "根据id获取商城商品信息", method = "GET", allUse = "0")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/ShopMaterialController/queryShopMaterialById")
+    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
+        shopMaterialService.selectById(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryShopMaterialList", value = "获取商城商品信息列表", method = "POST", allUse = "0")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/ShopMaterialController/queryShopMaterialList")
+    public void queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
+        shopMaterialService.queryShopMaterialList(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryShopMaterialByNormsIdList", value = "根据规格id获取商城商品信息", method = "POST", allUse = "0")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "normsIds", name = "normsIds", value = "规格id，多个逗号隔开", required = "required")})
+    @RequestMapping("/post/ShopMaterialController/queryShopMaterialByNormsIdList")
+    public void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject) {
+        shopMaterialService.queryShopMaterialByNormsIdList(inputObject, outputObject);
     }
 
 }

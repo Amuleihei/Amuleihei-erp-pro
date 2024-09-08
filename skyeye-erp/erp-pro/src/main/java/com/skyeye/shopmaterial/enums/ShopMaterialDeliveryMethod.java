@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum ShopMaterialDeliveryMethod implements SkyeyeEnumClass {
 
-    DEFAULT_SET(1, "快递发货", true, true),
+    DEFAULT_SET(1, "快递发货", true, false),
     SINGLE_SET(2, "用户自提", true, false),
     LOCAL_SET(3, "同城配送", true, false);
 

@@ -10,6 +10,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.shopmaterial.dao.ShopMaterialNormsDao;
 import com.skyeye.shopmaterial.entity.ShopMaterialNorms;
@@ -65,8 +66,20 @@ public class ShopMaterialNormsServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         if (CollectionUtil.isNotEmpty(shopMaterialNormsList)) {
             for (ShopMaterialNorms shopMaterialNorms : shopMaterialNormsList) {
                 shopMaterialNorms.setMaterialId(materialId);
+                shopMaterialNorms.setRealSales(CommonNumConstants.NUM_ZERO.toString());
             }
             createEntity(shopMaterialNormsList, StrUtil.EMPTY);
         }
+    }
+
+    @Override
+    public List<ShopMaterialNorms> queryShopMaterialByNormsIdList(List<String> normsIdList) {
+        if (CollectionUtil.isEmpty(normsIdList)) {
+            return CollectionUtil.newArrayList();
+        }
+        QueryWrapper<ShopMaterialNorms> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(ShopMaterialNorms::getNormsId), normsIdList);
+        List<ShopMaterialNorms> shopMaterialNormsList = list(queryWrapper);
+        return shopMaterialNormsList;
     }
 }

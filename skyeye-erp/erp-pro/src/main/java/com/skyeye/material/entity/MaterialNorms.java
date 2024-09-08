@@ -95,8 +95,4 @@ public class MaterialNorms extends OperatorUserInfo {
     @Property(value = "指定仓库的库存")
     private NormsCalcStock depotTock;
 
-    @TableField(value = "shelves_state")
-    @Property(value = "上下架状态")
-    private Integer shelvesState;
-
 }
