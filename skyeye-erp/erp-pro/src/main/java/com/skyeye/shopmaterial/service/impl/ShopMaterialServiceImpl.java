@@ -7,6 +7,7 @@ package com.skyeye.shopmaterial.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -151,6 +152,14 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         List<ShopMaterial> shopMaterials = selectByIds(idList.toArray(new String[]{}));
         outputObject.setBeans(shopMaterials);
         outputObject.settotal(pages.getTotal());
+    }
+
+    @Override
+    public void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject) {
+        List<String> normsIdList = JSONUtil.toList(inputObject.getParams().get("normsIds").toString(), null);
+        List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.queryShopMaterialByNormsIdList(normsIdList);
+        outputObject.setBeans(shopMaterialNormsList);
+        outputObject.settotal(shopMaterialNormsList.size());
     }
 
 }

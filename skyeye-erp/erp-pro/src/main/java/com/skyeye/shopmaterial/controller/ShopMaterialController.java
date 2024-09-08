@@ -62,4 +62,12 @@ public class ShopMaterialController {
         shopMaterialService.queryShopMaterialList(inputObject, outputObject);
     }
 
+    @ApiOperation(id = "queryShopMaterialByNormsIdList", value = "根据规格id获取商城商品信息", method = "POST", allUse = "0")
+    @ApiImplicitParams(value = {
+        @ApiImplicitParam(id = "normsIds", name = "normsIds", value = "规格id，多个逗号隔开", required = "required")})
+    @RequestMapping("/post/ShopMaterialController/queryShopMaterialByNormsIdList")
+    public void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject) {
+        shopMaterialService.queryShopMaterialByNormsIdList(inputObject, outputObject);
+    }
+
 }
