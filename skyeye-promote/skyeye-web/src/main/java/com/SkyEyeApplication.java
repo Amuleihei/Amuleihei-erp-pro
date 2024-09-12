@@ -17,6 +17,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.unit.DataSize;
 
 import javax.servlet.MultipartConfigElement;
 
@@ -49,9 +50,9 @@ public class SkyEyeApplication {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tPath);
         // 单个文件最大，KB,MB 100MB
-        factory.setMaxFileSize("102400KB");
+        factory.setMaxFileSize(DataSize.ofMegabytes(100));
         // 设置总上传数据总大小，1000MB
-        factory.setMaxRequestSize("1024000KB");
+        factory.setMaxRequestSize(DataSize.ofMegabytes(1000));
         return factory.createMultipartConfig();
     }
 
