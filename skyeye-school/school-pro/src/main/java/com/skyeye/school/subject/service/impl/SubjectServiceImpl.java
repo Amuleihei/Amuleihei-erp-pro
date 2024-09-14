@@ -19,7 +19,6 @@ import com.skyeye.eve.classenum.LoginIdentity;
 import com.skyeye.exception.CustomException;
 import com.skyeye.rest.wall.certification.service.ICertificationService;
 import com.skyeye.school.semester.entity.Semester;
-import com.skyeye.school.student.entity.Student;
 import com.skyeye.school.subject.dao.SubjectDao;
 import com.skyeye.school.subject.entity.Subject;
 import com.skyeye.school.subject.entity.SubjectClasses;

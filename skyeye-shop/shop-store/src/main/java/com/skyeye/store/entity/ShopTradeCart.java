@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.store.entity;
 
 
@@ -30,9 +34,17 @@ public class ShopTradeCart extends OperatorUserInfo {
     @ApiModelProperty(value = "商品id", required = "required")
     private String materialId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "商品信息")
+    private Object materialMaton;
+
     @TableField("norms_id")
     @ApiModelProperty(value = "规格id", required = "required")
     private String normsId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "規格信息")
+    private Object normsMaton;
 
     @TableField("count")
     @ApiModelProperty(value = "数量", required = "required")

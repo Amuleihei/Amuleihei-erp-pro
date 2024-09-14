@@ -14,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
@@ -30,6 +31,7 @@ import com.skyeye.shopmaterial.service.ShopMaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -156,7 +158,8 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
 
     @Override
     public void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject) {
-        List<String> normsIdList = JSONUtil.toList(inputObject.getParams().get("normsIds").toString(), null);
+        List<String> normsIdList = Arrays.asList(inputObject.getParams().get("normsIds").toString()
+            .split(CommonCharConstants.COMMA_MARK));
         List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.queryShopMaterialByNormsIdList(normsIdList);
         outputObject.setBeans(shopMaterialNormsList);
         outputObject.settotal(shopMaterialNormsList.size());
