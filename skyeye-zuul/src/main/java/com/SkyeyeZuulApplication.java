@@ -13,7 +13,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = {
     DataSourceAutoConfiguration.class,
-    NutzDaoAutoConfiguration.class
+    NutzDaoAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
 })
 @ComponentScan(basePackages = {"com.skyeye"})
 @EnableDiscoveryClient // 开启服务发现
