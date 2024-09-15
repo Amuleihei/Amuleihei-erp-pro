@@ -7,11 +7,7 @@ spring:
     name: skyeye-zuul-${spring.profiles.active} # 服务名
   main:
     allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
-    allow-bean-definition-overriding: true # 允许 Bean 覆盖，例如说 Feign 等会存在重复定义的服务
-  data:
-    redis:
-      repositories:
-        enabled: false # 项目未使用到 Spring Data Redis 的 Repository，所以直接禁用，保证启动速度
+    web-application-type: reactive
   profiles:
     active: dev
   cloud:
@@ -27,3 +23,81 @@ spring:
         file-extension: yml
         # 命名空间 常用场景之一是不同环境的配置的区分隔离，例如开发测试环境和生产环境的资源（如配置、服务）隔离等
         namespace: ${spring.profiles.active} # 配置命名空间
+        # 支持多个共享 Data Id 的配置，优先级小于ext-config,自定义 Data Id 配置 属性是个集合，内部由 Config POJO 组成。Config 有 3 个属性，分别是 dataId, group 以及 refresh
+        ext-config:
+          - data-id: skyeye-common.yml # 配置文件名-Data Id
+            group: DEFAULT_GROUP # 默认为DEFAULT_GROUP
+            refresh: false # 是否动态刷新，默认为false
+    gateway:
+      routes:
+        - id: fileBase    #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          uri: lb://skyeye-pro-${spring.profiles.active} #匹配后提供服务的路由地址
+          predicates:
+            - Path=/fileBase/**        # 断言，路径相匹配的进行路由
+        - id: reqBase
+          uri: lb://skyeye-pro-${spring.profiles.active}
+          predicates:
+            - Path=/reqBase/**
+        - id: shop
+          uri: lb://skyeye-shop-${spring.profiles.active}
+          predicates:
+            - Path=/shop/**
+        - id: flowable
+          uri: lb://skyeye-flowable-${spring.profiles.active}
+          predicates:
+            - Path=/flowable/**
+        - id: school
+          uri: lb://skyeye-school-${spring.profiles.active}
+          predicates:
+            - Path=/school/**
+        - id: report
+          uri: lb://skyeye-report-${spring.profiles.active}
+          predicates:
+            - Path=/report/**
+        - id: adm
+          uri: lb://skyeye-adm-${spring.profiles.active}
+          predicates:
+            - Path=/adm/**,/survey/**,/note/**,/knowlg/**,/mail/**,/diskCloud/**,/email/**,/notice/**,/businessFlow/**,/forum/**,/jobdiary/**,/ehr/**,/lightApp/**
+        - id: schedule
+          uri: lb://skyeye-schedule-${spring.profiles.active}
+          predicates:
+            - Path=/schedule/**
+        - id: wages
+          uri: lb://skyeye-wages-${spring.profiles.active}
+          predicates:
+            - Path=/wages/**
+        - id: crm
+          uri: lb://skyeye-crm-${spring.profiles.active}
+          predicates:
+            - Path=/crm/**
+        - id: ifs
+          uri: lb://skyeye-ifs-${spring.profiles.active}
+          predicates:
+            - Path=/ifs/**
+        - id: erp
+          uri: lb://skyeye-erp-${spring.profiles.active}
+          predicates:
+            - Path=/erp/**
+        - id: boss
+          uri: lb://skyeye-boss-${spring.profiles.active}
+          predicates:
+            - Path=/boss/**
+        - id: checkwork
+          uri: lb://skyeye-checkwork-${spring.profiles.active}
+          predicates:
+            - Path=/checkwork/**
+        - id: sealService
+          uri: lb://skyeye-seal-service-${spring.profiles.active}
+          predicates:
+            - Path=/sealService/**
+        - id: wall
+          uri: lb://skyeye-wall-${spring.profiles.active}
+          predicates:
+            - Path=/wall/**
+        - id: tms
+          uri: lb://skyeye-tms-${spring.profiles.active}
+          predicates:
+            - Path=/tms/**
+logging:
+  level:
+    com: debug

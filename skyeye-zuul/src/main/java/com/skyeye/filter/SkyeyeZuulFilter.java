@@ -4,14 +4,17 @@
 
 package com.skyeye.filter;
 
-import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.context.RequestContext;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -23,92 +26,33 @@ import java.util.List;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Component
-public class SkyeyeZuulFilter extends ZuulFilter {
+public class SkyeyeZuulFilter implements GlobalFilter, Ordered {
 
     private static final List<String> METHOD_LIST = Arrays.asList("GET", "POST", "PUT", "DELETE");
 
-    /**
-     * 过滤器的类型，它决定过滤器在请求的哪个生命周期中执行。 这里定义为pre，代表会在请求被路由之前执行。
-     *
-     * @return
-     */
     @Override
-    public String filterType() {
-        return "pre";
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 1.获取请求对象
+        ServerHttpRequest request = exchange.getRequest();
+        // 2.获取响应对象
+        ServerHttpResponse response = exchange.getResponse();
+
+        String method = request.getMethod().name().toUpperCase();
+        if (!METHOD_LIST.contains(method)) {
+            response.setStatusCode(HttpStatus.METHOD_NOT_ALLOWED);
+            return response.setComplete();
+        }
+        String uri = request.getURI().getPath();
+        if (uri.contains("/images/")) {
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            return response.setComplete();
+        }
+        // 放行
+        return chain.filter(exchange);
     }
 
-    /**
-     * filter执行顺序，通过数字指定。 数字越大，优先级越低。
-     *
-     * @return
-     */
     @Override
-    public int filterOrder() {
+    public int getOrder() {
         return 0;
     }
-
-    /**
-     * 判断该过滤器是否需要被执行。这里我们直接返回了true，因此该过滤器对所有请求都会生效。 实际运用中我们可以利用该函数来指定过滤器的有效范围。
-     *
-     * @return
-     */
-    @Override
-    public boolean shouldFilter() {
-        String method = RequestContext.getCurrentContext().getRequest().getMethod().toUpperCase();
-        if (!METHOD_LIST.contains(method)) {
-            return false;
-        }
-        HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
-        String uri = request.getRequestURI();
-        if (uri.contains("/images/")) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 过滤器的具体逻辑
-     *
-     * @return
-     */
-    @Override
-    public Object run() {
-        // 获取currentContext
-        RequestContext currentContext = RequestContext.getCurrentContext();
-        // 获取响应对象
-        HttpServletResponse response = currentContext.getResponse();
-        // 设置响应格式
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-
-        HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
-        System.err.println("REQUEST:: @@START@@ " + request.getSession().getId());
-        System.err.println("REQUEST:: " + request.getScheme() + " " + request.getRemoteAddr() + ":" + request.getRemotePort());
-        System.err.println("REQUEST:: " + request.getScheme() + " " + request.getRemoteAddr() + ":" + request.getRemotePort());
-        StringBuilder params = new StringBuilder("?");
-        Enumeration<String> names = request.getParameterNames();
-        if (request.getMethod().equals("GET")) {
-            while (names.hasMoreElements()) {
-                String name = names.nextElement();
-                params.append(name);
-                params.append("=");
-                params.append(request.getParameter(name));
-                params.append("&");
-            }
-        }
-        if (params.length() > 0) {
-            params.delete(params.length() - 1, params.length());
-        }
-        System.err.println("REQUEST:: > " + request.getMethod() + " " + request.getRequestURI() + params + " " + request.getProtocol());
-        Enumeration<String> headers = request.getHeaderNames();
-        while (headers.hasMoreElements()) {
-            String name = headers.nextElement();
-            String value = request.getHeader(name);
-            System.err.println("REQUEST:: > " + name + ":" + value);
-        }
-        System.err.println("REQUEST:: @@END@@ " + request.getSession().getId());
-
-        return null;
-    }
-
 }
