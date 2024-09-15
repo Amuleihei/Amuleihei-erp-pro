@@ -72,26 +72,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/lib</directory>
-                            <targetPath>WEB-INF/lib</targetPath>
-                            <filtering>false</filtering>
-                            <includes>
-                                <include>**/*.jar</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>springloaded</artifactId>
-                        <version>1.2.5.RELEASE</version>
-                    </dependency>
-                </dependencies>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal> <!-- 将引入的 jar 打入其中 -->
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!--打包跳过测试 -->

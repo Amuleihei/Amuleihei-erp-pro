@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {
     org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
-    org.flowable.spring.boot.FlowableSecurityAutoConfiguration.class
+    org.flowable.spring.boot.FlowableSecurityAutoConfiguration.class,
+    org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class
 })
 @EnableConfigurationProperties({FlowableModelerAppProperties.class})
 @ComponentScan(basePackages = {"com.skyeye"})
@@ -26,9 +27,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableDiscoveryClient
 @EnableFeignClients
 public class SkyFlowableApplication {
-
-    @Value("${IMAGES_PATH}")
-    private String tPath;
 
     public static void main(String[] args) {
         System.setProperty("spring.devtools.restart.enabled", "false");
