@@ -80,6 +80,4 @@ public class ShopTradeCartController {
     public void resetShopTradeCart(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.resetShopTradeCart(inputObject, outputObject);
     }
-
-
 }

@@ -51,6 +51,6 @@ public class ShopTradeCart extends OperatorUserInfo {
     private Integer count;
 
     @TableField("selected")
-    @ApiModelProperty(value = "是否选中", required = "required")
+    @ApiModelProperty(value = "是否选中，参考#WhetherEnum", required = "required,num")
     private Integer selected;
 }
