@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.base.handler.enclosure.bean.Enclosure;
@@ -48,6 +49,18 @@ public class Member extends AreaInfo implements EnclosureFace {
     @ApiModelProperty(value = "联系电话", required = "required,phone")
     private String phone;
 
+    @TableField("password")
+    @ApiModelProperty(value = "密码")
+    private String password;
+
+    @TableField("pwd_num_enc")
+    @Property(value = "用户密码加密次数")
+    private Integer pwdNumEnc;
+
+    @TableField("wechat_open_id")
+    @ApiModelProperty(value = "微信的openId")
+    private String wechatOpenId;
+
     @TableField(value = "email")
     @ApiModelProperty(value = "电子邮箱", required = "email")
     private String email;
@@ -66,4 +79,9 @@ public class Member extends AreaInfo implements EnclosureFace {
     @TableField(exist = false)
     @ApiModelProperty(value = "附件", required = "json")
     private Enclosure enclosureInfo;
+
+    @TableField(exist = false)
+    @Property(value = "用户token")
+    private String userToken;
+
 }

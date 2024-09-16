@@ -29,6 +29,6 @@ public class SmsCodeValidateReq implements Serializable {
     private Integer scene;
 
     @ApiModelProperty(value = "验证码", required = "required")
-    private String code;
+    private String smsCode;
 
 }
