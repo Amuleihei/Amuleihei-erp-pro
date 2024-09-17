@@ -10,12 +10,12 @@ import cn.hutool.core.util.StrUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.RedisConstants;
+import com.skyeye.common.enumeration.SmsSceneEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.jedis.JedisClientService;
-import com.skyeye.personnel.classenum.SmsSceneEnum;
 import com.skyeye.sms.core.config.SmsCodeProperties;
 import com.skyeye.sms.entity.SmsCodeSendReq;
 import com.skyeye.sms.entity.SmsCodeUseReq;
@@ -126,9 +126,12 @@ public class SmsCodeServiceImpl implements SmsCodeService {
     @Override
     public void validateSmsCode(SmsCodeValidateReq smsCodeValidateReq) {
         String chcheCode = validateSmsCode0(smsCodeValidateReq.getMobile(), smsCodeValidateReq.getScene());
-        if (!StrUtil.equals(chcheCode, smsCodeValidateReq.getCode())) {
+        if (!StrUtil.equals(chcheCode, smsCodeValidateReq.getSmsCode())) {
             throw new CustomException("验证码错误");
         }
+        // 验证码使用过后，删除缓存
+        String key = String.format(MOBILE_SMS_CODE, smsCodeValidateReq.getMobile(), smsCodeValidateReq.getScene());
+        jedisClientService.del(key);
     }
 
     private String validateSmsCode0(String mobile, Integer scene) {

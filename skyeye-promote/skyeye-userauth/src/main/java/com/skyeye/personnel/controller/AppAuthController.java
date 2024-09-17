@@ -77,4 +77,13 @@ public class AppAuthController {
         appAuthService.sendSmsCode(inputObject, outputObject);
     }
 
+    @ApiOperation(id = "smsLogin", value = "短信验证码登录", method = "POST", allUse = "0")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "mobile", name = "mobile", value = "手机号", required = "required"),
+        @ApiImplicitParam(id = "smsCode", name = "smsCode", value = "短信验证码", required = "required")})
+    @RequestMapping("/post/AppAuthController/smsLogin")
+    public void smsLogin(InputObject inputObject, OutputObject outputObject) {
+        appAuthService.smsLogin(inputObject, outputObject);
+    }
+
 }

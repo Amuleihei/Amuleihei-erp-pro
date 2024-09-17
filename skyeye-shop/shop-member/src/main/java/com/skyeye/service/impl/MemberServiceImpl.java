@@ -4,15 +4,19 @@
 
 package com.skyeye.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.DeleteFlagEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CharUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.dao.MemberDao;
 import com.skyeye.entity.Member;
 import com.skyeye.eve.service.IAreaService;
@@ -54,6 +58,10 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
     @Override
     public void updatePrepose(Member entity) {
         setMemberMation(entity);
+        Member oldMember = selectById(entity.getId());
+        entity.setPassword(oldMember.getPassword());
+        entity.setWechatOpenId(oldMember.getWechatOpenId());
+        entity.setPwdNumEnc(oldMember.getPwdNumEnc());
     }
 
     private void setMemberMation(Member entity) {
@@ -87,6 +95,24 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         List<Map<String, Object>> beans = skyeyeBaseMapper.queryMemberByList(pageInfo);
         outputObject.setBeans(beans);
         outputObject.settotal(pages.getTotal());
+    }
+
+    @Override
+    public Member queryMemberByPhone(String phone) {
+        QueryWrapper<Member> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Member::getPhone), phone);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Member::getDeleteFlag), DeleteFlagEnum.NOT_DELETE.getKey());
+        Member member = getOne(queryWrapper, false);
+        return member;
+    }
+
+    @Override
+    public void editMemberPassword(String userId, String newPassword, int pwdNum) {
+        UpdateWrapper<Member> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, userId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Member::getPassword), newPassword);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Member::getPwdNumEnc), pwdNum);
+        update(updateWrapper);
     }
 
 }

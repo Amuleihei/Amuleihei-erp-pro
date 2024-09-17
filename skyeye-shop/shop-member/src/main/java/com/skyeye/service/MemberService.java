@@ -21,4 +21,7 @@ public interface MemberService extends SkyeyeBusinessService<Member> {
 
     void queryMyWriteMemberList(InputObject inputObject, OutputObject outputObject);
 
+    Member queryMemberByPhone(String phone);
+
+    void editMemberPassword(String userId, String newPassword, int pwdNum);
 }
