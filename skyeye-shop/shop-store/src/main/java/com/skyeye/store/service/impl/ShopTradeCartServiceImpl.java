@@ -5,6 +5,7 @@
 package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -18,6 +19,7 @@ import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CalculationUtil;
+import com.skyeye.common.util.StringUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.erp.service.IMaterialNormsService;
 import com.skyeye.erp.service.IMaterialService;
@@ -26,6 +28,7 @@ import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import com.skyeye.store.dao.ShopTradeCartDao;
 import com.skyeye.store.entity.ShopTradeCart;
 import com.skyeye.store.service.ShopTradeCartService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +58,7 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
 
     @Override
     public void validatorEntity(ShopTradeCart shopTradeCart) {
+        super.validatorEntity(shopTradeCart);
         if (shopTradeCart.getCount() <= CommonNumConstants.NUM_ZERO) {
             throw new CustomException("商品数量不能小于1");
         }
@@ -66,15 +70,29 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
         List<ShopTradeCart> beans = list(wrapper);
-        iMaterialNormsService.setDataMation(beans, ShopTradeCart::getMaterialId);
+        iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
     @Override
+    public String createEntity(ShopTradeCart shopTradeCart, String userId){
+        QueryWrapper<ShopTradeCart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getMaterialId), shopTradeCart.getMaterialId());
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getNormsId), shopTradeCart.getNormsId());
+        ShopTradeCart one = getOne(queryWrapper);
+        if (ObjectUtil.isNotEmpty(one)) {
+            shopTradeCart.setId(one.getId());
+            shopTradeCart.setCount(one.getCount() + shopTradeCart.getCount());
+            return super.updateEntity(shopTradeCart, userId);
+        }
+        return super.createEntity(shopTradeCart, userId);
+    }
+
+    @Override
     public void deleteById(InputObject inputObject, OutputObject outputObject) {
         String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(","));
+        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
         super.deleteById(idList);
     }
 
@@ -88,14 +106,10 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         if (!userId.equals(one.getCreateId())) {
             throw new CustomException("无权限!");
         }
-        if (Objects.equals(one.getSelected(), WhetherEnum.ENABLE_USING.getKey())) {
-            updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), WhetherEnum.DISABLE_USING.getKey());
-        } else {
-            updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), WhetherEnum.ENABLE_USING.getKey());
-        }
+        updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected),
+            Objects.equals(one.getSelected(), WhetherEnum.ENABLE_USING.getKey())
+                ? WhetherEnum.DISABLE_USING.getKey() : WhetherEnum.ENABLE_USING.getKey());
         update(updateWrapper);
-        outputObject.setBean(getOne(updateWrapper));
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
     @Override
@@ -116,8 +130,6 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
             updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getCount), count - CommonNumConstants.NUM_ONE);
         }
         update(updateWrapper);
-        outputObject.setBean(getOne(updateWrapper));
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
     @Override
@@ -125,12 +137,7 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopTradeCart> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
-        List<ShopTradeCart> list = list(queryWrapper);
         remove(queryWrapper);
-        List<String> idCollect = list.stream()
-            .map(ShopTradeCart::getId).collect(Collectors.toList());
-        outputObject.setBeans(idCollect);
-        outputObject.settotal(idCollect.size());
     }
 
     @Override
@@ -160,7 +167,6 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
                 allPrice[0] = CalculationUtil.add(allPrice[0], flagPrice);
             });
         }
-
         result.put("allPrice", Joiner.on(CommonCharConstants.COMMA_MARK).join(allPrice));
         outputObject.setBean(result);
         outputObject.settotal(CommonNumConstants.NUM_ONE);

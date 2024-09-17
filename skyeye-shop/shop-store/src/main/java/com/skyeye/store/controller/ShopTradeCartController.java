@@ -43,13 +43,25 @@ public class ShopTradeCartController {
         shopTradeCartService.queryList(inputObject, outputObject);
     }
 
+    /**
+     * 新增购物车信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "insertShopTradeCart", value = "新增购物车信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopTradeCart.class)
-    @RequestMapping("/post/ShopTradeCartController/writeShopTradeCart")
+    @RequestMapping("/post/ShopTradeCartController/insertShopTradeCart")
     public void insertShopTradeCart(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.createEntity(inputObject, outputObject);
     }
 
+    /**
+     * 批量删除购物车信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "deleteShopTradCartByIds", value = "批量删除购物车信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号隔开", required = "required")})
@@ -58,6 +70,12 @@ public class ShopTradeCartController {
         shopTradeCartService.deleteById(inputObject, outputObject);
     }
 
+    /**
+     * 更新购物车商品数量
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "changeCount", value = "更新购物车商品数量", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required"),
@@ -67,6 +85,12 @@ public class ShopTradeCartController {
         shopTradeCartService.changeCount(inputObject, outputObject);
     }
 
+    /**
+     * 更新购物车商品选中
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "changeSelected", value = "更新购物车商品选中", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -75,16 +99,27 @@ public class ShopTradeCartController {
         shopTradeCartService.changeSelected(inputObject, outputObject);
     }
 
+    /**
+     * 重置购物车信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "resetShopTradeCart", value = "重置购物车信息", method = "POST", allUse = "2")
     @RequestMapping("/post/ShopTradeCartController/resetShopTradeCart")
     public void resetShopTradeCart(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.resetShopTradeCart(inputObject, outputObject);
     }
 
+    /**
+     * 计算购物车总价
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @ApiOperation(id = "calculateTotalPrices", value = "计算购物车总价", method = "POST", allUse = "2")
     @RequestMapping("/post/ShopTradeCartController/calculateTotalPrices")
     public void calculateTotalPrices(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.calculateTotalPrices(inputObject, outputObject);
     }
-
 }
