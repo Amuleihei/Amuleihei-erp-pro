@@ -13,6 +13,8 @@ import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @ClassName: ShopTradeCart
  * @Description: 品牌管理实体类
@@ -36,7 +38,7 @@ public class ShopTradeCart extends OperatorUserInfo {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "商品信息")
-    private Object materialMaton;
+    private Map<String, Object> materialMaton;
 
     @TableField("norms_id")
     @ApiModelProperty(value = "规格id", required = "required")
@@ -44,7 +46,7 @@ public class ShopTradeCart extends OperatorUserInfo {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "規格信息")
-    private Object normsMaton;
+    private Map<String, Object> normsMaton;
 
     @TableField("count")
     @ApiModelProperty(value = "数量", required = "required")
