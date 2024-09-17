@@ -23,6 +23,7 @@ import com.skyeye.sms.entity.SmsCodeValidateReq;
 import com.skyeye.sms.service.SmsCodeService;
 import com.skyeye.sms.service.SmsSendService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import static cn.hutool.core.util.RandomUtil.randomInt;
@@ -59,6 +60,12 @@ public class SmsCodeServiceImpl implements SmsCodeService {
      */
     private static final String MOBILE_SMS_DAY_SEND_NUM = "sms:mobile:daySendNum:%s:%s";
 
+    @Value("${sms.template.enabled}")
+    private Boolean smsTemplateEnabled;
+
+    @Value("${sms.template.code}")
+    private String smsTemplateCode;
+
     @Override
     public void sendSmsCodeReq(InputObject inputObject, OutputObject outputObject) {
         SmsCodeSendReq smsCodeSendReq = inputObject.getParams(SmsCodeSendReq.class);
@@ -69,6 +76,9 @@ public class SmsCodeServiceImpl implements SmsCodeService {
     public void sendSmsCodeReq(SmsCodeSendReq smsCodeSendReq) {
         SmsSceneEnum sceneEnum = SmsSceneEnum.getCodeByScene(smsCodeSendReq.getScene());
         Assert.notNull(sceneEnum, "验证码场景({}) 查找不到配置", smsCodeSendReq.getScene());
+        if (smsTemplateEnabled) {
+            return;
+        }
         // 创建验证码
         String code = createSmsCode(smsCodeSendReq.getMobile(), smsCodeSendReq.getScene());
         // 发送验证码
@@ -125,6 +135,12 @@ public class SmsCodeServiceImpl implements SmsCodeService {
 
     @Override
     public void validateSmsCode(SmsCodeValidateReq smsCodeValidateReq) {
+        if (smsTemplateEnabled) {
+            if (!StrUtil.equals(smsTemplateCode, smsCodeValidateReq.getSmsCode())) {
+                throw new CustomException("验证码错误");
+            }
+            return;
+        }
         String chcheCode = validateSmsCode0(smsCodeValidateReq.getMobile(), smsCodeValidateReq.getScene());
         if (!StrUtil.equals(chcheCode, smsCodeValidateReq.getSmsCode())) {
             throw new CustomException("验证码错误");
