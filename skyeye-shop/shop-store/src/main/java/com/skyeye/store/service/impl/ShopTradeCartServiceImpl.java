@@ -144,26 +144,23 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         //设置返回值
         Map<String, String> result = new HashMap<>();
         final String[] allPrice = {"0"};
-        if (CollectionUtil.isEmpty(beans)) {
-            result.put("allPrice", Joiner.on(CommonCharConstants.COMMA_MARK).join(allPrice));
-            outputObject.setBean(result);
-            outputObject.settotal(CommonNumConstants.NUM_ONE);
-            return;
+        if (CollectionUtil.isNotEmpty(beans)) {
+            Map<String, String> countMap = beans.stream().collect(Collectors
+                .toMap(ShopTradeCart::getNormsId, shopTradeCart -> shopTradeCart.getCount().toString()));
+            // 收集规格id列表，获得规格信息
+            List<String> normsIdList = beans.stream().map(ShopTradeCart::getNormsId).collect(Collectors.toList());
+            List<Map<String, Object>> normsListMap = iShopMaterialNormsService
+                .queryShopMaterialByNormsIdList(Joiner.on(CommonCharConstants.COMMA_MARK).join(normsIdList));
+            // 计算价格
+            normsListMap.forEach(map -> {
+                String id = map.get("normsId").toString();
+                String count = countMap.get(id);
+                String salePrice = map.get("salePrice").toString();
+                String flagPrice = CalculationUtil.multiply(count, salePrice, CommonNumConstants.NUM_TWO);
+                allPrice[0] = CalculationUtil.add(allPrice[0], flagPrice);
+            });
         }
-        Map<String, String> countMap = beans.stream().collect(Collectors
-            .toMap(ShopTradeCart::getNormsId, shopTradeCart -> shopTradeCart.getCount().toString()));
-        // 收集规格id列表，获得规格信息
-        List<String> normsIdList = beans.stream().map(ShopTradeCart::getNormsId).collect(Collectors.toList());
-        List<Map<String, Object>> normsListMap = iShopMaterialNormsService
-            .queryShopMaterialByNormsIdList(Joiner.on(CommonCharConstants.COMMA_MARK).join(normsIdList));
-        // 计算价格
-        normsListMap.forEach(map -> {
-            String id = map.get("normsId").toString();
-            String count = countMap.get(id);
-            String salePrice = map.get("salePrice").toString();
-            String flagPrice = CalculationUtil.multiply(count, salePrice, CommonNumConstants.NUM_TWO);
-            allPrice[0] = CalculationUtil.add(allPrice[0], flagPrice);
-        });
+
         result.put("allPrice", Joiner.on(CommonCharConstants.COMMA_MARK).join(allPrice));
         outputObject.setBean(result);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
