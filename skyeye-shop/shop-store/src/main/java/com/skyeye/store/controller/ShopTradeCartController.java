@@ -37,25 +37,25 @@ public class ShopTradeCartController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryMyShopTradeCartList", value = "获取购物车信息", method = "POST", allUse = "2")
-    @RequestMapping("/post/ShopTradeCartController/queryMyShopTradeCartList")
+    @ApiOperation(id = "queryShopTradeCartList", value = "获取购物车信息", method = "POST", allUse = "2")
+    @RequestMapping("/post/ShopTradeCartController/queryShopTradeCartList")
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
-        shopTradeCartService.queryMyShopTradeCartList(inputObject, outputObject);
+        shopTradeCartService.queryList(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "writeShopTradeCart", value = "新增/修改购物车信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "insertShopTradeCart", value = "新增购物车信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopTradeCart.class)
     @RequestMapping("/post/ShopTradeCartController/writeShopTradeCart")
     public void insertShopTradeCart(InputObject inputObject, OutputObject outputObject) {
-        shopTradeCartService.saveOrUpdateEntity(inputObject, outputObject);
+        shopTradeCartService.createEntity(inputObject, outputObject);
     }
 
     @ApiOperation(id = "deleteShopTradCartByIds", value = "批量删除购物车信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表", required = "required")})
+        @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号隔开", required = "required")})
     @RequestMapping("/post/ShopTradeCartController/deleteShopTradCartByIds")
     public void deleteShopTradCartByIds(InputObject inputObject, OutputObject outputObject) {
-        shopTradeCartService.deleteByIds(inputObject, outputObject);
+        shopTradeCartService.deleteById(inputObject, outputObject);
     }
 
     @ApiOperation(id = "changeCount", value = "更新购物车商品数量", method = "POST", allUse = "2")
@@ -80,4 +80,11 @@ public class ShopTradeCartController {
     public void resetShopTradeCart(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.resetShopTradeCart(inputObject, outputObject);
     }
+
+    @ApiOperation(id = "calculateTotalPrices", value = "计算购物车总价", method = "POST", allUse = "2")
+    @RequestMapping("/post/ShopTradeCartController/calculateTotalPrices")
+    public void calculateTotalPrices(InputObject inputObject, OutputObject outputObject) {
+        shopTradeCartService.calculateTotalPrices(inputObject, outputObject);
+    }
+
 }

@@ -18,13 +18,11 @@ import com.skyeye.store.entity.ShopTradeCart;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface ShopTradeCartService extends SkyeyeBusinessService<ShopTradeCart> {
-    void queryMyShopTradeCartList(InputObject inputObject, OutputObject outputObject);
-
     void changeSelected(InputObject inputObject, OutputObject outputObject);
 
     void changeCount(InputObject inputObject, OutputObject outputObject);
 
     void resetShopTradeCart(InputObject inputObject, OutputObject outputObject);
 
-    void deleteByIds(InputObject inputObject, OutputObject outputObject);
+    void calculateTotalPrices(InputObject inputObject, OutputObject outputObject);
 }

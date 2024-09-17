@@ -5,16 +5,22 @@
 package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.google.common.base.Joiner;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.erp.service.IMaterialNormsService;
+import com.skyeye.erp.service.IMaterialService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import com.skyeye.store.dao.ShopTradeCartDao;
@@ -39,7 +45,10 @@ import java.util.stream.Collectors;
 public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTradeCartDao, ShopTradeCart> implements ShopTradeCartService {
 
     @Autowired
-    private ShopTradeCartService shopTradeCartService;
+    private IMaterialService iMaterialService;
+
+    @Autowired
+    private IMaterialNormsService iMaterialNormsService;
 
     @Autowired
     private IShopMaterialNormsService iShopMaterialNormsService;
@@ -52,49 +61,21 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
     }
 
     @Override
-    public void queryMyShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
+    public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
-        QueryWrapper<ShopTradeCart> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
-        List<Map<String, Object>> mapList = listMaps(queryWrapper);
-        if (CollectionUtil.isEmpty(mapList)) {
-            return;
-        }
-        List<String> normsIds = mapList.stream()
-            .map(map -> map.get("norms_id").toString()).collect(Collectors.toList());
-        List<Map<String, Object>> materiaList = iShopMaterialNormsService.
-            queryShopMaterialByNormsIdList(normsIds.toString().replaceAll("\\[|]", ""));
-        Map<String, Object> materialMap = materiaList.stream().collect(Collectors.
-            toMap(key -> key.get("materialId").toString(), value -> value.get("materialMation")));
-        Map<String, Object> normsMap = materiaList.stream().collect(Collectors.
-            toMap(key -> key.get("normsId").toString(), value -> value.get("normsMation")));
-        Map<String, Long> salePriceMap = materiaList.stream().collect(Collectors.
-            toMap(key -> key.get("materialId").toString(), value -> Long.parseLong(value.get("salePrice").toString())));
+        QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        List<ShopTradeCart> beans = list(wrapper);
+        iMaterialNormsService.setDataMation(beans, ShopTradeCart::getMaterialId);
+        iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
+        return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+    }
 
-        Map<String, Object> priceAndNum = new HashMap<>();
-        final Long[] sum = {0L};
-        final int[] allCount = {0};
-        mapList.forEach(map -> {
-            String materialId = map.get("material_id").toString();
-            String normsId = map.get("norms_id").toString();
-            if (CollectionUtil.isNotEmpty(materialMap)) {
-                map.put("materialMaton", materialMap.get(materialId));
-            }
-            if (CollectionUtil.isNotEmpty(normsMap)) {
-                map.put("normsMation", normsMap.get(normsId));
-            }
-            if (CollectionUtil.isNotEmpty(salePriceMap)) {
-                int count = (int) map.get("count");
-                Long price = count * salePriceMap.get(materialId);
-                sum[0] = sum[0] + price;
-                allCount[0] = allCount[0] + count;
-            }
-        });
-        priceAndNum.put("price", sum[0]);
-        priceAndNum.put("allCount", allCount[0]);
-        mapList.add(priceAndNum);
-        outputObject.setBeans(mapList);
-        outputObject.settotal(mapList.size() - CommonNumConstants.NUM_ONE);
+    @Override
+    public void deleteById(InputObject inputObject, OutputObject outputObject) {
+        String ids = inputObject.getParams().get("ids").toString();
+        List<String> idList = Arrays.asList(ids.split(","));
+        super.deleteById(idList);
     }
 
     @Override
@@ -153,20 +134,38 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
     }
 
     @Override
-    public void deleteByIds(InputObject inputObject, OutputObject outputObject) {
+    public void calculateTotalPrices(InputObject inputObject, OutputObject outputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(","));
-        QueryWrapper<ShopTradeCart> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in(CommonConstants.ID, idList);
-        List<ShopTradeCart> list = list(queryWrapper);
-        List<ShopTradeCart> MyCartIds = list.stream().filter(
-            shopTradeCart -> shopTradeCart.getCreateId().equals(userId)
-        ).collect(Collectors.toList());
-        if (MyCartIds.size() == list.size()) {
-            shopTradeCartService.deleteById(idList);
-        } else {
-            throw new CustomException("存在无权限信息");
+        QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
+        wrapper.in(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        // 查询选中的商品
+        wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), WhetherEnum.ENABLE_USING.getKey());
+        List<ShopTradeCart> beans = list(wrapper);
+        //设置返回值
+        Map<String, String> result = new HashMap<>();
+        final String[] allPrice = {"0"};
+        if (CollectionUtil.isEmpty(beans)) {
+            result.put("allPrice", Joiner.on(CommonCharConstants.COMMA_MARK).join(allPrice));
+            outputObject.setBean(result);
+            outputObject.settotal(CommonNumConstants.NUM_ONE);
+            return;
         }
+        Map<String, String> countMap = beans.stream().collect(Collectors
+            .toMap(ShopTradeCart::getNormsId, shopTradeCart -> shopTradeCart.getCount().toString()));
+        // 收集规格id列表，获得规格信息
+        List<String> normsIdList = beans.stream().map(ShopTradeCart::getNormsId).collect(Collectors.toList());
+        List<Map<String, Object>> normsListMap = iShopMaterialNormsService
+            .queryShopMaterialByNormsIdList(Joiner.on(CommonCharConstants.COMMA_MARK).join(normsIdList));
+        // 计算价格
+        normsListMap.forEach(map -> {
+            String id = map.get("normsId").toString();
+            String count = countMap.get(id);
+            String salePrice = map.get("salePrice").toString();
+            String flagPrice = CalculationUtil.multiply(count, salePrice, CommonNumConstants.NUM_TWO);
+            allPrice[0] = CalculationUtil.add(allPrice[0], flagPrice);
+        });
+        result.put("allPrice", Joiner.on(CommonCharConstants.COMMA_MARK).join(allPrice));
+        outputObject.setBean(result);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 }

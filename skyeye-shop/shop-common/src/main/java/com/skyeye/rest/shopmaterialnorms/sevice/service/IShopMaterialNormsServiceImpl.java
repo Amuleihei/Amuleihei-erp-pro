@@ -6,6 +6,7 @@ package com.skyeye.rest.shopmaterialnorms.sevice.service;
 
 import com.skyeye.base.rest.service.impl.IServiceImpl;
 import com.skyeye.common.client.ExecuteFeignClient;
+import com.skyeye.common.object.ResultEntity;
 import com.skyeye.rest.shopmaterialnorms.rest.IShopMaterialNormsRest;
 import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class IShopMaterialNormsServiceImpl extends IServiceImpl implements IShop
 
     @Override
     public List<Map<String, Object>> queryShopMaterialByNormsIdList(String normsIds) {
-        return ExecuteFeignClient.get(() -> iShopMaterialNormsRest.queryShopMaterialByNormsIdList(normsIds)).getRows();
+        ResultEntity resultEntity = ExecuteFeignClient.get(() -> iShopMaterialNormsRest.queryShopMaterialByNormsIdList(normsIds));
+        List<Map<String, Object>> rows = resultEntity.getRows();
+        return rows;
     }
 }
