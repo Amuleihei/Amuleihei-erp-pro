@@ -28,4 +28,6 @@ public interface ShopAppAuthService {
     void sendShopSmsCode(InputObject inputObject, OutputObject outputObject);
 
     void smsShopLogin(InputObject inputObject, OutputObject outputObject);
+
+    void smsShopMemberRegister(InputObject inputObject, OutputObject outputObject);
 }

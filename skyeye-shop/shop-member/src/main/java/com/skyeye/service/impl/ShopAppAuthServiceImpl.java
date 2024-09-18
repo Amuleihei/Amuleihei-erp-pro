@@ -9,6 +9,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.SysUserAuthConstants;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.enumeration.RequestType;
 import com.skyeye.common.enumeration.SmsSceneEnum;
 import com.skyeye.common.object.GetUserToken;
@@ -24,8 +25,11 @@ import com.skyeye.service.ShopAppAuthService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+
+import static com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl.TRANSACTION_MANAGER_VALUE;
 
 /**
  * @ClassName: ShopAppAuthServiceImpl
@@ -161,5 +165,25 @@ public class ShopAppAuthServiceImpl implements ShopAppAuthService {
         member = getMember(requestType, member, member.getPassword());
         outputObject.setBean(member);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
+    public void smsShopMemberRegister(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String mobile = params.get("mobile").toString();
+        String smsCode = params.get("smsCode").toString();
+        // 校验验证码
+        iSmsCodeService.validateSmsCode(mobile, smsCode, SmsSceneEnum.LOGIN.getKey());
+        Member member = memberService.queryMemberByPhone(mobile);
+        if (ObjectUtil.isNotEmpty(member)) {
+            throw new CustomException("手机号已经被使用");
+        }
+        // 注册
+        Member saveMember = new Member();
+        saveMember.setPhone(mobile);
+        saveMember.setName("未命名");
+        saveMember.setEnabled(EnableEnum.ENABLE_USING.getKey());
+        memberService.createEntity(saveMember, null);
     }
 }

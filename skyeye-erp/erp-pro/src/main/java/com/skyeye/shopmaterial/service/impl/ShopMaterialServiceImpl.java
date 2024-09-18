@@ -7,7 +7,6 @@ package com.skyeye.shopmaterial.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -22,12 +21,14 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.material.classenum.MaterialShelvesState;
 import com.skyeye.material.entity.Material;
+import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.material.service.MaterialService;
 import com.skyeye.shopmaterial.dao.ShopMaterialDao;
 import com.skyeye.shopmaterial.entity.ShopMaterial;
 import com.skyeye.shopmaterial.entity.ShopMaterialNorms;
 import com.skyeye.shopmaterial.service.ShopMaterialNormsService;
 import com.skyeye.shopmaterial.service.ShopMaterialService;
+import com.skyeye.shopmaterial.service.ShopMaterialStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,13 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     private MaterialService materialService;
 
     @Autowired
+    private MaterialNormsService materialNormsService;
+
+    @Autowired
     private ShopMaterialNormsService shopMaterialNormsService;
+
+    @Autowired
+    private ShopMaterialStoreService shopMaterialStoreService;
 
     @Override
     public void createPrepose(ShopMaterial entity) {
@@ -68,10 +75,13 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         Material material = materialService.selectById(entity.getMaterialId());
         if (CollectionUtil.isEmpty(entity.getShopMaterialNormsList())) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.NOT_ON_SHELVE.getKey());
+            shopMaterialStoreService.deleteByMaterialId(entity.getMaterialId());
         } else if (material.getMaterialNorms().size() > entity.getShopMaterialNormsList().size()) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.PART_ON_SHELVE.getKey());
+            shopMaterialStoreService.addAllStoreForMaterial(entity.getMaterialId());
         } else if (material.getMaterialNorms().size() == entity.getShopMaterialNormsList().size()) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.ON_SHELVE.getKey());
+            shopMaterialStoreService.addAllStoreForMaterial(entity.getMaterialId());
         }
     }
 
@@ -163,6 +173,19 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.queryShopMaterialByNormsIdList(normsIdList);
         outputObject.setBeans(shopMaterialNormsList);
         outputObject.settotal(shopMaterialNormsList.size());
+    }
+
+    @Override
+    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
+        String id = inputObject.getParams().get("id").toString();
+        ShopMaterial shopMaterial = selectById(id);
+        shopMaterial.getMaterialMation().setMaterialNorms(null);
+        materialNormsService.setDataMation(shopMaterial.getShopMaterialNormsList(), ShopMaterialNorms::getNormsId);
+        shopMaterial.getShopMaterialNormsList().forEach(shopMaterialNorms -> {
+            shopMaterialNorms.setEstimatePurchasePrice(null);
+        });
+        outputObject.setBean(shopMaterial);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
 }

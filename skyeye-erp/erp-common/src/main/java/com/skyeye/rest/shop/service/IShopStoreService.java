@@ -6,6 +6,9 @@ package com.skyeye.rest.shop.service;
 
 import com.skyeye.base.rest.service.IService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @ClassName: IShopStoreService
  * @Description: 门店信息管理公共的一些操作
@@ -15,5 +18,7 @@ import com.skyeye.base.rest.service.IService;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目
  */
 public interface IShopStoreService extends IService {
+
+    List<Map<String, Object>> queryStoreListByParams(String shopAreaId, Integer enabled);
 
 }

@@ -81,4 +81,13 @@ public class ShopAppAuthController {
         shopAppAuthService.smsShopLogin(inputObject, outputObject);
     }
 
+    @ApiOperation(id = "smsShopMemberRegister", value = "会员注册", method = "POST", allUse = "0")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "mobile", name = "mobile", value = "手机号", required = "required"),
+        @ApiImplicitParam(id = "smsCode", name = "smsCode", value = "短信验证码", required = "required")})
+    @RequestMapping("/post/ShopAppAuthController/smsShopMemberRegister")
+    public void smsShopMemberRegister(InputObject inputObject, OutputObject outputObject) {
+        shopAppAuthService.smsShopMemberRegister(inputObject, outputObject);
+    }
+
 }

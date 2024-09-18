@@ -50,7 +50,7 @@ public class EnclosureLinkController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryEnclosureLinkList", value = "根据业务对象数据获取附件与业务对象关系", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryEnclosureLinkList", value = "根据业务对象数据获取附件与业务对象关系", method = "POST", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "objectId", name = "objectId", value = "业务对象数据的id", required = "required"),
         @ApiImplicitParam(id = "objectKey", name = "objectKey", value = "业务对象服务的className", required = "required")})
@@ -65,7 +65,7 @@ public class EnclosureLinkController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deleteEnclosureLink", value = "根据业务对象数据删除附件与业务对象关系", method = "POST", allUse = "2")
+    @ApiOperation(id = "deleteEnclosureLink", value = "根据业务对象数据删除附件与业务对象关系", method = "POST", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "objectId", name = "objectId", value = "业务对象数据的id", required = "required"),
         @ApiImplicitParam(id = "objectKey", name = "objectKey", value = "业务对象服务的className", required = "required")})
