@@ -28,6 +28,7 @@ import com.skyeye.shopmaterial.entity.ShopMaterial;
 import com.skyeye.shopmaterial.entity.ShopMaterialNorms;
 import com.skyeye.shopmaterial.service.ShopMaterialNormsService;
 import com.skyeye.shopmaterial.service.ShopMaterialService;
+import com.skyeye.shopmaterial.service.ShopMaterialStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,9 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     @Autowired
     private ShopMaterialNormsService shopMaterialNormsService;
 
+    @Autowired
+    private ShopMaterialStoreService shopMaterialStoreService;
+
     @Override
     public void createPrepose(ShopMaterial entity) {
         entity.setRealSales(CommonNumConstants.NUM_ZERO.toString());
@@ -71,10 +75,13 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         Material material = materialService.selectById(entity.getMaterialId());
         if (CollectionUtil.isEmpty(entity.getShopMaterialNormsList())) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.NOT_ON_SHELVE.getKey());
+            shopMaterialStoreService.deleteByMaterialId(entity.getMaterialId());
         } else if (material.getMaterialNorms().size() > entity.getShopMaterialNormsList().size()) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.PART_ON_SHELVE.getKey());
+            shopMaterialStoreService.addAllStoreForMaterial(entity.getMaterialId());
         } else if (material.getMaterialNorms().size() == entity.getShopMaterialNormsList().size()) {
             materialService.setShelvesState(material.getId(), MaterialShelvesState.ON_SHELVE.getKey());
+            shopMaterialStoreService.addAllStoreForMaterial(entity.getMaterialId());
         }
     }
 
