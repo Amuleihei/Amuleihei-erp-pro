@@ -54,7 +54,7 @@ public class ShopStoreController {
         shopStoreService.selectById(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "queryStoreByIds", value = "根据ID批量查询门店信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryStoreByIds", value = "根据ID批量查询门店信息", method = "POST", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id", required = "required")})
     @RequestMapping("/post/ShopStoreController/queryStoreByIds")

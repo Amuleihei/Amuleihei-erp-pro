@@ -163,6 +163,10 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
             Collectors.toMap(ShopMaterial::getMaterialId, shopMaterial -> shopMaterial));
         shopMaterialStoreList.forEach(shopMaterialStore -> {
             ShopMaterial shopMaterial = materialMap.get(shopMaterialStore.getMaterialId());
+            shopMaterial.getMaterialMation().setMaterialNorms(null);
+            shopMaterial.getMaterialMation().setUnitGroupMation(null);
+            shopMaterial.getMaterialMation().setMaterialProcedure(null);
+            shopMaterial.getMaterialMation().setNormsSpec(null);
             shopMaterialStore.setShopMaterial(shopMaterial);
         });
 
@@ -183,6 +187,9 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         String id = inputObject.getParams().get("id").toString();
         ShopMaterial shopMaterial = selectById(id);
         shopMaterial.getMaterialMation().setMaterialNorms(null);
+        shopMaterial.getMaterialMation().setUnitGroupMation(null);
+        shopMaterial.getMaterialMation().setMaterialProcedure(null);
+        shopMaterial.getMaterialMation().setNormsSpec(null);
         materialNormsService.setDataMation(shopMaterial.getShopMaterialNormsList(), ShopMaterialNorms::getNormsId);
         shopMaterial.getShopMaterialNormsList().forEach(shopMaterialNorms -> {
             shopMaterialNorms.setEstimatePurchasePrice(null);

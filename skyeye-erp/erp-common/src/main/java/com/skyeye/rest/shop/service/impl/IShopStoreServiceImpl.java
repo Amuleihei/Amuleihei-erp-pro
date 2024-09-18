@@ -48,9 +48,6 @@ public class IShopStoreServiceImpl extends IServiceImpl implements IShopStoreSer
 
     @Override
     public List<Map<String, Object>> queryStoreListByParams(String shopAreaId, Integer enabled) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("shopAreaId", shopAreaId);
-        params.put("enabled", enabled);
-        return ExecuteFeignClient.get(() -> iShopStoreRest.queryStoreListByParams(params)).getRows();
+        return ExecuteFeignClient.get(() -> iShopStoreRest.queryStoreListByParams(shopAreaId, enabled)).getRows();
     }
 }

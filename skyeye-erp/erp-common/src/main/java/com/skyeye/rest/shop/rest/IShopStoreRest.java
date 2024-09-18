@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
 /**
  * @ClassName: IShopStoreRest
  * @Description: 门店信息管理公共的一些操作
@@ -34,11 +32,11 @@ public interface IShopStoreRest {
     /**
      * 获取门店列表信息
      *
-     * @param params 查询参数
-     *               shopAreaId：门店所属区域id
-     *               enebled：是否启用
+     * @param shopAreaId 门店所属区域id
+     * @param enabled    是否启用
      */
     @GetMapping("/queryStoreListByParams")
-    String queryStoreListByParams(Map<String, Object> params);
+    String queryStoreListByParams(@RequestParam("shopAreaId") String shopAreaId,
+                                  @RequestParam("enabled") Integer enabled);
 
 }
