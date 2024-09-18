@@ -21,6 +21,7 @@ import com.skyeye.exception.CustomException;
 import com.skyeye.rest.sms.service.ISmsCodeService;
 import com.skyeye.service.MemberService;
 import com.skyeye.service.ShopAppAuthService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,11 @@ public class ShopAppAuthServiceImpl implements ShopAppAuthService {
         if (!StrUtil.equals(password, member.getPassword())) {
             throw new CustomException("密码错误！");
         }
+        return getMember(requestType, member, password);
+    }
+
+    @NotNull
+    private static Member getMember(String requestType, Member member, String password) {
         SysUserAuthConstants.setUserLoginRedisCache(member.getId(), BeanUtil.beanToMap(member));
         String userToken;
         if (RequestType.APP.getKey().equals(requestType)) {
@@ -146,5 +152,14 @@ public class ShopAppAuthServiceImpl implements ShopAppAuthService {
         String smsCode = params.get("smsCode").toString();
         // 校验验证码
         iSmsCodeService.validateSmsCode(mobile, smsCode, SmsSceneEnum.LOGIN.getKey());
+        // 登录
+        Member member = memberService.queryMemberByPhone(mobile);
+        if (ObjectUtil.isEmpty(member)) {
+            throw new CustomException("手机号码不存在，请先注册！");
+        }
+        String requestType = InputObject.getRequest().getHeader("requestType");
+        member = getMember(requestType, member, member.getPassword());
+        outputObject.setBean(member);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 }
