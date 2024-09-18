@@ -72,7 +72,7 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
     }
 
     @Override
-    public List<Map<String, Object>> queryDataList(InputObject inputObject){
+    public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getCreateId), userId);

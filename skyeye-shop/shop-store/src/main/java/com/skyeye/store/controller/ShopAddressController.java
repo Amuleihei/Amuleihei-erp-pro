@@ -84,12 +84,17 @@ public class ShopAddressController {
         shopAddressService.queryList(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "queryShopAddressByCreateId", value = "获取默认收件地址信息", method = "POST", allUse = "2")
+    /**
+     * 获取用户收件地址信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryShopAddressByCreateId", value = "获取用户收件地址信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "userId", name = "userId", value = "用户主键id", required = "required")})
     @RequestMapping("/post/ShopAddressController/queryShopAddressByCreateId")
     public void queryShopAddressByCreateId(InputObject inputObject, OutputObject outputObject) {
         shopAddressService.queryShopAddressByCreateId(inputObject, outputObject);
     }
-
 }
