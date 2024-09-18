@@ -19,7 +19,6 @@ import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CalculationUtil;
-import com.skyeye.common.util.StringUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.erp.service.IMaterialNormsService;
 import com.skyeye.erp.service.IMaterialService;
@@ -27,8 +26,8 @@ import com.skyeye.exception.CustomException;
 import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import com.skyeye.store.dao.ShopTradeCartDao;
 import com.skyeye.store.entity.ShopTradeCart;
+import com.skyeye.store.service.ShopStoreService;
 import com.skyeye.store.service.ShopTradeCartService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +55,9 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
     @Autowired
     private IShopMaterialNormsService iShopMaterialNormsService;
 
+    @Autowired
+    private ShopStoreService shopStoreService;
+
     @Override
     public void validatorEntity(ShopTradeCart shopTradeCart) {
         super.validatorEntity(shopTradeCart);
@@ -69,14 +71,17 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
+        wrapper.groupBy(MybatisPlusUtil.toColumns(ShopTradeCart::getStoreId));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
+        shopStoreService.setDataMation(beans, ShopTradeCart::getStoreId);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
     @Override
-    public String createEntity(ShopTradeCart shopTradeCart, String userId){
+    public String createEntity(ShopTradeCart shopTradeCart, String userId) {
         QueryWrapper<ShopTradeCart> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getMaterialId), shopTradeCart.getMaterialId());
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getNormsId), shopTradeCart.getNormsId());

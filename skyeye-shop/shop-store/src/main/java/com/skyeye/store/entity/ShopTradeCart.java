@@ -32,6 +32,15 @@ public class ShopTradeCart extends OperatorUserInfo {
     @ApiModelProperty("主键id。为空时新增，不为空时编辑")
     private String id;
 
+
+    @TableField("store_id")
+    @ApiModelProperty(value = "门店id", required = "required")
+    private String storeId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "门店信息")
+    private Map<String, Object> storeMation;
+
     @TableField("material_id")
     @ApiModelProperty(value = "商品id", required = "required")
     private String materialId;
