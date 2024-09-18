@@ -49,4 +49,8 @@ public class ShopMaterialStore extends OperatorUserInfo {
     @Property(value = "门店信息")
     private Map<String, Object> storeMation;
 
+    @TableField(exist = false)
+    @Property(value = "上架的商品信息")
+    private ShopMaterial shopMaterial;
+
 }

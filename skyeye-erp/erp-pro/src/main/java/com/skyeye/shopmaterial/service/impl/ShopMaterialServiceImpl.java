@@ -8,14 +8,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -26,6 +22,7 @@ import com.skyeye.material.service.MaterialService;
 import com.skyeye.shopmaterial.dao.ShopMaterialDao;
 import com.skyeye.shopmaterial.entity.ShopMaterial;
 import com.skyeye.shopmaterial.entity.ShopMaterialNorms;
+import com.skyeye.shopmaterial.entity.ShopMaterialStore;
 import com.skyeye.shopmaterial.service.ShopMaterialNormsService;
 import com.skyeye.shopmaterial.service.ShopMaterialService;
 import com.skyeye.shopmaterial.service.ShopMaterialStoreService;
@@ -153,17 +150,23 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
 
     @Override
     public void queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
-        MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
-            .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
-            .like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
-
-        List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
+        List<ShopMaterialStore> shopMaterialStoreList = shopMaterialStoreService.queryShopMaterialList(inputObject, outputObject);
+        List<String> materialIdList = shopMaterialStoreList.stream().map(ShopMaterialStore::getMaterialId).collect(Collectors.toList());
+        // 根据商品id查询上架的商品信息
+        QueryWrapper<ShopMaterial> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(ShopMaterial::getMaterialId), materialIdList);
+        List<ShopMaterial> shopMaterialList = list(queryWrapper);
+        // 根据id批量查询详细的商品信息
         List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
         List<ShopMaterial> shopMaterials = selectByIds(idList.toArray(new String[]{}));
-        outputObject.setBeans(shopMaterials);
-        outputObject.settotal(pages.getTotal());
+        Map<String, ShopMaterial> materialMap = shopMaterials.stream().collect(
+            Collectors.toMap(ShopMaterial::getMaterialId, shopMaterial -> shopMaterial));
+        shopMaterialStoreList.forEach(shopMaterialStore -> {
+            ShopMaterial shopMaterial = materialMap.get(shopMaterialStore.getMaterialId());
+            shopMaterialStore.setShopMaterial(shopMaterial);
+        });
+
+        outputObject.setBeans(shopMaterialStoreList);
     }
 
     @Override

@@ -8,11 +8,16 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.material.entity.Material;
 import com.skyeye.rest.shop.service.IShopStoreService;
 import com.skyeye.shopmaterial.dao.ShopMaterialStoreDao;
 import com.skyeye.shopmaterial.entity.ShopMaterialStore;
@@ -119,5 +124,19 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         remove(removeWrapper);
         // 保存门店商品数据
         createEntity(newList, InputObject.getLogParamsStatic().get("id").toString());
+    }
+
+    @Override
+    public List<ShopMaterialStore> queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
+        MPJLambdaWrapper<ShopMaterialStore> wrapper = new MPJLambdaWrapper<ShopMaterialStore>()
+            .innerJoin(Material.class, Material::getId, ShopMaterialStore::getMaterialId)
+            .like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
+
+        List<ShopMaterialStore> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterialStore.class, wrapper);
+        iShopStoreService.setDataMation(shopMaterialList, ShopMaterialStore::getStoreId);
+        outputObject.settotal(pages.getTotal());
+        return shopMaterialList;
     }
 }
