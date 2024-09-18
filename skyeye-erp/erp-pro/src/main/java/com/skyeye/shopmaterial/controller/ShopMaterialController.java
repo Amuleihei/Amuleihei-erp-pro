@@ -40,7 +40,7 @@ public class ShopMaterialController {
         shopMaterialService.queryTransMaterialById(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "saveShopMaterial", value = "根据id获取商品信息，用于上架商城", method = "POST", allUse = "2")
+    @ApiOperation(id = "saveShopMaterial", value = "ERP商品上架商城", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopMaterial.class)
     @RequestMapping("/post/ShopMaterialController/saveShopMaterial")
     public void saveShopMaterial(InputObject inputObject, OutputObject outputObject) {
@@ -52,7 +52,7 @@ public class ShopMaterialController {
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/ShopMaterialController/queryShopMaterialById")
     public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
-        shopMaterialService.selectById(inputObject, outputObject);
+        shopMaterialService.queryShopMaterialById(inputObject, outputObject);
     }
 
     @ApiOperation(id = "queryShopMaterialList", value = "获取商城商品信息列表", method = "POST", allUse = "0")

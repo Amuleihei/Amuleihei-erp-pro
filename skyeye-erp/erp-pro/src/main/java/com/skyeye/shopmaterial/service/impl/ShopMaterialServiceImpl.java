@@ -7,7 +7,6 @@ package com.skyeye.shopmaterial.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -22,6 +21,7 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.material.classenum.MaterialShelvesState;
 import com.skyeye.material.entity.Material;
+import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.material.service.MaterialService;
 import com.skyeye.shopmaterial.dao.ShopMaterialDao;
 import com.skyeye.shopmaterial.entity.ShopMaterial;
@@ -50,6 +50,9 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private MaterialNormsService materialNormsService;
 
     @Autowired
     private ShopMaterialNormsService shopMaterialNormsService;
@@ -163,6 +166,19 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.queryShopMaterialByNormsIdList(normsIdList);
         outputObject.setBeans(shopMaterialNormsList);
         outputObject.settotal(shopMaterialNormsList.size());
+    }
+
+    @Override
+    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
+        String id = inputObject.getParams().get("id").toString();
+        ShopMaterial shopMaterial = selectById(id);
+        shopMaterial.getMaterialMation().setMaterialNorms(null);
+        materialNormsService.setDataMation(shopMaterial.getShopMaterialNormsList(), ShopMaterialNorms::getNormsId);
+        shopMaterial.getShopMaterialNormsList().forEach(shopMaterialNorms -> {
+            shopMaterialNorms.setEstimatePurchasePrice(null);
+        });
+        outputObject.setBean(shopMaterial);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
 }
