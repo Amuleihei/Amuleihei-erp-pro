@@ -74,12 +74,13 @@ public class ShopAppAuthServiceImpl implements ShopAppAuthService {
 
     @NotNull
     private static Member getMember(String requestType, Member member, String password) {
-        SysUserAuthConstants.setUserLoginRedisCache(member.getId(), BeanUtil.beanToMap(member));
         String userToken;
         if (RequestType.APP.getKey().equals(requestType)) {
             userToken = GetUserToken.createNewToken(member.getId() + SysUserAuthConstants.APP_IDENTIFYING, password);
+            SysUserAuthConstants.setUserLoginRedisCache(member.getId() + SysUserAuthConstants.APP_IDENTIFYING, BeanUtil.beanToMap(member));
         } else {
             userToken = GetUserToken.createNewToken(member.getId(), password);
+            SysUserAuthConstants.setUserLoginRedisCache(member.getId(), BeanUtil.beanToMap(member));
         }
         member.setPassword(null);
         member.setPwdNumEnc(null);
