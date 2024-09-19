@@ -35,7 +35,7 @@ public class PayClientFactoryImpl implements PayClientFactory {
      * <p>
      * key：渠道编号
      */
-    private final ConcurrentMap<Long, AbstractPayClient<?>> clients = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AbstractPayClient<?>> clients = new ConcurrentHashMap<>();
 
     /**
      * 支付客户端 Class Map

@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AlipayAppPayClient extends AbstractAlipayPayClient {
 
-    public AlipayAppPayClient(Long channelId, AlipayPayClientConfig config) {
+    public AlipayAppPayClient(String channelId, AlipayPayClientConfig config) {
         super(channelId, PayType.ALIPAY_APP.getKey(), config);
     }
 

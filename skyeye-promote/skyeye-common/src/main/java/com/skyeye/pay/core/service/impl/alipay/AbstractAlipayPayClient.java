@@ -56,7 +56,7 @@ public abstract class AbstractAlipayPayClient extends AbstractPayClient<AlipayPa
     @Getter // 仅用于单测场景
     protected DefaultAlipayClient client;
 
-    public AbstractAlipayPayClient(Long channelId, String channelCode, AlipayPayClientConfig config) {
+    public AbstractAlipayPayClient(String channelId, String channelCode, AlipayPayClientConfig config) {
         super(channelId, channelCode, config);
     }
 

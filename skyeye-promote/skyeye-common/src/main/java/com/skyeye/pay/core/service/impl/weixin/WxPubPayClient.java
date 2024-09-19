@@ -33,11 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WxPubPayClient extends AbstractWxPayClient {
 
-    public WxPubPayClient(Long channelId, WxPayClientConfig config) {
+    public WxPubPayClient(String channelId, WxPayClientConfig config) {
         super(channelId, PayType.WX_PUB.getKey(), config);
     }
 
-    protected WxPubPayClient(Long channelId, String channelCode, WxPayClientConfig config) {
+    protected WxPubPayClient(String channelId, String channelCode, WxPayClientConfig config) {
         super(channelId, channelCode, config);
     }
 

@@ -30,7 +30,7 @@ import java.util.Objects;
 @Slf4j
 public class AlipayPcPayClient extends AbstractAlipayPayClient {
 
-    public AlipayPcPayClient(Long channelId, AlipayPayClientConfig config) {
+    public AlipayPcPayClient(String channelId, AlipayPayClientConfig config) {
         super(channelId, PayType.ALIPAY_PC.getKey(), config);
     }
 

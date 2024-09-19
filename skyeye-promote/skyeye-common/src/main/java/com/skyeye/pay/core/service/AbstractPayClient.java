@@ -32,7 +32,7 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
     /**
      * 渠道编号
      */
-    private final Long channelId;
+    private final String channelId;
     /**
      * 渠道编码
      */
@@ -43,7 +43,7 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
      */
     protected Config config;
 
-    public AbstractPayClient(Long channelId, String channelCode, Config config) {
+    public AbstractPayClient(String channelId, String channelCode, Config config) {
         this.channelId = channelId;
         this.channelCode = channelCode;
         this.config = config;
@@ -74,7 +74,7 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
     }
 
     @Override
-    public Long getId() {
+    public String getId() {
         return channelId;
     }
 

@@ -40,7 +40,7 @@ public class WxBarPayClient extends AbstractWxPayClient {
      */
     private static final Duration AUTH_CODE_EXPIRE = Duration.ofMinutes(3);
 
-    public WxBarPayClient(Long channelId, WxPayClientConfig config) {
+    public WxBarPayClient(String channelId, WxPayClientConfig config) {
         super(channelId, PayType.WX_BAR.getKey(), config);
     }
 

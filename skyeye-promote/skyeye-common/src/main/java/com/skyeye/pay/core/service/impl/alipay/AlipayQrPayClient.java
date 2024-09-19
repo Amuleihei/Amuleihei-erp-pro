@@ -28,7 +28,7 @@ import java.util.Objects;
 @Slf4j
 public class AlipayQrPayClient extends AbstractAlipayPayClient {
 
-    public AlipayQrPayClient(Long channelId, AlipayPayClientConfig config) {
+    public AlipayQrPayClient(String channelId, AlipayPayClientConfig config) {
         super(channelId, PayType.ALIPAY_QR.getKey(), config);
     }
 

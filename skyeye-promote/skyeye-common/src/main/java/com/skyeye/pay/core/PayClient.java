@@ -29,7 +29,7 @@ public interface PayClient {
      *
      * @return 渠道编号
      */
-    Long getId();
+    String getId();
 
     // ============ 支付相关 ==========
 

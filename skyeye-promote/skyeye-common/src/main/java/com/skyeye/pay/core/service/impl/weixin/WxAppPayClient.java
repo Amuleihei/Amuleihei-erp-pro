@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WxAppPayClient extends AbstractWxPayClient {
 
-    public WxAppPayClient(Long channelId, WxPayClientConfig config) {
+    public WxAppPayClient(String channelId, WxPayClientConfig config) {
         super(channelId, PayType.WX_APP.getKey(), config);
     }
 

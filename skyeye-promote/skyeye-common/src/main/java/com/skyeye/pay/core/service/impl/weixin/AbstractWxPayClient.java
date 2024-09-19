@@ -52,7 +52,7 @@ public abstract class AbstractWxPayClient extends AbstractPayClient<WxPayClientC
 
     protected WxPayService client;
 
-    public AbstractWxPayClient(Long channelId, String channelCode, WxPayClientConfig config) {
+    public AbstractWxPayClient(String channelId, String channelCode, WxPayClientConfig config) {
         super(channelId, channelCode, config);
     }
 
