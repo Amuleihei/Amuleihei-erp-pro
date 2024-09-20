@@ -30,7 +30,7 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService
+@SkyeyeService(name = "支付应用管理", groupName = "支付应用管理")
 public class PayAppServiceImpl extends SkyeyeBusinessServiceImpl<PayAppDao, PayApp> implements PayAppService {
 
     @Override
@@ -56,13 +56,6 @@ public class PayAppServiceImpl extends SkyeyeBusinessServiceImpl<PayAppDao, PayA
         PayApp one = getOne(queryWrapper);
         if (ObjectUtil.isEmpty(one)) {
             throw new CustomException("该支付应用信息不存在");
-        }
-    }
-    @Override
-    public void deletePreExecution(PayApp payApp){
-        String userId = InputObject.getLogParamsStatic().get("id").toString();
-        if (!userId.equals(payApp.getCreateId())) {
-            throw new CustomException("无权限!");
         }
     }
 }
