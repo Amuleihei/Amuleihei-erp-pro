@@ -1,7 +1,7 @@
-package com.skyeye.member_level.dao;
+package com.skyeye.level.dao;
 
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.member_level.entity.ShopMemberLevel;
+import com.skyeye.level.entity.ShopMemberLevel;
 
 
 public interface ShopMemberLevelDao extends SkyeyeBaseMapper<ShopMemberLevel > {
