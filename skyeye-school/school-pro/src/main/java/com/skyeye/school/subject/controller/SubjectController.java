@@ -55,7 +55,7 @@ public class SubjectController {
     @ApiImplicitParams(classBean = Subject.class)
     @RequestMapping("/post/SubjectController/writeSubject")
     public void writeSubject(InputObject inputObject, OutputObject outputObject) {
-        subjectService.saveOrUpdateEntity(inputObject, outputObject);
+         subjectService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
     /**
