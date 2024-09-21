@@ -6,6 +6,7 @@ package com.skyeye.post.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
@@ -81,25 +82,39 @@ public class PostServiceImpl extends SkyeyeBusinessServiceImpl<PostDao, Post> im
     @Autowired
     private JoinCircleService joinCircleService;
 
+
+    private List<Map<String, Object>> queryPostList(InputObject inputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
+        if (params.containsKey("holderId") && StrUtil.isNotEmpty(params.get("holderId").toString())) {
+            queryWrapper.eq(MybatisPlusUtil.toColumns(Post::getCircleId), params.get("holderId").toString());
+            queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(Post::getCreateTime));
+            List<Post> postList = list(queryWrapper);
+            List<Map<String, Object>> beans = JSONUtil.toList(JSONUtil.toJsonStr(postList), null);
+            //  传holderId时，判断是否已加入该圈子
+            String userId = InputObject.getLogParamsStatic().get("id").toString();
+            String circleId = params.get("holderId").toString();
+            String createId = joinCircleService.selectByCircleId(circleId, userId).getCreateId();
+            return StrUtil.isEmpty(createId) ? CollectionUtil.sub(beans, CommonNumConstants.NUM_ZERO, CommonNumConstants.NUM_TEN) : beans;
+        } else if (params.containsKey("type") && StrUtil.isNotEmpty(params.get("type").toString())) {
+            String typeId = params.get("type").toString();
+            queryWrapper.eq(MybatisPlusUtil.toColumns(Post::getCreateId), typeId).or()
+                .eq(MybatisPlusUtil.toColumns(Post::getTypeId), typeId)
+                .orderByDesc(MybatisPlusUtil.toColumns(Post::getCreateTime));
+            List<Map<String, Object>> beans = JSONUtil.toList(JSONUtil.toJsonStr(list(queryWrapper)), null);
+            return beans;
+        } else {
+            queryWrapper.eq(MybatisPlusUtil.toColumns(Post::getCircleId), null).or()
+                .eq(MybatisPlusUtil.toColumns(Post::getCircleId), "")
+                .orderByDesc(MybatisPlusUtil.toColumns(Post::getCreateTime));
+            List<Map<String, Object>> beans = JSONUtil.toList(JSONUtil.toJsonStr(list(queryWrapper)), null);
+            return beans;
+        }
+    }
+
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.queryPostList(commonPageInfo);
-        //不传holderId 和 type时 过滤所有circleId不为空或不存在的帖子
-        String circleId = commonPageInfo.getHolderId();
-        if (StrUtil.isEmpty(circleId) && inputObject.getParams().containsKey("type")) {
-            beans = beans.stream().filter(bean ->
-                !bean.containsKey("circleId")).collect(Collectors.toList());
-        }
-        // 传holderId时，判断是否已加入该圈子
-        if (StrUtil.isNotEmpty(circleId)) {
-            String userId = InputObject.getLogParamsStatic().get("id").toString();
-            String createId = joinCircleService.selectByCircleId(circleId, userId).getCreateId();
-            if (!userId.equals(createId)) {
-                //未加入该圈子
-                beans = CollectionUtil.sub(beans, CommonNumConstants.NUM_ZERO, CommonNumConstants.NUM_TEN);
-            }
-        }
+        List<Map<String, Object>> beans = queryPostList(inputObject);
         List<String> postIds = beans.stream()
             .map(bean -> bean.get("id").toString()).collect(Collectors.toList());
         // 获取评论信息
