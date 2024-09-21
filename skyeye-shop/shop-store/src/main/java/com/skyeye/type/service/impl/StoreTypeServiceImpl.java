@@ -11,6 +11,7 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.store.service.ShopStoreService;
 import com.skyeye.type.dao.StoreTypeDao;
 import com.skyeye.type.entity.StoreType;
@@ -39,7 +40,9 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
 
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
-        List<StoreType> beans = list(new QueryWrapper<StoreType>());
+        QueryWrapper<StoreType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), inputObject.getParams().get("storeId"));
+        List<StoreType> beans = list(queryWrapper);
         shopStoreService.setDataMation(beans, StoreType::getStoreId);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }

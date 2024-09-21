@@ -64,6 +64,8 @@ public class StoreTypeController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryStoreTypeList", value = "获取门店商品分类信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+    @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id")})
     @RequestMapping("/post/StoreTypeController/queryStoreTypeList")
     public void queryStoreTypeList(InputObject inputObject, OutputObject outputObject) {
         storeTypeService.queryList(inputObject, outputObject);
