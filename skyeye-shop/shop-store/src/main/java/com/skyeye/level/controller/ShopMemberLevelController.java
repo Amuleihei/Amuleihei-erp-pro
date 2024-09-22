@@ -1,4 +1,4 @@
-package com.skyeye.member_level.controller;
+package com.skyeye.level.controller;
 
 
 import com.skyeye.annotation.api.Api;
@@ -8,8 +8,8 @@ import com.skyeye.annotation.api.ApiOperation;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.member_level.entity.ShopMemberLevel;
-import com.skyeye.member_level.service.ShopMemberLevelService;
+import com.skyeye.level.entity.ShopMemberLevel;
+import com.skyeye.level.service.ShopMemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,13 +45,13 @@ public class ShopMemberLevelController {
 
     @ApiOperation(id = "getMemberLevel", value = "根据ID获取会员等级", method = "GET", allUse = "2")
     @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopStoreController/getMemberLevel")
+    @RequestMapping("/post/ShopMemberLevelController/getMemberLevel")
     public void queryStoreByIds(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.selectById(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "memberLevel-list-all-simple",value = "获取精简的会员等级信息，主要用于下拉列表",method = "GET",allUse = "2")
-    @RequestMapping("/post/ShopMemberLevelController/memberLevel-list-all-simple")
+    @ApiOperation(id = "memberLevelListAllSimple",value = "获取精简的会员等级信息，主要用于下拉列表",method = "GET",allUse = "2")
+    @RequestMapping("/post/ShopMemberLevelController/memberLevelListAllSimple")
     public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.streamlineMemberLevelList(inputObject,outputObject);
     }

@@ -1,4 +1,4 @@
-package com.skyeye.member_level.service.impl;
+package com.skyeye.level.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -7,10 +7,9 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.member_level.dao.ShopMemberLevelDao;
-import com.skyeye.member_level.entity.ShopMemberLevel;
-import com.skyeye.member_level.service.ShopMemberLevelService;
-import com.skyeye.store.entity.ShopStore;
+import com.skyeye.level.dao.ShopMemberLevelDao;
+import com.skyeye.level.entity.ShopMemberLevel;
+import com.skyeye.level.service.ShopMemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +32,12 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
      */
     @Override
     public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
+
         QueryWrapper<ShopMemberLevel> queryWrapper = new QueryWrapper<>();
         // 添加查询条件 enabled = "2"
-        queryWrapper.eq("enabled", "2");
-        List<ShopMemberLevel> list = shopMemberLevelDao.selectList(queryWrapper);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), "2");
+        //查询
+        List<ShopMemberLevel> list = list(queryWrapper);
         outputObject.setBeans(list);
         outputObject.settotal(list.size());
     }
@@ -50,14 +51,19 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
     public void memberLevelList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         QueryWrapper<ShopMemberLevel > queryWrapper = new QueryWrapper<>();
+        //获取name值
         String nameValue = map.get("name").toString();
+        //判断name值是否存在，添加查询条件
         if (StrUtil.isNotEmpty(nameValue)) {
             queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getName), nameValue);
         }
+        //获取name值
         String enabledValue = map.get("enabled").toString();
+        //判断enabled值是否存在，添加查询条件
         if (StrUtil.isNotEmpty(enabledValue)) {
             queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), enabledValue);
         }
+        //查询
         List<ShopMemberLevel> memberLevels = shopMemberLevelDao.selectList(queryWrapper);
         outputObject.setBeans(memberLevels);
         outputObject.settotal(memberLevels.size());
