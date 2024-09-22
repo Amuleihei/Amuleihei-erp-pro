@@ -34,6 +34,10 @@ public class StoreType extends BaseGeneralInfo {
     @ApiModelProperty(value = "排序", required = "required")
     private Integer orderBy;
 
+    @TableField("enabled")
+    @ApiModelProperty(value = "启用状态1是0否，参考#WhetherEnum", required = "required")
+    private Integer enabled;
+
     @TableField(value = "store_id")
     @ApiModelProperty(value = "门店id")
     private String storeId;

@@ -15,6 +15,7 @@ import com.skyeye.type.service.StoreTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 /**
  * @ClassName: StoreTypeController
  * @Description: 门店商品分类管理控制类
@@ -65,7 +66,8 @@ public class StoreTypeController {
      */
     @ApiOperation(id = "queryStoreTypeList", value = "获取门店商品分类信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
-    @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id")})
+        @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id"),
+        @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态1是0否")})
     @RequestMapping("/post/StoreTypeController/queryStoreTypeList")
     public void queryStoreTypeList(InputObject inputObject, OutputObject outputObject) {
         storeTypeService.queryList(inputObject, outputObject);
