@@ -13,6 +13,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.brand.service.BrandService;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
@@ -73,6 +74,9 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
 
     @Autowired
     private ErpDepotService erpDepotService;
+
+    @Autowired
+    private BrandService brandService;
 
     @Override
     public void validatorEntity(Material entity) {
@@ -167,6 +171,8 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
                 }
             });
         }
+        // 品牌信息
+        brandService.setDataMation(material, Material::getBrandId);
 
         return material;
     }
@@ -239,6 +245,8 @@ public class MaterialServiceImpl extends SkyeyeBusinessServiceImpl<MaterialDao, 
                 });
             });
         }
+        // 品牌信息
+        brandService.setDataMation(materialList, Material::getBrandId);
 
         return materialList;
     }

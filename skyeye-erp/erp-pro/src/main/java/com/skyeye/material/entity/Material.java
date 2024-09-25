@@ -13,6 +13,7 @@ import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
+import com.skyeye.brand.entity.Brand;
 import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import com.skyeye.material.entity.unit.MaterialUnit;
@@ -119,5 +120,9 @@ public class Material extends BaseGeneralInfo {
     @TableField(value = "brand_id")
     @ApiModelProperty(value = "品牌id")
     private String brandId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "品牌信息")
+    private Brand brandMation;
 
 }

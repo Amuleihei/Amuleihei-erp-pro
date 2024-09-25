@@ -46,17 +46,15 @@ public class BrandController {
     }
 
     /**
-     * 根据启用状态获取品牌列表
+     * 根据已启用的品牌列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryBrandListByEnabled", value = "根据启用状态获取品牌列表", method = "POST", allUse = "1")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "enabled", name = "enabled", value = "商品状态", required = "required")})
-    @RequestMapping("/post/BrandController/queryBrandListByEnabled")
-    public void queryBrandListByEnabled(InputObject inputObject, OutputObject outputObject) {
-        brandService.queryBrandListByEnabled(inputObject, outputObject);
+    @ApiOperation(id = "queryEnabledBrandList", value = "根据已启用的品牌列表", method = "POST", allUse = "0")
+    @RequestMapping("/post/BrandController/queryEnabledBrandList")
+    public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
+        brandService.queryEnabledBrandList(inputObject, outputObject);
     }
 
     /**
