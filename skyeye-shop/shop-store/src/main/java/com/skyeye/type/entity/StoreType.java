@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Data
 @TableName(value = "shop_store_type")
-@ApiModel("门店商品分类管理实体类")
+@ApiModel(value = "门店商品分类管理实体类")
 public class StoreType extends BaseGeneralInfo {
 
     @TableField(value = "logo")

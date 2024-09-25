@@ -4,6 +4,7 @@
 
 package com.skyeye.store.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,9 +18,12 @@ import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.entity.Member;
+import com.skyeye.eve.service.IAreaService;
 import com.skyeye.store.dao.ShopAddressDao;
 import com.skyeye.store.entity.ShopAddress;
 import com.skyeye.store.service.ShopAddressService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -37,6 +41,9 @@ import java.util.Map;
 @Service
 @SkyeyeService(name = "收件地址管理", groupName = "收件地址管理")
 public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddressDao, ShopAddress> implements ShopAddressService {
+
+    @Autowired
+    private IAreaService iAreaService;
 
     @Override
     public void writePostpose(ShopAddress shopAddress, String userId) {
@@ -63,12 +70,21 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
     }
 
     @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+    public void queryDefaultShopAddress(InputObject inputObject, OutputObject outputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getCreateId), userId);
-        List<ShopAddress> list = list(queryWrapper);
-        return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getIsDefault), WhetherEnum.ENABLE_USING.getKey());
+        ShopAddress one = getOne(queryWrapper);
+        if (ObjectUtil.isEmpty(one)) {
+            return;
+        }
+        iAreaService.setDataMation(one, ShopAddress::getProvinceId);
+        iAreaService.setDataMation(one, ShopAddress::getCityId);
+        iAreaService.setDataMation(one, ShopAddress::getAreaId);
+        iAreaService.setDataMation(one, ShopAddress::getTownshipId);
+        outputObject.setBean(one);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
     @Override
@@ -78,16 +94,13 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getCreateId), userId);
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getIsDefault), CommonNumConstants.NUM_ONE);
         List<ShopAddress> list = list(queryWrapper);
+        if (CollectionUtil.isEmpty(list)) {
+            return null;
+        }
+        iAreaService.setDataMation(list, ShopAddress::getProvinceId);
+        iAreaService.setDataMation(list, ShopAddress::getCityId);
+        iAreaService.setDataMation(list, ShopAddress::getAreaId);
+        iAreaService.setDataMation(list, ShopAddress::getTownshipId);
         return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
-    }
-
-    @Override
-    public void queryShopAddressByCreateId(InputObject inputObject, OutputObject outputObject) {
-        String userId = inputObject.getParams().get("userId").toString();
-        QueryWrapper<ShopAddress> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getCreateId), userId);
-        List<ShopAddress> list = list(queryWrapper);
-        outputObject.setBeans(list);
-        outputObject.settotal(list.size());
     }
 }

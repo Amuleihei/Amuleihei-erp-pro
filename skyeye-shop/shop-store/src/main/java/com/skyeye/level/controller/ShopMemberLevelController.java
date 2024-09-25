@@ -50,19 +50,19 @@ public class ShopMemberLevelController {
         shopMemberLevelService.selectById(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "memberLevelListAllSimple",value = "获取精简的会员等级信息，主要用于下拉列表",method = "GET",allUse = "2")
+    @ApiOperation(id = "memberLevelListAllSimple", value = "获取精简的会员等级信息，主要用于下拉列表", method = "GET", allUse = "2")
     @RequestMapping("/post/ShopMemberLevelController/memberLevelListAllSimple")
     public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.streamlineMemberLevelList(inputObject,outputObject);
+        shopMemberLevelService.streamlineMemberLevelList(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "memberLevelList",value = "获得会员等级列表",method = "POST",allUse = "2")
+    @ApiOperation(id = "memberLevelList", value = "获得会员等级列表", method = "POST", allUse = "2")
     @ApiImplicitParams({
-            @ApiImplicitParam(id = "name", name = "name", value = "等级名称"),
-            @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态")})
+        @ApiImplicitParam(id = "name", name = "name", value = "等级名称"),
+        @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态")})
     @RequestMapping("/post/ShopMemberLevelController/memberLevelList")
     public void memberLevelList(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.memberLevelList(inputObject,outputObject);
+        shopMemberLevelService.memberLevelList(inputObject, outputObject);
     }
 
 
