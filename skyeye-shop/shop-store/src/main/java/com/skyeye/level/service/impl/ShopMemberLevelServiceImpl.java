@@ -32,7 +32,6 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
      */
     @Override
     public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
-
         QueryWrapper<ShopMemberLevel> queryWrapper = new QueryWrapper<>();
         // 添加查询条件 enabled = "2"
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), "2");
