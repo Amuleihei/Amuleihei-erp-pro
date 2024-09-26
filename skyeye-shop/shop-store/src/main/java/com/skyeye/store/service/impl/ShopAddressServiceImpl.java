@@ -18,7 +18,6 @@ import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.entity.Member;
 import com.skyeye.eve.service.IAreaService;
 import com.skyeye.store.dao.ShopAddressDao;
 import com.skyeye.store.entity.ShopAddress;
@@ -26,6 +25,7 @@ import com.skyeye.store.service.ShopAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getIsDefault), CommonNumConstants.NUM_ONE);
         List<ShopAddress> list = list(queryWrapper);
         if (CollectionUtil.isEmpty(list)) {
-            return null;
+            return new ArrayList<>();
         }
         iAreaService.setDataMation(list, ShopAddress::getProvinceId);
         iAreaService.setDataMation(list, ShopAddress::getCityId);
