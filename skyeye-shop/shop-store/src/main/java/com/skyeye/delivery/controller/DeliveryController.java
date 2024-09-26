@@ -9,7 +9,6 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.delivery.entity.Delivery;
 import com.skyeye.delivery.service.DeliveryService;
-import com.skyeye.level.entity.ShopMemberLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

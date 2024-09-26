@@ -9,7 +9,6 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.delivery.dao.DeliveryDao;
 import com.skyeye.delivery.entity.Delivery;
 import com.skyeye.delivery.service.DeliveryService;
-import com.skyeye.level.entity.ShopMemberLevel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
