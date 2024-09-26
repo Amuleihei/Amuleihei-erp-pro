@@ -134,15 +134,17 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         MPJLambdaWrapper<ShopMaterialStore> wrapper = new MPJLambdaWrapper<ShopMaterialStore>()
             .innerJoin(Material.class, Material::getId, ShopMaterialStore::getMaterialId)
             .eq(StrUtil.isNotBlank(commonPageInfo.getObjectId()), ShopMaterialStore::getStoreId, commonPageInfo.getObjectId())
+            .eq(StrUtil.isNotBlank(commonPageInfo.getHolderId()), ShopMaterialStore::getMaterialId, commonPageInfo.getHolderId())
             .eq(StrUtil.isNotBlank(commonPageInfo.getType()), Material::getBrandId, commonPageInfo.getType())
             .and(wra -> {
                 wra.or().like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
                 wra.or().like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getModel, commonPageInfo.getKeyword());
             });
 
-        List<ShopMaterialStore> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterialStore.class, wrapper);
-        iShopStoreService.setDataMation(shopMaterialList, ShopMaterialStore::getStoreId);
+        List<ShopMaterialStore> shopMaterialStoreList = skyeyeBaseMapper.selectJoinList(ShopMaterialStore.class, wrapper);
+        iShopStoreService.setDataMation(shopMaterialStoreList, ShopMaterialStore::getStoreId);
         outputObject.settotal(pages.getTotal());
-        return shopMaterialList;
+        return shopMaterialStoreList;
     }
+
 }

@@ -26,4 +26,6 @@ public interface ShopMaterialService extends SkyeyeBusinessService<ShopMaterial>
     void queryShopMaterialByNormsIdList(InputObject inputObject, OutputObject outputObject);
 
     void queryShopMaterialById(InputObject inputObject, OutputObject outputObject);
+
+    void queryBrandShopMaterialList(InputObject inputObject, OutputObject outputObject);
 }

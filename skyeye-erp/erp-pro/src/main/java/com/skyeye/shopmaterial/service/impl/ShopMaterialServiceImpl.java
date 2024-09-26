@@ -8,10 +8,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.brand.entity.Brand;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -195,6 +198,37 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
             shopMaterialNorms.setEstimatePurchasePrice(null);
         });
         outputObject.setBean(shopMaterial);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public void queryBrandShopMaterialList(InputObject inputObject, OutputObject outputObject) {
+        MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
+            .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
+            .innerJoin(Brand.class, Brand::getId, Material::getBrandId)
+            .eq(Brand::getEnabled, EnableEnum.ENABLE_USING.getKey());
+        List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
+        // 根据id批量查询详细的商品信息
+        List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
+        shopMaterialList = selectByIds(idList.toArray(new String[]{}));
+        shopMaterialList.forEach(shopMaterial -> {
+            shopMaterial.getMaterialMation().setMaterialNorms(null);
+            shopMaterial.getMaterialMation().setUnitGroupMation(null);
+            shopMaterial.getMaterialMation().setMaterialProcedure(null);
+            shopMaterial.getMaterialMation().setNormsSpec(null);
+        });
+
+        // 根据品牌id进行分组，并且每个品牌下只取8条数据
+        Map<String, List<ShopMaterial>> collectMap = shopMaterialList.stream().collect(Collectors.groupingBy(bean -> bean.getMaterialMation().getBrandId(), Collectors.collectingAndThen(
+            Collectors.toList(), // 分组的 downstream
+            list -> {
+                if (list.size() > 8) {
+                    return list.subList(0, 8); // 只取前8个元素
+                }
+                return list;
+            }
+        )));
+        outputObject.setBean(collectMap);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
