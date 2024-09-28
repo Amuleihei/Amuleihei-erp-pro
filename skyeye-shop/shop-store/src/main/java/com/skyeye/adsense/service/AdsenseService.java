@@ -7,5 +7,5 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 
 public interface AdsenseService extends SkyeyeBusinessService<Adsense> {
-    void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject);
+    void streamlineAdsenseList(InputObject inputObject, OutputObject outputObject);
 }
