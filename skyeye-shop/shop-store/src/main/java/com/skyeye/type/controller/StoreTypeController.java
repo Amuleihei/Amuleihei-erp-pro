@@ -8,6 +8,7 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.type.entity.StoreType;
@@ -59,18 +60,30 @@ public class StoreTypeController {
     }
 
     /**
-     * 获取门店商品分类信息
+     * 获取门店商品分类信息列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryStoreTypeList", value = "获取门店商品分类信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryStoreTypeList", value = "获取门店商品分类信息列表", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id"),
-        @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态1是0否")})
+        @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id")})
     @RequestMapping("/post/StoreTypeController/queryStoreTypeList")
     public void queryStoreTypeList(InputObject inputObject, OutputObject outputObject) {
         storeTypeService.queryList(inputObject, outputObject);
+    }
+
+    /**
+     * 分页获取门店商品分类信息列表
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryStoreTypePageList", value = "分页获取门店商品分类信息列表", method = "POST", allUse = "2")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/StoreTypeController/queryStoreTypePageList")
+    public void queryStoreTypePageList(InputObject inputObject, OutputObject outputObject) {
+        storeTypeService.queryPageList(inputObject, outputObject);
     }
 
     /**

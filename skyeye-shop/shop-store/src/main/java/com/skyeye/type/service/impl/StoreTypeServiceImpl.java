@@ -4,12 +4,12 @@
 
 package com.skyeye.type.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -42,12 +42,9 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         Map<String, Object> params = inputObject.getParams();
-        System.out.println(params);
         QueryWrapper<StoreType> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), params.get("storeId").toString());
-        if (params.containsKey("enabled") && StrUtil.isNotEmpty(params.get("enabled").toString())) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getEnabled), params.get("enabled").toString());
-        }
+        queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getEnabled), CommonNumConstants.NUM_ONE);
         List<StoreType> beans = list(queryWrapper);
         shopStoreService.setDataMation(beans, StoreType::getStoreId);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
