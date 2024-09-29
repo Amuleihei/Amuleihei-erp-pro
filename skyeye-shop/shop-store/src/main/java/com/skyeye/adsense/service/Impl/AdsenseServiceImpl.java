@@ -12,9 +12,6 @@ import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.level.entity.ShopMemberLevel;
-import com.skyeye.type.entity.StoreType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -25,8 +22,15 @@ import java.util.Map;
 @SkyeyeService(name = "广告位管理", groupName = "广告位管理")
 public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, Adsense>  implements AdsenseService {
 
-    @Autowired
-    private AdsenseService adsenseService;
+    /**
+     * 禁用
+     */
+    public static final Integer STATUS_FALSE = 0;
+    /**
+     * 启用
+     */
+    public static final Integer STATUS_TURE = 1;
+
 
     /**
      * 根据条件获取广告位管理信息
@@ -61,7 +65,7 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
     public void streamlineAdsenseList(InputObject inputObject, OutputObject outputObject) {
         QueryWrapper<Adsense> queryWrapper = new QueryWrapper<>();
         //查询在用的广告位管理的信息
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Adsense::getEnabled), "2");
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Adsense::getEnabled), STATUS_TURE);
         List<Adsense> list = list(queryWrapper);
         outputObject.setBeans(list);
         outputObject.settotal(list.size());
@@ -80,4 +84,5 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
         super.deleteById(idList);
     }
+
 }

@@ -9,4 +9,5 @@ import com.skyeye.delivery.entity.ShopDeliveryCompany;
 public interface ShopDeliveryCompanyService extends SkyeyeBusinessService<ShopDeliveryCompany> {
 
     void streamlineDeliveryList(InputObject inputObject, OutputObject outputObject);
+
 }

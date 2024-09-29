@@ -12,7 +12,6 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.delivery.dao.ShopDeliveryTemplateDao;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
-import com.skyeye.delivery.entity.ShopDeliveryTemplateCharge;
 import com.skyeye.delivery.service.ShopDeliveryTemplateService;
 import com.skyeye.delivery.vo.ShopDeliveryTemplateVo;
 import com.skyeye.exception.CustomException;
