@@ -7,18 +7,18 @@ import com.skyeye.annotation.api.ApiOperation;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.delivery.entity.Delivery;
-import com.skyeye.delivery.service.DeliveryService;
+import com.skyeye.delivery.entity.ShopDeliveryCompany;
+import com.skyeye.delivery.service.ShopDeliveryCompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(value = "快递公司管理", tags = "快递公司管理", modelName = "快递公司管理")
-public class DeliveryController {
+public class ShopDeliveryCompanyController {
 
     @Autowired
-    private DeliveryService deliveryService;
+    private ShopDeliveryCompanyService deliveryService;
 
     @ApiOperation(id = "queryDeliveryList", value = "获取快递公司信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
@@ -28,7 +28,7 @@ public class DeliveryController {
     }
 
     @ApiOperation(id = "writeDelivery", value = "添加/编辑快递公司", method = "POST", allUse = "2")
-    @ApiImplicitParams(classBean = Delivery.class)
+    @ApiImplicitParams(classBean = ShopDeliveryCompany.class)
     @RequestMapping("/post/DeliveryController/writeDelivery")
     public void writeDelivery(InputObject inputObject, OutputObject outputObject) {
         deliveryService.saveOrUpdateEntity(inputObject, outputObject);

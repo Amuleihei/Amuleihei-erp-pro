@@ -22,12 +22,12 @@ public class AdsenseController {
     private AdsenseService adsenseService;
 
     /**
-     * 新增/编辑广告位管理信息
+     * 查询广告位管理信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryAdsense", value = "分页查询快递公司信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryAdsense", value = "分页查询广告位管理信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/DeliveryController/queryAdsense")
     public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
@@ -98,7 +98,7 @@ public class AdsenseController {
      */
     @ApiOperation(id = "adsenseListAllSimple",value = "获取状态正常的精简的广告位管理信息，主要用于下拉列表",method = "GET",allUse = "2")
     @RequestMapping("/post/AdsenseController/adsenseListAllSimple")
-    public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
-        adsenseService.streamlineMemberLevelList(inputObject,outputObject);
+    public void streamlineAdSenseList(InputObject inputObject, OutputObject outputObject) {
+        adsenseService.streamlineAdsenseList(inputObject,outputObject);
     }
 }

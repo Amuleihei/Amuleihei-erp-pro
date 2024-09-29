@@ -28,6 +28,11 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
     @Autowired
     private AdsenseService adsenseService;
 
+    /**
+     * 根据条件获取广告位管理信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     */
     //重写queryDataList查询方法
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
@@ -45,8 +50,15 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
+
+    /**
+     * 获取在用的广告位管理的信息广告位管理信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @Override
-    public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
+    public void streamlineAdsenseList(InputObject inputObject, OutputObject outputObject) {
         QueryWrapper<Adsense> queryWrapper = new QueryWrapper<>();
         //查询在用的广告位管理的信息
         queryWrapper.eq(MybatisPlusUtil.toColumns(Adsense::getEnabled), "2");
@@ -55,6 +67,13 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         outputObject.settotal(list.size());
     }
 
+
+    /**
+     * 批量删除广告位管理信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
     @Override
     public void deleteById(InputObject inputObject, OutputObject outputObject) {
         String ids = inputObject.getParams().get("ids").toString();
