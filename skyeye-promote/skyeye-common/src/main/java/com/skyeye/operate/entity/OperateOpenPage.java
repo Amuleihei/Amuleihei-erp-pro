@@ -43,8 +43,8 @@ public class OperateOpenPage extends OperatorUserInfo {
     private String name;
 
     @TableField("`type`")
-    @ApiModelProperty(value = "页面类型，true: 自定义页面 false: 表单布局", required = "required")
-    private Boolean type;
+    @ApiModelProperty(value = "页面类型，参考#MenuPageType", required = "required")
+    private Integer type;
 
     @TableField("page_url")
     @ApiModelProperty(value = "自定义页面的地址/表单布局的id", required = "required")
@@ -53,6 +53,10 @@ public class OperateOpenPage extends OperatorUserInfo {
     @TableField(exist = false)
     @Property(value = "当 type 为表单布局时，存储的表单布局信息")
     private DsFormPage dsFormPage;
+
+    @TableField(exist = false)
+    @Property(value = "当 type 为视图页面时，存储的视图页面信息")
+    private Map<String, Object> reportPage;
 
     @TableField(value = "params", typeHandler = JacksonTypeHandler.class)
     @ApiModelProperty(value = "请求参数，数据格式：{入参key: 需要解析的属性key}", required = "json")

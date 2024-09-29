@@ -19,11 +19,13 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.dsform.entity.DsFormPage;
 import com.skyeye.dsform.service.DsFormPageService;
 import com.skyeye.operate.classenum.EventType;
+import com.skyeye.operate.classenum.MenuPageType;
 import com.skyeye.operate.dao.OperateDao;
 import com.skyeye.operate.entity.Operate;
 import com.skyeye.operate.entity.OperateOpenPage;
 import com.skyeye.operate.service.OperateOpenPageService;
 import com.skyeye.operate.service.OperateService;
+import com.skyeye.rest.report.service.IReportPageService;
 import com.skyeye.server.entity.ServiceBeanCustom;
 import com.skyeye.server.service.ServiceBeanCustomService;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +63,9 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
 
     @Autowired
     private ServiceBeanCustomService serviceBeanCustomService;
+
+    @Autowired
+    private IReportPageService iReportPageService;
 
     /**
      * 获取操作列表
@@ -145,7 +150,7 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
         if (StrUtil.equals(operate.getEventType(), EventType.OPEN_PAGE.getKey())) {
             // 新开页面
             OperateOpenPage operateOpenPage = operate.getOperateOpenPage();
-            if (!operateOpenPage.getType()) {
+            if (operateOpenPage.getType() == MenuPageType.LAYOUT.getKey()) {
                 // 表单布局
                 try {
                     DsFormPage dsFormPage = dsFormPageService.getDataFromDb(operateOpenPage.getPageUrl());
@@ -155,6 +160,9 @@ public class OperateServiceImpl extends SkyeyeBusinessServiceImpl<OperateDao, Op
                 } catch (Exception ex) {
                     log.info(String.format(Locale.ROOT, "FormPage %s is not exits. 【selectById】", operateOpenPage.getPageUrl()));
                 }
+            } else if (operateOpenPage.getType() == MenuPageType.REPORT.getKey()) {
+                // 报表页面
+                operateOpenPage.setReportPage(iReportPageService.queryDataMationById(operateOpenPage.getPageUrl()));
             }
         }
         return operate;

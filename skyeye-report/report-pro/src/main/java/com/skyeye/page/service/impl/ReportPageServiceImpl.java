@@ -48,7 +48,7 @@ public class ReportPageServiceImpl extends SkyeyeBusinessServiceImpl<ReportPageD
     }
 
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void editReportPageContentById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         String id = params.get("id").toString();

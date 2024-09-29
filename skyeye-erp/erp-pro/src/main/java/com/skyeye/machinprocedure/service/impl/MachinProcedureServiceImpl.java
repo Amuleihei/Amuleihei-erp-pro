@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,8 +78,14 @@ public class MachinProcedureServiceImpl extends SkyeyeBusinessServiceImpl<Machin
     @Transactional(value = TRANSACTION_MANAGER_VALUE, rollbackFor = Exception.class)
     public void setMachinProcedureById(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
+
+        String machinProcedureFarmListStr = params.get("machinProcedureFarmList").toString();
+        List<MachinProcedureFarm> machinProcedureFarmList = new ArrayList<>();
+        if (StrUtil.isNotEmpty(machinProcedureFarmListStr)) {
+            machinProcedureFarmList = JSONUtil.toList(machinProcedureFarmListStr, MachinProcedureFarm.class);
+        }
+        params.put("machinProcedureFarmList", null);
         MachinProcedure machinProcedure = JSONUtil.toBean(JSONUtil.toJsonStr(params), MachinProcedure.class);
-        List<MachinProcedureFarm> machinProcedureFarmList = JSONUtil.toList(JSONUtil.toJsonStr(params.get("machinProcedureFarmList")), MachinProcedureFarm.class);
 
         UpdateWrapper<MachinProcedure> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq(CommonConstants.ID, machinProcedure.getId());
