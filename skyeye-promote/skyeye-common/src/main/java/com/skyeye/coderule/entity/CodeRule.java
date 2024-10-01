@@ -33,11 +33,11 @@ public class CodeRule extends OperatorUserInfo {
     private String id;
 
     @TableField("`name`")
-    @ApiModelProperty(value = "名称", required = "required")
+    @ApiModelProperty(value = "名称", required = "required", fuzzyLike = true)
     private String name;
 
     @TableField("code_num")
-    @ApiModelProperty(value = "编码", required = "required")
+    @ApiModelProperty(value = "编码", required = "required", fuzzyLike = true)
     private String codeNum;
 
     @TableField("remark")

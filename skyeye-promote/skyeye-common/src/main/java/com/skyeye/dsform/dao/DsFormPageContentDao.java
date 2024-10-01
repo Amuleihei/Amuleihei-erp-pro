@@ -6,9 +6,6 @@ package com.skyeye.dsform.dao;
 
 import com.skyeye.dsform.entity.DsFormPageContent;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.Map;
 
 /**
  * @ClassName: DsFormPageContentDao
@@ -19,7 +16,5 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface DsFormPageContentDao extends SkyeyeBaseMapper<DsFormPageContent> {
-
-    Map<String, Object> queryDsFormPageOrderby(@Param("pageId") String pageId);
 
 }

@@ -24,7 +24,6 @@ import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.RedisConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DataCommonUtil;
@@ -72,13 +71,6 @@ public class CodeRuleServiceImpl extends SkyeyeBusinessServiceImpl<CodeRuleDao, 
 
     @Autowired
     private Executor codeRuleExecutor;
-
-    @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = codeRuleDao.queryCodeRuleList(commonPageInfo);
-        return beans;
-    }
 
     @Override
     public void validatorEntity(CodeRule entity) {

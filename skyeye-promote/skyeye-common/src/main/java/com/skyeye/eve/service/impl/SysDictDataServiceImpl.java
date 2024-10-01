@@ -8,6 +8,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
+import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
+@SkyeyeService(name = "数据字典", groupName = "数据字典")
 public class SysDictDataServiceImpl extends SkyeyeBusinessServiceImpl<SysDictDataDao, SysDictData> implements SysDictDataService {
 
     @Autowired
