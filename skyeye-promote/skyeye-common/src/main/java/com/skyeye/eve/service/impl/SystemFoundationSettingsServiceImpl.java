@@ -5,12 +5,15 @@
 package com.skyeye.eve.service.impl;
 
 import cn.hutool.json.JSONUtil;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.MapUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.eve.dao.SystemFoundationSettingsDao;
+import com.skyeye.eve.entity.SystemFoundationSettings;
 import com.skyeye.eve.service.SystemFoundationSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,8 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-public class SystemFoundationSettingsServiceImpl implements SystemFoundationSettingsService {
+@SkyeyeService(name = "系统基础设置", groupName = "系统基础设置")
+public class SystemFoundationSettingsServiceImpl extends SkyeyeBusinessServiceImpl<SystemFoundationSettingsDao, SystemFoundationSettings> implements SystemFoundationSettingsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemFoundationSettingsServiceImpl.class);
 

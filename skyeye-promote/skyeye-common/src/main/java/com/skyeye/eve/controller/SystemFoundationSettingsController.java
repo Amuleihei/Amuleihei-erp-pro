@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "系统基础设置", tags = "系统基础设置", modelName = "系统公共模块")
+@Api(value = "系统基础设置", tags = "系统基础设置", modelName = "系统基础设置")
 public class SystemFoundationSettingsController {
 
     @Autowired
