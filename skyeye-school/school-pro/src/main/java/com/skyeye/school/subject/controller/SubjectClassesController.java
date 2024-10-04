@@ -130,4 +130,18 @@ public class SubjectClassesController {
         subjectClassesService.changeQuit(inputObject, outputObject);
     }
 
+    /**
+     * 获取创建老师信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryTeacherMessage", value = "获取创建老师信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+            @ApiImplicitParam(id = "subClassLinkId", name = "subClassLinkId", value = "科目表与班级表关系id",required = "require")})
+    @RequestMapping("/post/SubjectClassesController/queryTeacherMessage")
+    public void queryTeacherMessage(InputObject inputObject, OutputObject outputObject) {
+        subjectClassesService.queryTeacherMessage(inputObject, outputObject);
+    }
+
 }

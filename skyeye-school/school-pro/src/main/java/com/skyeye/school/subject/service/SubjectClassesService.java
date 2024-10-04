@@ -48,4 +48,6 @@ public interface SubjectClassesService extends SkyeyeBusinessService<SubjectClas
     void changeQuit(InputObject inputObject, OutputObject outputObject);
 
     void updatePeopleNum(String subClassLinkId, Integer count);
+
+    void queryTeacherMessage(InputObject inputObject, OutputObject outputObject);
 }

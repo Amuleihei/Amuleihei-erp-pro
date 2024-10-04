@@ -152,7 +152,7 @@ public class SubjectClassesStuController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "selectStudentList",value = "根据科目表与班级表关系id查询学生分组", method = "POST",allUse = "2")
+    @ApiOperation(id = "selectStudentList",value = "根据科目表与班级表关系id新增学生分组", method = "POST",allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "subClassLinkId", name = "subClassLinkId", value = "科目表与班级表关系id", required = "required"),
         @ApiImplicitParam(id = "groupCount", name = "groupCount", value = "分组数量", required = "required")})
@@ -160,6 +160,9 @@ public class SubjectClassesStuController {
     public void selectStudentList(InputObject inputObject, OutputObject outputObject) {
         subjectClassesStuService.selectStudentList(inputObject, outputObject);
     }
+
+
+
 
 
 }

@@ -292,4 +292,11 @@ public class SubjectClassesStuServiceImpl extends SkyeyeBusinessServiceImpl<Subj
         outputObject.settotal(groups.size());
     }
 
+
+    @Override
+    public List<SubjectClassesStu> queryListBySubClassLinkId(String SubClassLinkId) {
+        QueryWrapper<SubjectClassesStu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SubjectClassesStu::getSubClassLinkId), SubClassLinkId);
+        return list(queryWrapper);
+    }
 }

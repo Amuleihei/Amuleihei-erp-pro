@@ -83,4 +83,5 @@ public class SubjectController {
     public void querySubjectListByUserId(InputObject inputObject, OutputObject outputObject) {
         subjectService.querySubjectListByUserId(inputObject, outputObject);
     }
+
 }
