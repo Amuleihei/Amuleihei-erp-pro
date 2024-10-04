@@ -80,11 +80,11 @@ public class ExamServiceImpl implements ExamService {
 
     /**
      * 新增试卷
-     *
+     * todo  获取当前年级所属的年份
      * @param inputObject 入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @Override
+  /*  @Override
     @Transactional(value = "transactionManager", rollbackFor = Exception.class)
     public void insertExamMation(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
@@ -129,7 +129,7 @@ public class ExamServiceImpl implements ExamService {
             outputObject.setreturnMessage("该年级还未曾分班。");
         }
     }
-
+*/
     /**
      * 获取试卷题目信息
      *

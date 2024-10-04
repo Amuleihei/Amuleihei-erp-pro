@@ -104,19 +104,7 @@
 			</if>
 			ORDER BY a.create_time DESC
 	</select>
-	
-	<select id="queryGradeNowYearByGradeId" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.`year` sessionYear
-		FROM
-			school_class_mation a
-		WHERE
-			a.grade_id = #{gradeId}
-		GROUP BY `year`
-		ORDER BY a.`year` DESC
-		LIMIT 1
-	</select>
-	
+
 	<insert id="insertExamMation" parameterType="java.util.Map">
 	     INSERT into exam_survey_directory 
 	     (id, survey_name, sid, survey_model, survey_note, school_id, grade_id, view_answer, semester_id, session_year, 
