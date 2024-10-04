@@ -8,6 +8,7 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.client.ExecuteFeignClient;
@@ -18,6 +19,7 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.object.PutObject;
 import com.skyeye.common.util.FileUtil;
 import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.echarts.classenum.ReportModelState;
 import com.skyeye.echarts.dao.ReportImportHistoryDao;
 import com.skyeye.echarts.entity.ImportHistory;
@@ -72,10 +74,10 @@ public class ReportImportHistoryServiceImpl extends SkyeyeBusinessServiceImpl<Re
     private CommonService commonService;
 
     @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.queryReportImportHistoryList(commonPageInfo);
-        return beans;
+    public QueryWrapper<ImportHistory> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ImportHistory> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ImportHistory::getModelCode), commonPageInfo.getObjectId());
+        return queryWrapper;
     }
 
     /**

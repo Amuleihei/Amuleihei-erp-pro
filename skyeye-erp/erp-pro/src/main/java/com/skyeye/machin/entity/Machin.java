@@ -10,11 +10,10 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
+import com.skyeye.bom.entity.BomChild;
 import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.SkyeyeFlowable;
-import com.skyeye.material.entity.Material;
-import com.skyeye.material.entity.MaterialNorms;
 import lombok.Data;
 
 import java.util.List;
@@ -73,5 +72,9 @@ public class Machin extends SkyeyeFlowable {
     @TableField(exist = false)
     @Property(value = "条形码信息")
     private Map<String, Object> barCodeMation;
+
+    @TableField(exist = false)
+    @Property(value = "加工单所需的原材料信息")
+    private List<BomChild> needRawMaterialList;
 
 }

@@ -18,5 +18,5 @@ import com.skyeye.common.object.OutputObject;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface BrandService extends SkyeyeBusinessService<Brand> {
-    void queryBrandListByEnabled(InputObject inputObject, OutputObject outputObject);
+    void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject);
 }

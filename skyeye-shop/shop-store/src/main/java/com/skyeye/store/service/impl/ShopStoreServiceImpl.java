@@ -9,12 +9,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.client.ExecuteFeignClient;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.rest.shopmaterialnorms.rest.IShopMaterialNormsRest;
 import com.skyeye.store.dao.ShopStoreDao;
 import com.skyeye.store.entity.ShopStore;
 import com.skyeye.store.entity.ShopStoreStaff;
@@ -46,11 +48,20 @@ public class ShopStoreServiceImpl extends SkyeyeBusinessServiceImpl<ShopStoreDao
     @Autowired
     private ShopStoreStaffService shopStoreStaffService;
 
+    @Autowired
+    private IShopMaterialNormsRest iShopMaterialNormsRest;
+
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         shopAreaService.setMationForMap(beans, "shopAreaId", "shopAreaMation");
         return beans;
+    }
+
+    @Override
+    public void createPostpose(ShopStore entity, String userId) {
+        // 新增门店时，新增门店商品
+        ExecuteFeignClient.get(() -> iShopMaterialNormsRest.saveShopMaterialStore(entity.getId()));
     }
 
     @Override

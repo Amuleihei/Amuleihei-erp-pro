@@ -7,6 +7,7 @@ package com.skyeye.menu.dao;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.menu.entity.AppWorkPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public interface AppWorkPageDao extends SkyeyeBaseMapper<AppWorkPage> {
 
     List<Map<String, Object>> queryAppWorkPageList(CommonPageInfo commonPageInfo);
 
-    List<String> queryAllChildIdsByParentId(List<String> ids);
+    List<String> queryAllChildIdsByParentId(@Param("ids") List<String> ids);
 
     List<Map<String, Object>> queryAllAppMenuList();
 

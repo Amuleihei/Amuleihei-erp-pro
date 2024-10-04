@@ -4,7 +4,7 @@
 
 package com.skyeye.eve.dao;
 
-import java.util.Map;
+import com.skyeye.eve.entity.SystemFoundationSettings;
 
 /**
  * @ClassName: SystemFoundationSettingsDao
@@ -14,12 +14,6 @@ import java.util.Map;
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
-public interface SystemFoundationSettingsDao {
-
-    Map<String, Object> querySystemFoundationSettingsList();
-
-    int insertSystemFoundationSettings(Map<String, Object> map);
-
-    int editSystemFoundationSettings(Map<String, Object> map);
+public interface SystemFoundationSettingsDao extends SkyeyeBaseMapper<SystemFoundationSettings> {
 
 }

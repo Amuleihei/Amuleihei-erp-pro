@@ -58,7 +58,7 @@ public class UpvoteServiceImpl extends SkyeyeBusinessServiceImpl<UpvoteDao, Upvo
             }
         } else {
             if (estimateAddOrCancel(upvote)) {
-                addUpvotePost(upvote, userId);
+                addUpvotePost(upvote);
             } else {
                 updateUpvotePost(upvote);
             }
@@ -78,8 +78,9 @@ public class UpvoteServiceImpl extends SkyeyeBusinessServiceImpl<UpvoteDao, Upvo
         return false;
     }
 
-    public void addUpvotePost(Upvote upvote, String userId) {
-        upvoteService.createEntity(upvote, userId);
+    public void addUpvotePost(Upvote upvote) {
+        upvote.setCreateTime(DateUtil.getYmdTimeAndToString());
+        upvoteService.createEntity(upvote, StrUtil.EMPTY);
         postService.updateUpvoteCount(upvote.getObjectId(), String.valueOf(getUpvoteNum(upvote.getObjectId())));
     }
 

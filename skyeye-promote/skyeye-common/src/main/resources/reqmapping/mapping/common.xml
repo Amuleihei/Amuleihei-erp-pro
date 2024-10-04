@@ -4,22 +4,6 @@
         - allUse  是否需要登录才能使用   1是   0否  2需要登陆才能访问，但无需授权    默认为否
      -->
 
-    <!-- 系统基础设置开始 -->
-    <url id="sysfdsettings002" path="/post/SystemFoundationSettingsController/editSystemFoundationSettings" val="编辑" allUse="1" method="PUT" groupName="系统基础设置">
-        <property id="emailType" name="emailType" ref="required" var="邮箱类型"/>
-        <property id="emailReceiptServer" name="emailReceiptServer" ref="required" var="收件服务器"/>
-        <property id="emailReceiptServerPort" name="emailReceiptServerPort" ref="required" var="收件服务器ssl端口"/>
-        <property id="emailSendServer" name="emailSendServer" ref="required" var="发件服务器"/>
-        <property id="emailSendServerPort" name="emailSendServerPort" ref="required" var="发件服务器ssl端口"/>
-        <property id="noDocumentaryDayNum" name="noDocumentaryDayNum" ref="num" var="未跟单天数，N天未跟单自动进入公海"/>
-        <property id="noChargeId" name="noChargeId" ref="num" var="未指定负责人，未指定责任人自动进入公海"/>
-        <property id="holidaysTypeJson" name="holidaysTypeJson" ref="required,json" var="企业假期类型以及扣薪信息"/>
-        <property id="yearHolidaysMation" name="yearHolidaysMation" ref="required,json" var="年假信息"/>
-        <property id="abnormalMation" name="abnormalMation" ref="required,json" var="异常考勤制度管理信息"/>
-        <property id="sysOrderBasicDesign" name="sysOrderBasicDesign" ref="required,json" var="系统单据审核的一些设置"/>
-    </url>
-    <!-- 系统基础设置结束 -->
-
     <!-- 系统模板分类开始 -->
     <url id="sysevemodeltype001" path="/post/SysEveModelTypeController/querySysEveModelTypeList" method="POST" val="获取系统模板分类列表" allUse="1" groupName="系统模板分类">
         <property id="typeName" name="typeName" ref="" var="分类名称"/>

@@ -162,6 +162,9 @@ public class AbstractTeamServiceImpl<D extends SkyeyeBaseMapper<T>, T extends Ab
     }
 
     private List<TeamRoleUser> getTeamRoleUserList(List<TeamRole> teamRoleList) {
+        if (CollectionUtil.isEmpty(teamRoleList)) {
+            return CollectionUtil.newArrayList();
+        }
         return teamRoleList.stream()
             .filter(teamRole -> CollectionUtil.isNotEmpty(teamRole.getTeamRoleUserList()))
             .flatMap(teamRole -> {

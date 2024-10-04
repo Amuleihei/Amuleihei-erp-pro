@@ -6,6 +6,7 @@ package com.skyeye.rest.shop.rest;
 
 import com.skyeye.common.client.ClientConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,5 +28,15 @@ public interface IShopStoreRest {
      */
     @PostMapping("/queryStoreByIds")
     String queryStoreByIds(@RequestParam("ids") String ids);
+
+    /**
+     * 获取门店列表信息
+     *
+     * @param shopAreaId 门店所属区域id
+     * @param enabled    是否启用
+     */
+    @GetMapping("/queryStoreListByParams")
+    String queryStoreListByParams(@RequestParam("shopAreaId") String shopAreaId,
+                                  @RequestParam("enabled") Integer enabled);
 
 }

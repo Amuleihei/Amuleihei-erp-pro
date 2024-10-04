@@ -4,12 +4,8 @@
 
 package com.skyeye.echarts.dao;
 
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.echarts.entity.ImportModel;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: ReportImportModelDao
@@ -20,7 +16,5 @@ import java.util.Map;
  * 注意：本内容具体规则请参照readme执行，地址：https://gitee.com/doc_wei01/skyeye-report/blob/master/README.md
  */
 public interface ReportImportModelDao extends SkyeyeBaseMapper<ImportModel> {
-
-    List<Map<String, Object>> getReportImportModelList(CommonPageInfo commonPageInfo);
 
 }

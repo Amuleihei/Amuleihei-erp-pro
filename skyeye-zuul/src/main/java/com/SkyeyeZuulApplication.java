@@ -4,20 +4,23 @@
 
 package com;
 
+import org.nutz.plugin.spring.boot.NutzDaoAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    DataSourceAutoConfiguration.class,
+    NutzDaoAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
+})
 @ComponentScan(basePackages = {"com.skyeye"})
 @EnableDiscoveryClient // 开启服务发现
-@EnableZuulProxy
 public class SkyeyeZuulApplication {
 
     public static void main(String[] args) {
-        System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(SkyeyeZuulApplication.class, args);
     }
 

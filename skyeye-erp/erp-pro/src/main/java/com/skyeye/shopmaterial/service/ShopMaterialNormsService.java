@@ -28,4 +28,6 @@ public interface ShopMaterialNormsService extends SkyeyeBusinessService<ShopMate
 
     void saveList(String materialId, List<ShopMaterialNorms> shopMaterialNormsList);
 
+    List<ShopMaterialNorms> queryShopMaterialByNormsIdList(List<String> normsIdList);
+
 }

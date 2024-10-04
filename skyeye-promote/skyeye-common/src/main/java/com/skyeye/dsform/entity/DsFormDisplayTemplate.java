@@ -11,7 +11,6 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
-import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
@@ -35,7 +34,7 @@ public class DsFormDisplayTemplate extends OperatorUserInfo {
     private String id;
 
     @TableField("`name`")
-    @ApiModelProperty(value = "模板名称", required = "required")
+    @ApiModelProperty(value = "模板名称", required = "required", fuzzyLike = true)
     private String name;
 
     @TableField("content")

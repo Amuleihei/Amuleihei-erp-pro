@@ -9,18 +9,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.echarts.dao.ReportImportModelDao;
 import com.skyeye.echarts.entity.ImportModel;
+import com.skyeye.echarts.entity.ReportModel;
 import com.skyeye.echarts.service.ReportImportModelService;
+import com.skyeye.echarts.service.ReportModelService;
 import com.skyeye.exception.CustomException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: ReportImportModelServiceImpl
@@ -34,11 +37,20 @@ import java.util.Map;
 @SkyeyeService(name = "Echarts模型管理", groupName = "Echarts模型管理")
 public class ReportImportModelServiceImpl extends SkyeyeBusinessServiceImpl<ReportImportModelDao, ImportModel> implements ReportImportModelService {
 
+    @Autowired
+    private ReportModelService reportModelService;
+
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.getReportImportModelList(commonPageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
+
+        // 获取最新版本的报表模型
+        List<ReportModel> reportModelList = reportModelService.queryAllMaxVersionReportModel();
+        Map<String, ReportModel> reportModelMap = reportModelList.stream().collect(Collectors.toMap(ReportModel::getModelCode, item -> item));
+        beans.forEach(bean -> {
+            bean.put("reportModel", reportModelMap.get(bean.get("modelCode").toString()));
+        });
         return beans;
     }
 

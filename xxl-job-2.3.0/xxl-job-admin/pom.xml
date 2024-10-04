@@ -30,7 +30,7 @@
 			<dependency>
 				<groupId>com.alibaba.cloud</groupId>
 				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
-				<version>2.1.0.RELEASE</version>
+				<version>2021.0.6.1</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -61,6 +61,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 
 		<!-- starter-actuator -->

@@ -7,10 +7,10 @@ package com.skyeye.eve.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName: SysDictTypeServiceImpl
@@ -35,14 +34,8 @@ import java.util.stream.Collectors;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
+@SkyeyeService(name = "数据字典类型", groupName = "数据字典")
 public class SysDictTypeServiceImpl extends SkyeyeBusinessServiceImpl<SysDictTypeDao, SysDictType> implements SysDictTypeService {
-
-    @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<SysDictType> beans = skyeyeBaseMapper.queryDictTypeList(commonPageInfo);
-        return beans.stream().map(bean -> BeanUtil.beanToMap(bean)).collect(Collectors.toList());
-    }
 
     @Override
     public void validatorEntity(SysDictType entity) {

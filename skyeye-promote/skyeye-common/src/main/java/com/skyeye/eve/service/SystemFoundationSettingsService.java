@@ -4,8 +4,10 @@
 
 package com.skyeye.eve.service;
 
+import com.skyeye.base.business.service.SkyeyeBusinessService;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.eve.entity.SystemFoundationSettings;
 
 import java.util.Map;
 
@@ -17,29 +19,8 @@ import java.util.Map;
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
-public interface SystemFoundationSettingsService {
+public interface SystemFoundationSettingsService extends SkyeyeBusinessService<SystemFoundationSettings> {
 
-    /**
-     * 查询系统基础信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     void querySystemFoundationSettingsList(InputObject inputObject, OutputObject outputObject);
-
-    /**
-     * 修改系统配置信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    void editSystemFoundationSettings(InputObject inputObject, OutputObject outputObject);
-
-    /**
-     * 获取系统配置信息
-     *
-     * @return 系统配置信息
-     */
-    Map<String, Object> getSystemFoundationSettings();
 
 }

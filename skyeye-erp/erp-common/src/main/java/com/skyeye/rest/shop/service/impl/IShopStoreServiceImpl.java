@@ -46,4 +46,8 @@ public class IShopStoreServiceImpl extends IServiceImpl implements IShopStoreSer
         return String.format(Locale.ROOT, "%s:%s", CacheConstants.SHOP_STORE_CACHE_KEY, id);
     }
 
+    @Override
+    public List<Map<String, Object>> queryStoreListByParams(String shopAreaId, Integer enabled) {
+        return ExecuteFeignClient.get(() -> iShopStoreRest.queryStoreListByParams(shopAreaId, enabled)).getRows();
+    }
 }

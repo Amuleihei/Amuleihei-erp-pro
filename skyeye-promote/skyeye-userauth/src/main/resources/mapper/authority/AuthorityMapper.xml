@@ -6,7 +6,8 @@
         SELECT
             c.id,
             c.`name`,
-            c.icon icon,
+            c.icon,
+            c.page_type pageType,
             c.page_url pageURL,
             c.open_type openType,
             c.type,

@@ -10,6 +10,7 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
+import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ import lombok.Data;
  */
 @Data
 @UniqueField
-@RedisCacheField(name = "report:page")
+@RedisCacheField(name = CacheConstants.REPORT_PAGE_CACHE_KEY)
 @TableName(value = "report_page", autoResultMap = true)
 @ApiModel("报表页面实体类")
 public class ReportPage extends BaseGeneralInfo {

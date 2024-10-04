@@ -5,14 +5,15 @@
 package com.skyeye.personnel.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.skyeye.common.enumeration.SmsSceneEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.exception.CustomException;
-import com.skyeye.personnel.classenum.SmsSceneEnum;
 import com.skyeye.personnel.entity.SysEveUserStaff;
 import com.skyeye.personnel.service.AppAuthService;
 import com.skyeye.personnel.service.SysEveUserStaffService;
 import com.skyeye.sms.entity.SmsCodeSendReq;
+import com.skyeye.sms.entity.SmsCodeValidateReq;
 import com.skyeye.sms.service.SmsCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,5 +70,18 @@ public class AppAuthServiceImpl implements AppAuthService {
         SmsCodeSendReq smsCodeSendReq = new SmsCodeSendReq().setMobile(mobile).setScene(scene);
         smsCodeService.sendSmsCodeReq(smsCodeSendReq);
 
+    }
+
+    @Override
+    public void smsLogin(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String mobile = params.get("mobile").toString();
+        String smsCode = params.get("smsCode").toString();
+        // 校验验证码
+        SmsCodeValidateReq smsCodeValidateReq = new SmsCodeValidateReq();
+        smsCodeValidateReq.setMobile(mobile);
+        smsCodeValidateReq.setSmsCode(smsCode);
+        smsCodeValidateReq.setScene(SmsSceneEnum.LOGIN.getKey());
+        smsCodeService.validateSmsCode(smsCodeValidateReq);
     }
 }

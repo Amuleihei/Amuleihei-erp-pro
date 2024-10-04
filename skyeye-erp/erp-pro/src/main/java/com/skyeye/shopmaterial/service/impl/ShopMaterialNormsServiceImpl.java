@@ -71,4 +71,15 @@ public class ShopMaterialNormsServiceImpl extends SkyeyeBusinessServiceImpl<Shop
             createEntity(shopMaterialNormsList, StrUtil.EMPTY);
         }
     }
+
+    @Override
+    public List<ShopMaterialNorms> queryShopMaterialByNormsIdList(List<String> normsIdList) {
+        if (CollectionUtil.isEmpty(normsIdList)) {
+            return CollectionUtil.newArrayList();
+        }
+        QueryWrapper<ShopMaterialNorms> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(ShopMaterialNorms::getNormsId), normsIdList);
+        List<ShopMaterialNorms> shopMaterialNormsList = list(queryWrapper);
+        return shopMaterialNormsList;
+    }
 }

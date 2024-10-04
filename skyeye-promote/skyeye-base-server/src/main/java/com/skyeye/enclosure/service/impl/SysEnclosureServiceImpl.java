@@ -5,6 +5,7 @@
 package com.skyeye.enclosure.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
@@ -94,8 +95,10 @@ public class SysEnclosureServiceImpl extends SkyeyeBusinessServiceImpl<SysEnclos
                 }
                 tree.putExtra("objectType", objectType);
             });
-        outputObject.setBeans(treeNodes);
-        outputObject.settotal(treeNodes.size());
+        if (CollectionUtil.isNotEmpty(treeNodes)) {
+            outputObject.setBeans(treeNodes);
+            outputObject.settotal(treeNodes.size());
+        }
     }
 
 }

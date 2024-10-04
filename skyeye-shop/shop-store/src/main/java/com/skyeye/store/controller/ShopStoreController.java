@@ -32,12 +32,6 @@ public class ShopStoreController {
     @Autowired
     private ShopStoreService shopStoreService;
 
-    /**
-     * 获取门店信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "store001", value = "获取门店信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ShopStoreController/queryStoreList")
@@ -45,12 +39,6 @@ public class ShopStoreController {
         shopStoreService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 添加/编辑门店
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeStore", value = "添加/编辑门店", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = ShopStore.class)
     @RequestMapping("/post/ShopStoreController/writeStore")
@@ -58,12 +46,6 @@ public class ShopStoreController {
         shopStoreService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 根据ID查询门店信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryStoreById", value = "据ID查询门店信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -72,13 +54,7 @@ public class ShopStoreController {
         shopStoreService.selectById(inputObject, outputObject);
     }
 
-    /**
-     * 根据ID批量查询门店信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryStoreByIds", value = "根据ID批量查询门店信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryStoreByIds", value = "根据ID批量查询门店信息", method = "POST", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id", required = "required")})
     @RequestMapping("/post/ShopStoreController/queryStoreByIds")
@@ -86,12 +62,6 @@ public class ShopStoreController {
         shopStoreService.selectByIds(inputObject, outputObject);
     }
 
-    /**
-     * 根据id删除门店信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "deleteStoreById", value = "根据id删除门店信息", method = "DELETE", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -100,12 +70,6 @@ public class ShopStoreController {
         shopStoreService.deleteById(inputObject, outputObject);
     }
 
-    /**
-     * 获取门店列表信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryStoreListByParams", value = "获取门店列表信息", method = "GET", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "shopAreaId", name = "shopAreaId", value = "区域ID"),
@@ -115,12 +79,6 @@ public class ShopStoreController {
         shopStoreService.queryStoreListByParams(inputObject, outputObject);
     }
 
-    /**
-     * 根据门店ID获取门店设置的线上预约信息(已结合当前登陆用户)
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryStoreOnlineById", value = "根据门店ID获取门店设置的线上预约信息(已结合当前登陆用户)", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -129,12 +87,6 @@ public class ShopStoreController {
         shopStoreService.queryStoreOnlineById(inputObject, outputObject);
     }
 
-    /**
-     * 保存门店线上预约信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "saveStoreOnlineMation", value = "保存门店线上预约信息", method = "POST", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required"),
@@ -149,12 +101,6 @@ public class ShopStoreController {
         shopStoreService.saveStoreOnlineMation(inputObject, outputObject);
     }
 
-    /**
-     * 获取门店指定日期的预约信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "store010", value = "获取门店指定日期的预约信息", method = "GET", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "门店id", required = "required"),

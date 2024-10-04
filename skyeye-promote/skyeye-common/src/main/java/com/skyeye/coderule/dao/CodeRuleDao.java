@@ -4,12 +4,8 @@
 
 package com.skyeye.coderule.dao;
 
-import com.skyeye.common.entity.search.CommonPageInfo;
-import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.coderule.entity.CodeRule;
-
-import java.util.List;
-import java.util.Map;
+import com.skyeye.eve.dao.SkyeyeBaseMapper;
 
 /**
  * @ClassName: CodeRuleDao
@@ -20,7 +16,5 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface CodeRuleDao extends SkyeyeBaseMapper<CodeRule> {
-
-    List<Map<String, Object>> queryCodeRuleList(CommonPageInfo commonPageInfo);
 
 }
