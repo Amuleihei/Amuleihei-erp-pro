@@ -9,6 +9,7 @@ import com.skyeye.adsense.service.AdsenseService;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 @Service
 @SkyeyeService(name = "广告位管理", groupName = "广告位管理")
-public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, Adsense>  implements AdsenseService {
+public class AdsenseServiceImpl extends SkyeyeBusinessServiceImpl<AdsenseDao, Adsense> implements AdsenseService {
 
     /**
      * 禁用
@@ -31,11 +32,25 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
      */
     public static final Integer STATUS_TURE = 1;
 
+    /**
+     * 分页查询
+     * @param commonPageInfo
+     * @return
+     */
+    @Override
+    public QueryWrapper<Adsense> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<Adsense> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        String objectStr =  commonPageInfo.getObjectId();
+        if (StrUtil.isNotEmpty(objectStr)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(Adsense::getName), objectStr);
+        }
+        return queryWrapper;
+    }
 
     /**
      * 根据条件获取广告位管理信息
      *
-     * @param inputObject  入参以及用户信息等获取对象
+     * @param inputObject 入参以及用户信息等获取对象
      */
     //重写queryDataList查询方法
     @Override
@@ -54,7 +69,6 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
-
     /**
      * 获取在用的广告位管理的信息广告位管理信息
      *
@@ -71,7 +85,6 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         outputObject.settotal(list.size());
     }
 
-
     /**
      * 批量删除广告位管理信息
      *
@@ -84,5 +97,4 @@ public class AdsenseServiceImpl  extends SkyeyeBusinessServiceImpl<AdsenseDao, A
         List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
         super.deleteById(idList);
     }
-
 }

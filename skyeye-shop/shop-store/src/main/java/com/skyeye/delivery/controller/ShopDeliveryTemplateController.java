@@ -22,7 +22,6 @@ public class ShopDeliveryTemplateController {
     @Autowired
     private ShopDeliveryTemplateService shopDeliveryTemplateService;
 
-
     /**
      * 新增/编辑快递运费模版信息
      *
@@ -35,7 +34,6 @@ public class ShopDeliveryTemplateController {
     public void writeShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.saveOrUpdateEntity(inputObject, outputObject);
     }
-
 
     /**
      * 批量删除快递运费模版信息
@@ -93,7 +91,6 @@ public class ShopDeliveryTemplateController {
         shopDeliveryTemplateService.selectById(inputObject, outputObject);
     }
 
-
     /**
      * 获取精简的快递运费模版信息，主要用于下拉列表
      *
@@ -106,6 +103,4 @@ public class ShopDeliveryTemplateController {
     public void streamlineShopDeliveryTempList(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.shopDeliveryTemplateList(inputObject,outputObject);
     }
-
-
 }

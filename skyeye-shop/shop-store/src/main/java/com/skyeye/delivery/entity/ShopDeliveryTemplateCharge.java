@@ -20,7 +20,7 @@ public class ShopDeliveryTemplateCharge extends OperatorUserInfo {
     private String id;
 
     @TableField(value = "`template_id`")
-    @ApiModelProperty(value = "模板ID",required = "required")
+    @ApiModelProperty(value = "模板ID",required = "required",fuzzyLike = true)
     private String templateId;
 
     @TableField(value = "`area_id`")

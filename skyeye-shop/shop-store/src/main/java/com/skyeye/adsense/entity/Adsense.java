@@ -21,7 +21,7 @@ public class Adsense extends OperatorUserInfo {
     private String id;
 
     @TableField(value = "`name`")
-    @ApiModelProperty(value = "标题", required = "required")
+    @ApiModelProperty(value = "标题", required = "required", fuzzyLike = true)
     private String name;
 
     @TableField(value = "`jump_url`")

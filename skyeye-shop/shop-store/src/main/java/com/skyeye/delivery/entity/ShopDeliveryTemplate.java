@@ -21,7 +21,7 @@ public class ShopDeliveryTemplate extends OperatorUserInfo {
     private String id;
 
     @TableField(value = "`name`")
-    @ApiModelProperty(value = "模板名称",required = "required")
+    @ApiModelProperty(value = "模板名称",required = "required",fuzzyLike = true)
     private String name;
 
     @TableField(value = "`remark`")

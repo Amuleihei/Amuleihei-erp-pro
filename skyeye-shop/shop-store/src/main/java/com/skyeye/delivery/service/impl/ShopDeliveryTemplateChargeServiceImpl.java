@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -27,21 +28,30 @@ import java.util.List;
 import java.util.Map;
 
 
-
 @Service
 @SkyeyeService(name = "快递运费费用模版", groupName = "快递运费费用模版")
-public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessServiceImpl<ShopDeliveryTemplateChargeDao, ShopDeliveryTemplateCharge> implements ShopDeliveryTemplateChargeService{
-
-
-    @Autowired
-    private ShopDeliveryTemplateChargeService  shopDeliveryTemplateChargeService;
-
+public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessServiceImpl<ShopDeliveryTemplateChargeDao, ShopDeliveryTemplateCharge> implements ShopDeliveryTemplateChargeService {
 
     @Autowired
     private ShopDeliveryTemplateService shopDeliveryTemplateService;
 
     @Autowired
     private ShopAreaService shopAreaService;
+
+    /**
+     * 分页查询-根据快递运费模版模板ID
+     * @param commonPageInfo
+     * @return
+     */
+    @Override
+    public QueryWrapper<ShopDeliveryTemplateCharge> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ShopDeliveryTemplateCharge> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        String objectStr =  commonPageInfo.getObjectId();
+        if (StrUtil.isNotEmpty(objectStr)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryTemplateCharge::getTemplateId), objectStr);
+        }
+        return queryWrapper;
+    }
 
     /**
      * 批量删除快递运费费用模版信息
@@ -56,11 +66,10 @@ public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessService
         super.deleteById(idList);
     }
 
-
     /**
-     * 查询快递运费模版信息
+     * 查询快递运费模版信息,条件查询templateId和areaId
      *
-     * @param inputObject  入参以及用户信息等获取对象
+     * @param inputObject 入参以及用户信息等获取对象
      */
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
@@ -79,37 +88,25 @@ public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessService
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
-
     /**
      * 重写新增编辑前置条件快递运费模版信息
      */
     @Override
-    public void createPrepose(ShopDeliveryTemplateCharge shopDeliveryTemplateCharge) {
-        // 新增之前&&校验之后的前置执行事件
-        checkTemplateAndAreaExistence(shopDeliveryTemplateCharge);
-    }
-
-    @Override
-    public void updatePrepose(ShopDeliveryTemplateCharge shopDeliveryTemplateCharge) {
-        // 编辑之前&&校验之后的前置执行事件
-        checkTemplateAndAreaExistence(shopDeliveryTemplateCharge);
-    }
-
-    private void checkTemplateAndAreaExistence(ShopDeliveryTemplateCharge shopDeliveryTemplateCharge) {
+    public void validatorEntity(ShopDeliveryTemplateCharge shopDeliveryTemplateCharge) {
+        super.validatorEntity(shopDeliveryTemplateCharge);
         ShopDeliveryTemplate shopDeliveryTemplate = shopDeliveryTemplateService.selectById(shopDeliveryTemplateCharge.getTemplateId());
         ShopArea shopArea = shopAreaService.selectById(shopDeliveryTemplateCharge.getAreaId());
 
         // 判断shopDeliveryTemplate是否为空，如果为空则抛出异常
-        if (shopDeliveryTemplate.getId() == null ) {
+        if (shopDeliveryTemplate.getId() == null) {
             throw new CustomException("模板不存在: " + shopDeliveryTemplateCharge.getTemplateId());
         }
 
         // 判断shopArea是否为空，如果为空则抛出异常
-        if (shopArea.getId() == null ) {
+        if (shopArea.getId() == null) {
             throw new CustomException("区域不存在: " + shopDeliveryTemplateCharge.getAreaId());
         }
     }
-
 
     /**
      * 重查询快递运费模版信息，只返回部分字段
@@ -130,7 +127,6 @@ public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessService
             vo.setAreaId(template.getAreaId());
             voList.add(vo);
         }
-
         outputObject.setBeans(voList);
         outputObject.settotal(voList.size());
     }

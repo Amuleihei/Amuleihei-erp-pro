@@ -21,7 +21,6 @@ public class ShopDeliveryTemplateChargeController {
     @Autowired
     private ShopDeliveryTemplateChargeService   shopDeliveryTemplateChargeService;
 
-
     /**
      * 新增/编辑快递运费费用模版信息
      *
@@ -30,11 +29,10 @@ public class ShopDeliveryTemplateChargeController {
      */
     @ApiOperation(id = "writeShopDeliveryTemplateCharge", value = "添加/修改快递运费模板", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopDeliveryTemplateCharge.class)
-    @RequestMapping("/post/DeliveryTemplateController/writeShopDeliveryTemplateCharge")
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/writeShopDeliveryTemplateCharge")
     public void writeShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.saveOrUpdateEntity(inputObject, outputObject);
     }
-
 
     /**
      * 批量删除快递运费费用模版信息
@@ -45,7 +43,7 @@ public class ShopDeliveryTemplateChargeController {
     @ApiOperation(id = "deleteShopDeliveryTemplateChargeByIds", value = "批量删除快递运费模版信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
-    @RequestMapping("/post/ShopDeliveryTemplateChargeController/deleteShopDeliveryTemplateChargeByIds")
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/deleteShopDeliveryTemplateChargeByIds")
     public void deleteShopDeliveryTemplateChargeByIds(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.deleteById(inputObject, outputObject);
     }
@@ -74,7 +72,7 @@ public class ShopDeliveryTemplateChargeController {
             @ApiImplicitParam(id = "templateId", name = "templateId", value = "模版id"),
             @ApiImplicitParam(id = "areaId", name = "areaId", value = "区域id，集合")})
     @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateChargeList")
-    public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
+    public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryList(inputObject, outputObject);
     }
 
@@ -92,7 +90,6 @@ public class ShopDeliveryTemplateChargeController {
         shopDeliveryTemplateChargeService.selectById(inputObject, outputObject);
     }
 
-
     /**
      * 获取精简的快递运费费用模版信息，主要用于下拉列表
      *
@@ -101,10 +98,8 @@ public class ShopDeliveryTemplateChargeController {
      */
     @ApiOperation(id = "shopDeliveryTemplateChargeAllSimple",value = "获取精简的快递运费模版信息，主要用于下拉列表",method = "GET",allUse = "2")
     @ApiImplicitParams(classBean = ShopDeliveryTemplateChargeVo.class)
-    @RequestMapping("/post/shopDeliveryTemplateChargeController/deliveryShopDeliveryTemplateCharge")
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/shopDeliveryTemplateChargeAllSimple")
     public void streamlineShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.shopDeliveryTemplateChargeList(inputObject,outputObject);
     }
-
-
 }

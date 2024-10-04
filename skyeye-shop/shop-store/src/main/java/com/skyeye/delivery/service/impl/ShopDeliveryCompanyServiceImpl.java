@@ -1,9 +1,11 @@
 package com.skyeye.delivery.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -35,9 +37,24 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
     private ShopStoreService shopStoreService;
 
     /**
+     * 分页查询-快递公司
+     * @param commonPageInfo
+     * @return
+     */
+    @Override
+    public QueryWrapper<ShopDeliveryCompany> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ShopDeliveryCompany> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        String objectStr =  commonPageInfo.getObjectId();
+        if (StrUtil.isNotEmpty(objectStr)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryCompany::getName), objectStr);
+        }
+        return queryWrapper;
+    }
+
+    /**
      * 查询状态启用的快递公司管理信息
-     * @param inputObject
-     * @param outputObject
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
      */
     @Override
     public void streamlineDeliveryList(InputObject inputObject, OutputObject outputObject) {
@@ -48,7 +65,6 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
         outputObject.setBeans(list);
         outputObject.settotal(list.size());
     }
-
 
     /**
      * 重写新增编辑前置条件
@@ -73,5 +89,4 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
             }
         }
     }
-
 }

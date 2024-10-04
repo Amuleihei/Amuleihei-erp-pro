@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -30,10 +31,23 @@ import java.util.Map;
 @SkyeyeService(name = "快递运费模版", groupName = "快递运费模版")
 public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<ShopDeliveryTemplateDao, ShopDeliveryTemplate> implements ShopDeliveryTemplateService {
 
-
-
     @Autowired
     private ShopStoreService shopStoreService;
+
+    /**
+     * 分页查询-快递运费模版
+     * @param commonPageInfo
+     * @return
+     */
+    @Override
+    public QueryWrapper<ShopDeliveryTemplate> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ShopDeliveryTemplate> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        String objectStr =  commonPageInfo.getObjectId();
+        if (StrUtil.isNotEmpty(objectStr)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getName), objectStr);
+        }
+        return queryWrapper;
+    }
 
     /**
      * 批量删除快递运费模版信息
@@ -51,7 +65,7 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
     /**
      * 查询快递运费模版信息
      *
-     * @param inputObject  入参以及用户信息等获取对象
+     * @param inputObject 入参以及用户信息等获取对象
      */
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
@@ -69,31 +83,21 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
-
     /**
      * 重写新增编辑前置条件快递运费模版信息
      */
     @Override
-    public void createPrepose(ShopDeliveryTemplate shopDeliveryTemplate) {
-        checkStoreExists(shopDeliveryTemplate);
-    }
-
-    @Override
-    public void updatePrepose(ShopDeliveryTemplate shopDeliveryTemplate) {
-        checkStoreExists(shopDeliveryTemplate);
-    }
-
-    private void checkStoreExists(ShopDeliveryTemplate shopDeliveryTemplate) {
+    public void validatorEntity(ShopDeliveryTemplate shopDeliveryTemplate) {
+        super.validatorEntity(shopDeliveryTemplate);
         //判断StoreId是否存在
         if (ObjectUtil.isNotNull(shopDeliveryTemplate.getStoreId())) {
             ShopStore shopStore = shopStoreService.selectById(shopDeliveryTemplate.getStoreId());
             //判断shopStore是否为空，如果为空，则抛出异常
-            if (shopStore.getId() ==null) {
+            if (shopStore.getId() == null) {
                 throw new CustomException("门店不存在: " + shopDeliveryTemplate.getStoreId());
             }
         }
     }
-
 
     /**
      * 获取精简的快递运费模版信息，主要用于下拉列表
@@ -117,7 +121,6 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
             vo.setName(template.getName());
             voList.add(vo);
         }
-
         outputObject.setBeans(voList);
         outputObject.settotal(voList.size());
     }
