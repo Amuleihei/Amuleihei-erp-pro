@@ -35,6 +35,7 @@ public class ReportImgModelServiceImpl extends SkyeyeBusinessServiceImpl<ReportI
         QueryWrapper<ImgModel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ImgModel::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<ImgModel> imgModels = list(queryWrapper);
+        iSysDictDataService.setName(imgModels, "typeId", "typeName");
         outputObject.setBeans(imgModels);
         outputObject.settotal(imgModels.size());
     }

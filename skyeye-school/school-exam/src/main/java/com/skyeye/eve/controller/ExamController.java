@@ -41,14 +41,14 @@ public class ExamController {
 
     /**
      * 新增试卷
-     *
-     * @param inputObject 入参以及用户信息等获取对象
+     * todo 获取当前年级所属的年份
+     * @param inputObject 入参以及用户信息等获取对象.
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @RequestMapping("/post/ExamController/insertExamMation")
+   /* @RequestMapping("/post/ExamController/insertExamMation")
     public void insertExamMation(InputObject inputObject, OutputObject outputObject) {
         examService.insertExamMation(inputObject, outputObject);
-    }
+    }*/
 
     /**
      * 获取试卷题目信息

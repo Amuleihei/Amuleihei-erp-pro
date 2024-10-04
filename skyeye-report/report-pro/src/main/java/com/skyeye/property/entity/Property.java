@@ -28,7 +28,7 @@ import java.util.List;
 @ApiModel("样式属性实体类")
 public class Property extends BaseGeneralInfo {
 
-    @TableField(value = "code")
+    @TableField(value = "attr_code")
     @ApiModelProperty(value = "样式属性", required = "required", fuzzyLike = true)
     private String attrCode;
 

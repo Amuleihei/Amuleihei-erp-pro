@@ -68,4 +68,5 @@ public class Datum extends OperatorUserInfo {
     @TableField(exist = false)
     @ApiModelProperty(value = "章节信息", required = "json")
     private  Chapter chapterMation;
+
 }

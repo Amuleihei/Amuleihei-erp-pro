@@ -30,6 +30,11 @@
             <artifactId>jboss-logging</artifactId>
             <version>3.3.2.Final</version>
         </dependency>
+        <dependency>
+            <groupId>com.skyeye</groupId>
+            <artifactId>skyeye-base</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 

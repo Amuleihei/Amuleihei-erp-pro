@@ -235,7 +235,7 @@ public interface ExamDao {
 
     int updateExamMationEndById(Map<String, Object> map);
 
-    Map<String, Object> queryGradeNowYearByGradeId(Map<String, Object> map);
+//    Map<String, Object> queryGradeNowYearByGradeId(Map<String, Object> map);
 
     int insertExamClassMation(List<Map<String, Object>> beans);
 

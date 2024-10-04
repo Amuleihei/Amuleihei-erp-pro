@@ -16,6 +16,7 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.object.PutObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.classenum.LoginIdentity;
+import com.skyeye.eve.service.IAuthUserService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.rest.wall.certification.service.ICertificationService;
 import com.skyeye.school.semester.entity.Semester;
@@ -54,6 +55,9 @@ public class SubjectServiceImpl extends SkyeyeBusinessServiceImpl<SubjectDao, Su
     @Autowired
     private SubjectClassesService subjectClassesService;
 
+    @Autowired
+    private IAuthUserService iAuthUserService;
+
     @Override
     public QueryWrapper<Subject> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<Subject> queryWrapper = super.getQueryWrapper(commonPageInfo);
@@ -82,7 +86,7 @@ public class SubjectServiceImpl extends SkyeyeBusinessServiceImpl<SubjectDao, Su
     @Override
     public void querySubjectListByUserId(InputObject inputObject, OutputObject outputObject) {
         String userIdentity = PutObject.getRequest().getHeader(SchoolConstants.USER_IDENTITY_KEY);
-        String userId = inputObject.getLogParams().get("id").toString();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
         List<SubjectClasses> subjectClassesList = null;
         if (StrUtil.equals(userIdentity, LoginIdentity.TEACHER.getKey())) {
             // 教师身份信息

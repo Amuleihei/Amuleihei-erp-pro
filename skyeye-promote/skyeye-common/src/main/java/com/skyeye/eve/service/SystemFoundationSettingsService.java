@@ -21,27 +21,6 @@ import java.util.Map;
  */
 public interface SystemFoundationSettingsService extends SkyeyeBusinessService<SystemFoundationSettings> {
 
-    /**
-     * 查询系统基础信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     void querySystemFoundationSettingsList(InputObject inputObject, OutputObject outputObject);
-
-    /**
-     * 修改系统配置信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    void editSystemFoundationSettings(InputObject inputObject, OutputObject outputObject);
-
-    /**
-     * 获取系统配置信息
-     *
-     * @return 系统配置信息
-     */
-    Map<String, Object> getSystemFoundationSettings();
 
 }

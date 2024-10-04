@@ -38,6 +38,10 @@ public class ImportModel extends BaseGeneralInfo {
     private String typeId;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "所属分类名称，数据来自数据字典")
+    private String typeName;
+
+    @TableField(exist = false)
     @Property(value = "属性的map")
     private Map<String, ReportModelAttr> attr;
 

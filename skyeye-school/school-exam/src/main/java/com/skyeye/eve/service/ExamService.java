@@ -11,7 +11,7 @@ public interface ExamService {
 
     void queryExamList(InputObject inputObject, OutputObject outputObject);
 
-    void insertExamMation(InputObject inputObject, OutputObject outputObject);
+//    void insertExamMation(InputObject inputObject, OutputObject outputObject);
 
     void queryExamMationById(InputObject inputObject, OutputObject outputObject);
 
