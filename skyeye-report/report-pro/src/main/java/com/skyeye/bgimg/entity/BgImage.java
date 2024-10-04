@@ -38,4 +38,8 @@ public class BgImage extends BaseGeneralInfo {
     @ApiModelProperty(value = "所属分类ID，数据来自数据字典", required = "required")
     private String typeId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "所属分类名称，数据来自数据字典")
+    private String typeName;
+
 }

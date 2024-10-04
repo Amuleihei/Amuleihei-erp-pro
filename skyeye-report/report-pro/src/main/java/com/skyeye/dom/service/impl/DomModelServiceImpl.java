@@ -35,6 +35,7 @@ public class DomModelServiceImpl extends SkyeyeBusinessServiceImpl<DomModelDao, 
         QueryWrapper<DomModel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(DomModel::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<DomModel> domModelList = list(queryWrapper);
+        iSysDictDataService.setName(domModelList, "typeId", "typeName");
         outputObject.setBeans(domModelList);
         outputObject.settotal(domModelList.size());
     }

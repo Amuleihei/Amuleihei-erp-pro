@@ -124,6 +124,7 @@ public class ReportWordModelServiceImpl extends SkyeyeBusinessServiceImpl<Report
 
         List<String> ids = wordModelList.stream().map(WordModel::getId).collect(Collectors.toList());
         List<WordModel> wordModels = selectByIds(ids.toArray(new String[]{}));
+        iSysDictDataService.setName(wordModels, "typeId", "typeName");
         outputObject.setBeans(wordModels);
         outputObject.settotal(wordModels.size());
     }

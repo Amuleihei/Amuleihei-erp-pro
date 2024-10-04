@@ -42,6 +42,10 @@ public class DomModel extends BaseGeneralInfo {
     @ApiModelProperty(value = "所属分类ID，数据来自数据字典", required = "required")
     private String typeId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "所属分类名称，数据来自数据字典")
+    private String typeName;
+
     @TableField("default_width")
     @ApiModelProperty(value = "默认宽度，单位：px", required = "required,num")
     private Integer defaultWidth;

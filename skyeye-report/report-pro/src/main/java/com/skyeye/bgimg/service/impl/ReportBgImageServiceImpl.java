@@ -53,6 +53,7 @@ public class ReportBgImageServiceImpl extends SkyeyeBusinessServiceImpl<ReportBg
         QueryWrapper<BgImage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(BgImage::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<BgImage> bgImageList = list(queryWrapper);
+        iSysDictDataService.setName(bgImageList, "typeId", "typeName");
         outputObject.setBeans(bgImageList);
         outputObject.settotal(bgImageList.size());
     }

@@ -75,6 +75,7 @@ public class ReportImportModelServiceImpl extends SkyeyeBusinessServiceImpl<Repo
         QueryWrapper<ImportModel> queryWrapper = new QueryWrapper<>();
         queryWrapper.in(MybatisPlusUtil.toColumns(ImportModel::getModelCode), modelCodes);
         List<ImportModel> importModels = list(queryWrapper);
+        iSysDictDataService.setName(importModels, "typeId", "typeName");
         return importModels;
     }
 
