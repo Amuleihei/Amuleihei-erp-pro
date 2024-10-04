@@ -53,14 +53,13 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
     }
 
     @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+    public QueryWrapper<StoreType> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<StoreType> queryWrapper = super.getQueryWrapper(commonPageInfo);
         String objectId = commonPageInfo.getObjectId();
-        QueryWrapper<StoreType> queryWrapper = new QueryWrapper<>();
         if (StrUtil.isNotEmpty(objectId)) {
             queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), objectId);
         }
-        return JSONUtil.toList(JSONUtil.toJsonStr(list(queryWrapper)), null);
+        return queryWrapper;
     }
 
     @Override

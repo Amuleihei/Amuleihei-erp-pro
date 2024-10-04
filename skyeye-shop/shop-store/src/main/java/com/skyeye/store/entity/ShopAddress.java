@@ -40,10 +40,6 @@ public class ShopAddress extends AreaInfo {
     @ApiModelProperty(value = "手机号", required = "required")
     private String mobile;
 
-    @TableField("absolute_address")
-    @ApiModelProperty(value = "详细地址")
-    private String absoluteAddress;
-
     @TableField("is_default")
     @ApiModelProperty(value = "是否是默认地址，参考#WhetherEnum", required = "required,num")
     private Integer isDefault;

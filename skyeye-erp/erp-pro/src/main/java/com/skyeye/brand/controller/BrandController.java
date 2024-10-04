@@ -51,7 +51,7 @@ public class BrandController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryEnabledBrandList", value = "根据已启用的品牌列表", method = "POST", allUse = "0")
+    @ApiOperation(id = "queryEnabledBrandList", value = "根据已启用查询品牌列表", method = "POST", allUse = "0")
     @RequestMapping("/post/BrandController/queryEnabledBrandList")
     public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
         brandService.queryEnabledBrandList(inputObject, outputObject);

@@ -4,6 +4,7 @@
 
 package com.skyeye.brand.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -17,6 +18,7 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: BrandServiceImpl
