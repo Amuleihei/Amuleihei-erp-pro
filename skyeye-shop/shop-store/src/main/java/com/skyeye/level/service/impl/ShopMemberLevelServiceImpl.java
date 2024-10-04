@@ -2,9 +2,11 @@ package com.skyeye.level.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.adsense.entity.Adsense;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -25,6 +27,21 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
 
     @Autowired
     private ShopMemberLevelDao shopMemberLevelDao;
+
+    /**
+     * 分页查询
+     * @param commonPageInfo
+     * @return
+     */
+    @Override
+    public QueryWrapper<ShopMemberLevel > getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ShopMemberLevel > queryWrapper = super.getQueryWrapper(commonPageInfo);
+        String objectStr =  commonPageInfo.getObjectId();
+        if (StrUtil.isNotEmpty(objectStr)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopMemberLevel ::getName), objectStr);
+        }
+        return queryWrapper;
+    }
 
     /**
      * 获取会员等级前端下拉列表信息

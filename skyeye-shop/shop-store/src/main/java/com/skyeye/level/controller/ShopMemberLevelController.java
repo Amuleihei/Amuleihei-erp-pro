@@ -21,18 +21,20 @@ public class ShopMemberLevelController {
 
     @Autowired
     private ShopMemberLevelService shopMemberLevelService;
+
     /**
      * 分页获取会员等级
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryMemberLevelList", value = "获取会员等级信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryMemberLevel", value = "获取会员等级信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/ShopMemberLevelController/queryMemberLevelList")
+    @RequestMapping("/post/ShopMemberLevelController/queryMemberLevel")
     public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.queryPageList(inputObject, outputObject);
     }
+
     /**
      * 编辑会员等级信息
      *
@@ -45,6 +47,7 @@ public class ShopMemberLevelController {
     public void writeMemberLevel(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.saveOrUpdateEntity(inputObject, outputObject);
     }
+
     /**
      * 根据id删除会员等级信息
      *
@@ -109,6 +112,4 @@ public class ShopMemberLevelController {
     public void memberLevelList(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.memberLevelList(inputObject, outputObject);
     }
-
-
 }

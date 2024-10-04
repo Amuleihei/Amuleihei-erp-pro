@@ -22,7 +22,7 @@ public class AdsenseController {
     private AdsenseService adsenseService;
 
     /**
-     * 查询广告位管理信息
+     * 分頁查询广告位管理信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象

@@ -11,7 +11,6 @@ import lombok.Data;
 
 @Data
 @UniqueField
-//@RedisCacheField(name = CacheConstants.SHOP_STORE_CACHE_KEY)
 @TableName(value = "shop_member_level")
 @ApiModel("会员级别实体类")
 public class ShopMemberLevel extends OperatorUserInfo {
@@ -20,7 +19,7 @@ public class ShopMemberLevel extends OperatorUserInfo {
     private String id;
 
     @TableField(value = "`name`")
-    @ApiModelProperty(value = "等级名称", required = "required")
+    @ApiModelProperty(value = "等级名称", required = "required",fuzzyLike = true)
     private String name;
 
     @TableField(value = "`level`")

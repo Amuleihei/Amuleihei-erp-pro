@@ -10,6 +10,5 @@ public interface ShopMemberLevelService extends SkyeyeBusinessService<ShopMember
 
     void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject);
 
-
     void memberLevelList(InputObject inputObject, OutputObject outputObject);
 }
