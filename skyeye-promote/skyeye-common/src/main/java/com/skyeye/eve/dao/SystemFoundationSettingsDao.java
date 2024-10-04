@@ -6,8 +6,6 @@ package com.skyeye.eve.dao;
 
 import com.skyeye.eve.entity.SystemFoundationSettings;
 
-import java.util.Map;
-
 /**
  * @ClassName: SystemFoundationSettingsDao
  * @Description: 系统基础设置数据交互类
@@ -17,11 +15,5 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface SystemFoundationSettingsDao extends SkyeyeBaseMapper<SystemFoundationSettings> {
-
-    Map<String, Object> querySystemFoundationSettingsList();
-
-    int insertSystemFoundationSettings(Map<String, Object> map);
-
-    int editSystemFoundationSettings(Map<String, Object> map);
 
 }
