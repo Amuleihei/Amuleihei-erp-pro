@@ -11,7 +11,6 @@ import com.skyeye.attr.service.AttrDefinitionCustomService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.dsform.classenum.ComponentApplyRange;
@@ -42,8 +41,7 @@ public class DsFormComponentServiceImpl extends SkyeyeBusinessServiceImpl<DsForm
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.queryDsFormComponentList(commonPageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
         attrDefinitionCustomService.setDsFormComponentUseNum(beans);
         return beans;

@@ -5,9 +5,11 @@
 package com.skyeye.eve.controller;
 
 import com.skyeye.annotation.api.Api;
+import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.eve.entity.SystemFoundationSettings;
 import com.skyeye.eve.service.SystemFoundationSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,33 +24,23 @@ import org.springframework.web.bind.annotation.RestController;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "系统基础设置", tags = "系统基础设置", modelName = "系统公共模块")
+@Api(value = "系统基础设置", tags = "系统基础设置", modelName = "系统基础设置")
 public class SystemFoundationSettingsController {
 
     @Autowired
     private SystemFoundationSettingsService systemFoundationSettingsService;
 
-    /**
-     * 获取系统基础设置
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "sysfdsettings001", value = "获取系统基础设置", method = "GET", allUse = "2")
     @RequestMapping("/post/SystemFoundationSettingsController/querySystemFoundationSettingsList")
     public void querySystemFoundationSettingsList(InputObject inputObject, OutputObject outputObject) {
         systemFoundationSettingsService.querySystemFoundationSettingsList(inputObject, outputObject);
     }
 
-    /**
-     * 编辑系统基础设置
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
+    @ApiOperation(id = "sysfdsettings002", value = "编辑系统基础设置", method = "PUT", allUse = "1")
+    @ApiImplicitParams(classBean = SystemFoundationSettings.class)
     @RequestMapping("/post/SystemFoundationSettingsController/editSystemFoundationSettings")
     public void editSystemFoundationSettings(InputObject inputObject, OutputObject outputObject) {
-        systemFoundationSettingsService.editSystemFoundationSettings(inputObject, outputObject);
+        systemFoundationSettingsService.updateEntity(inputObject, outputObject);
     }
 
 }

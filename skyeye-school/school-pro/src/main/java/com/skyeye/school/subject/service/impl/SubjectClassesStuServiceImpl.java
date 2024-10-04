@@ -33,8 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +78,9 @@ public class SubjectClassesStuServiceImpl extends SkyeyeBusinessServiceImpl<Subj
         // 获取认证信息
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         Map<String, Object> certification = iCertificationService.queryCertificationById(userId);
+        if (!certification.get("state").equals(CommonNumConstants.NUM_FOUR)) {
+            throw new CustomException("认证信息未通过审核，不允许加入课程班级");
+        }
         String studentNumber = certification.get("studentNumber").toString();
         if (CollectionUtil.isNotEmpty(certification) && StrUtil.isNotEmpty(studentNumber)) {
             // 认证信息不为空，并且认证的学号信息存在
@@ -263,4 +268,35 @@ public class SubjectClassesStuServiceImpl extends SkyeyeBusinessServiceImpl<Subj
         updateReward(subjectClassesStuId,reward);
     }
 
+    public void selectStudentList(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        String subClassLinkId = map.get("subClassLinkId").toString();
+        Integer groupCount = Integer.parseInt(map.get("groupCount").toString());
+        List<Map<String, Object>> maps = queryClassStuIds(subClassLinkId);
+        // 检查学生数量是否小于分组数量
+        if (maps.size() < groupCount) {
+            throw new CustomException("学生数量小于分组数量，无法进行分组");
+        }
+        // 进行随机分组
+        List<List<Map<String, Object>>> groups = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < groupCount; i++) {
+            groups.add(new ArrayList<>());
+        }
+
+        while (!maps.isEmpty()) {
+            int randomIndex = random.nextInt(groups.size());
+            groups.get(randomIndex).add(maps.remove(0));
+        }
+        outputObject.setBeans(groups);
+        outputObject.settotal(groups.size());
+    }
+
+
+    @Override
+    public List<SubjectClassesStu> queryListBySubClassLinkId(String SubClassLinkId) {
+        QueryWrapper<SubjectClassesStu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SubjectClassesStu::getSubClassLinkId), SubClassLinkId);
+        return list(queryWrapper);
+    }
 }

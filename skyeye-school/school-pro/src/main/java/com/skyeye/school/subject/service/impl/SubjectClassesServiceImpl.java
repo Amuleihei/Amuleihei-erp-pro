@@ -235,4 +235,16 @@ public class SubjectClassesServiceImpl extends SkyeyeBusinessServiceImpl<Subject
         update(updateWrapper);
     }
 
+    @Override
+    public void queryTeacherMessage(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> map = inputObject.getParams();
+        String subClassLinkId = map.get("subClassLinkId").toString();
+        QueryWrapper<SubjectClasses> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(CommonConstants.ID,subClassLinkId);
+        List<SubjectClasses> subjectClassesList = list(queryWrapper);
+        iAuthUserService.setDataMation(subjectClassesList,SubjectClasses::getCreateId);
+        outputObject.setBean(subjectClassesList);
+        outputObject.settotal(subjectClassesList.size());
+    }
+
 }

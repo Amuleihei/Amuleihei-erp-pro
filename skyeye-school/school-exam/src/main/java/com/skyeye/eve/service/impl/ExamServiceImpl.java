@@ -473,7 +473,7 @@ public class ExamServiceImpl implements ExamService {
                     bean.put("createTime", DateUtil.getTimeAndToString());
                     quRadio.add(bean);
                 } else {
-                    bean.put("id", object.get("optionId"));
+                    bean.put("id", object.get("optionId"));//修改时需要id
                     editquRadio.add(bean);
                 }
             }

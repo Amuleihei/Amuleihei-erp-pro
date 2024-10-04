@@ -11,7 +11,7 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.constans.RedisConstants;
-import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.common.entity.features.AreaInfo;
 import lombok.Data;
 
 /**
@@ -26,7 +26,7 @@ import lombok.Data;
 @RedisCacheField(name = "shop:address", cacheTime = RedisConstants.THIRTY_DAY_SECONDS)
 @TableName(value = "shop_address")
 @ApiModel("收件地址管理实体类")
-public class ShopAddress extends OperatorUserInfo {
+public class ShopAddress extends AreaInfo {
 
     @TableId("id")
     @ApiModelProperty("主键id。为空时新增，不为空时编辑")
@@ -39,22 +39,6 @@ public class ShopAddress extends OperatorUserInfo {
     @TableField("mobile")
     @ApiModelProperty(value = "手机号", required = "required")
     private String mobile;
-
-    @TableField("province_id")
-    @ApiModelProperty(value = "省")
-    private String provinceId;
-
-    @TableField("city_id")
-    @ApiModelProperty(value = "市")
-    private String cityId;
-
-    @TableField("area_id")
-    @ApiModelProperty(value = "县区")
-    private String areaId;
-
-    @TableField("township_id")
-    @ApiModelProperty(value = "乡镇")
-    private String townshipId;
 
     @TableField("absolute_address")
     @ApiModelProperty(value = "详细地址")

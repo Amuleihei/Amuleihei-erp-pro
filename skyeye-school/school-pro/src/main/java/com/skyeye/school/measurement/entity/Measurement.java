@@ -70,6 +70,10 @@ public class Measurement extends BaseGeneralInfo {
     @ApiModelProperty(value = "内容")
     private String content;
 
+    @TableField(value = "state")
+    @ApiModelProperty(value = "状态，参考#MeasurementType", required = "required")
+    private String state;
+
     @TableField(exist = false)
     @Property(value = "时间状态，参考#MeasurementTimeState")
     private String timeState;

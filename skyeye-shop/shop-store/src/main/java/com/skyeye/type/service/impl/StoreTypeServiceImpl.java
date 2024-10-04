@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -42,15 +44,23 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         Map<String, Object> params = inputObject.getParams();
-        System.out.println(params);
         QueryWrapper<StoreType> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), params.get("storeId").toString());
-        if (params.containsKey("enabled") && StrUtil.isNotEmpty(params.get("enabled").toString())) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getEnabled), params.get("enabled").toString());
-        }
+        queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getEnabled), WhetherEnum.ENABLE_USING.getKey());
         List<StoreType> beans = list(queryWrapper);
         shopStoreService.setDataMation(beans, StoreType::getStoreId);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        String objectId = commonPageInfo.getObjectId();
+        QueryWrapper<StoreType> queryWrapper = new QueryWrapper<>();
+        if (StrUtil.isNotEmpty(objectId)) {
+            queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), objectId);
+        }
+        return JSONUtil.toList(JSONUtil.toJsonStr(list(queryWrapper)), null);
     }
 
     @Override

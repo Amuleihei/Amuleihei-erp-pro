@@ -4,12 +4,8 @@
 
 package com.skyeye.property.dao;
 
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.property.entity.Property;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: ReportPropertyDao
@@ -20,7 +16,5 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface ReportPropertyDao extends SkyeyeBaseMapper<Property> {
-
-    List<Map<String, Object>> queryReportPropertyList(CommonPageInfo pageInfo);
 
 }

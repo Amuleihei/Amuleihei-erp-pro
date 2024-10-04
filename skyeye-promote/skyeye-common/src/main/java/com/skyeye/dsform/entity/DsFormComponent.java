@@ -38,11 +38,11 @@ public class DsFormComponent extends IconOrImgInfo {
     private String id;
 
     @TableField("num_code")
-    @ApiModelProperty(value = "组件编码", required = "required")
+    @ApiModelProperty(value = "组件编码", required = "required", fuzzyLike = true)
     private String numCode;
 
     @TableField("`name`")
-    @ApiModelProperty(value = "组件名称", required = "required")
+    @ApiModelProperty(value = "组件名称", required = "required", fuzzyLike = true)
     private String name;
 
     @TableField("type_id")

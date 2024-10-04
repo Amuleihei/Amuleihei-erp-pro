@@ -17,6 +17,8 @@ import com.skyeye.win.entity.SysDesktop;
 import com.skyeye.win.entity.SysWin;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @ClassName: SysMenu
  * @Description: 菜单管理实体类
@@ -40,12 +42,16 @@ public class SysMenu extends IconOrImgInfo {
     private String name;
 
     @TableField("page_type")
-    @ApiModelProperty(value = "页面类型，true: 自定义页面 false: 表单布局", required = "required")
-    private Boolean pageType;
+    @ApiModelProperty(value = "页面类型，参考#MenuPageType", required = "required")
+    private Integer pageType;
 
     @TableField(exist = false)
     @Property(value = "当 pageType 为表单布局时，存储的表单布局信息")
     private DsFormPage dsFormPage;
+
+    @TableField(exist = false)
+    @Property(value = "当 type 为视图页面时，存储的视图页面信息")
+    private Map<String, Object> reportPage;
 
     @TableField("page_url")
     @ApiModelProperty(value = "菜单链接", required = "required")

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 @Data
 @TableName(value = "shop_store_type")
-@ApiModel("门店商品分类管理实体类")
+@ApiModel(value = "门店商品分类管理实体类")
 public class StoreType extends BaseGeneralInfo {
 
     @TableField(value = "logo")
@@ -43,6 +44,6 @@ public class StoreType extends BaseGeneralInfo {
     private String storeId;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "门店信息")
+    @Property(value = "门店信息")
     private Map<String, Object> storeMation;
 }

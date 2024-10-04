@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "数据字典类型管理", tags = "数据字典类型管理", modelName = "系统公共模块")
+@Api(value = "数据字典类型管理", tags = "数据字典类型管理", modelName = "数据字典")
 public class SysDictTypeController {
 
     @Autowired

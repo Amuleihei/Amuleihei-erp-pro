@@ -20,6 +20,8 @@ import com.skyeye.menu.dao.SysEveMenuDao;
 import com.skyeye.menu.entity.SysMenu;
 import com.skyeye.menu.entity.SysMenuQueryDo;
 import com.skyeye.menu.service.SysEveMenuService;
+import com.skyeye.operate.classenum.MenuPageType;
+import com.skyeye.rest.report.service.IReportPageService;
 import com.skyeye.server.entity.ServiceBeanCustom;
 import com.skyeye.server.service.ServiceBeanCustomService;
 import com.skyeye.win.service.SysEveDesktopService;
@@ -70,6 +72,9 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
      */
     public static final String SYS_MENU_TYPE_IS_IFRAME = "win";
     public static final String SYS_MENU_TYPE_IS_HTML = "html";
+
+    @Autowired
+    private IReportPageService iReportPageService;
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
@@ -170,12 +175,15 @@ public class SysEveMenuServiceImpl extends SkyeyeBusinessServiceImpl<SysEveMenuD
         sysEveDesktopService.setDataMation(sysMenu, SysMenu::getDesktopId);
         sysEveWinService.setDataMation(sysMenu, SysMenu::getSysWinId);
 
-        if (!sysMenu.getPageType()) {
+        if (sysMenu.getPageType() == MenuPageType.LAYOUT.getKey()) {
             // 表单布局
             DsFormPage dsFormPage = dsFormPageService.getDataFromDb(sysMenu.getPageUrl());
             ServiceBeanCustom serviceBeanCustom = serviceBeanCustomService.selectServiceBeanCustom(dsFormPage.getAppId(), dsFormPage.getClassName());
             dsFormPage.setServiceBeanCustom(serviceBeanCustom);
             sysMenu.setDsFormPage(dsFormPage);
+        } else if (sysMenu.getPageType() == MenuPageType.REPORT.getKey()) {
+            // 报表页面
+            sysMenu.setReportPage(iReportPageService.queryDataMationById(sysMenu.getPageUrl()));
         }
         if (!sysMenu.getParentId().equals("0")) {
             sysMenu.setParentMenu(selectById(sysMenu.getParentId()));

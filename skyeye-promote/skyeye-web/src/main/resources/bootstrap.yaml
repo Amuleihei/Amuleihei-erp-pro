@@ -40,6 +40,8 @@ logging:
 webroot:
   # 工作流相关的服务
   skyeye-flowable: skyeye-flowable-${spring.profiles.active}
+  # 报表
+  skyeye-report: skyeye-report-${spring.profiles.active}
   # xxl-job
   xxl-job: xxl-job-${spring.profiles.active}
 

@@ -10,6 +10,7 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.brand.dao.BrandDao;
 import com.skyeye.brand.entity.Brand;
 import com.skyeye.brand.service.BrandService;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -30,10 +31,9 @@ import java.util.List;
 public class BrandServiceImpl extends SkyeyeBusinessServiceImpl<BrandDao, Brand> implements BrandService {
 
     @Override
-    public void queryBrandListByEnabled(InputObject inputObject, OutputObject outputObject) {
-        String enable = inputObject.getParams().get("enabled").toString();
+    public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
         QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), enable);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<Brand> brandList = list(queryWrapper);
         outputObject.setBeans(brandList);
         outputObject.settotal(brandList.size());

@@ -30,11 +30,11 @@ public class SysDictType extends OperatorUserInfo {
     private String id;
 
     @TableField("dict_name")
-    @ApiModelProperty(value = "字典分类名称", required = "required")
+    @ApiModelProperty(value = "字典分类名称", required = "required", fuzzyLike = true)
     private String dictName;
 
     @TableField("dict_code")
-    @ApiModelProperty(value = "字典分类CODE，需要保证唯一", required = "required")
+    @ApiModelProperty(value = "字典分类CODE，需要保证唯一", required = "required", fuzzyLike = true)
     private String dictCode;
 
     @TableField("remark")

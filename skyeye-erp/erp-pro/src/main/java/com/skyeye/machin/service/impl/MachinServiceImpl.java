@@ -13,6 +13,7 @@ import com.google.common.base.Joiner;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeFlowableServiceImpl;
 import com.skyeye.bom.entity.Bom;
+import com.skyeye.bom.entity.BomChild;
 import com.skyeye.bom.service.BomService;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
@@ -20,6 +21,7 @@ import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.enumeration.FlowableStateEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.common.util.MapUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -636,20 +638,63 @@ public class MachinServiceImpl extends SkyeyeFlowableServiceImpl<MachinDao, Mach
     public void queryMachinTransRequestById(InputObject inputObject, OutputObject outputObject) {
         String id = inputObject.getParams().get("id").toString();
         Machin machin = selectById(id);
+        // 获取需要的原材料
+        List<BomChild> needRawMaterial = getNeedRawMaterial(machin);
         // 获取已经领料的数量
         Map<String, Integer> requestNum = requisitionMaterialService.calcMaterialNormsNumByFromId(id);
         // 获取已经补料的数量
         Map<String, Integer> patchNum = patchMaterialService.calcMaterialNormsNumByFromId(id);
-        machin.getMachinChildList().forEach(machinChild -> {
-            // 设置未下达领料单/补料单的商品数量-----订单数量 - 已领料的数量 - 已补料的数量
-            Integer surplusNum = machinChild.getLastProcedureNum()
+        // 设置未申领的原材料信息
+        needRawMaterial.forEach(machinChild -> {
+            // 设置未下达领料单/补料单的商品数量-----原材料需求数量 - 已领料的数量 - 已补料的数量
+            Integer surplusNum = machinChild.getNeedNum()
                 - (requestNum.containsKey(machinChild.getNormsId()) ? requestNum.get(machinChild.getNormsId()) : 0)
                 - (patchNum.containsKey(machinChild.getNormsId()) ? patchNum.get(machinChild.getNormsId()) : 0);
             // 设置未下达领料单/补料单的数量
-            machinChild.setOperNumber(surplusNum);
+            machinChild.setNeedNum(surplusNum);
         });
+        // 过滤掉数量为0的商品信息
+        needRawMaterial = needRawMaterial.stream()
+            .filter(erpOrderItem -> erpOrderItem.getNeedNum() > 0).collect(Collectors.toList());
+        machin.setNeedRawMaterialList(needRawMaterial);
+
         outputObject.setBean(machin);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    /**
+     * 获取需要的原材料
+     *
+     * @param machin 加工单
+     * @return
+     */
+    private List<BomChild> getNeedRawMaterial(Machin machin) {
+        List<BomChild> needRawMaterial = new ArrayList<>();
+        for (MachinChild machinChild : machin.getMachinChildList()) {
+            if (StrUtil.isNotEmpty(machinChild.getBomId())) {
+                Bom bom = machinChild.getBomMation();
+                List<BomChild> bomChildList = new ArrayList<>(bom.getBomChildList());
+                bomChildList.forEach(bomChild -> {
+                    // 计算需要的原材料数量 = 订单数量 / bom方案制造的数量 * bom子项的需求数量
+                    String divide = CalculationUtil.divide(String.valueOf(machinChild.getOperNumber()), String.valueOf(bom.getMakeNum()));
+                    divide = CalculationUtil.multiply(divide, String.valueOf(bomChild.getNeedNum()));
+                    bomChild.setNeedNum(Integer.parseInt(divide));
+                });
+                needRawMaterial.addAll(bomChildList);
+            }
+        }
+        // 根据规格id去重并合并所需数量
+        Map<String, BomChild> needRawMaterialMap = new HashMap<>();
+        needRawMaterial.forEach(bomChild -> {
+            if (needRawMaterialMap.containsKey(bomChild.getNormsId())) {
+                BomChild existBomChild = needRawMaterialMap.get(bomChild.getNormsId());
+                existBomChild.setNeedNum(existBomChild.getNeedNum() + bomChild.getNeedNum());
+            } else {
+                needRawMaterialMap.put(bomChild.getNormsId(), bomChild);
+            }
+        });
+        needRawMaterial = new ArrayList<>(needRawMaterialMap.values());
+        return needRawMaterial;
     }
 
     @Override

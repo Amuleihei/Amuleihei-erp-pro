@@ -30,7 +30,7 @@ import java.util.Map;
 public class ImportModel extends BaseGeneralInfo {
 
     @TableField("model_code")
-    @ApiModelProperty(value = "模型code", required = "required")
+    @ApiModelProperty(value = "模型code", required = "required", fuzzyLike = true)
     private String modelCode;
 
     @TableField(value = "type_id")
@@ -44,5 +44,37 @@ public class ImportModel extends BaseGeneralInfo {
     @TableField(exist = false)
     @Property(value = "最新的模型信息")
     private ReportModel reportModel;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符1")
+    private String placeholder1;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符2")
+    private String placeholder2;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符3")
+    private String placeholder3;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符4")
+    private String placeholder4;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符5")
+    private String placeholder5;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符6")
+    private String placeholder6;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符7")
+    private String placeholder7;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "占位符8")
+    private String placeholder8;
 
 }

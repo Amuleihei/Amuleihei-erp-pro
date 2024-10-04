@@ -5,13 +5,11 @@
 package com.skyeye.dsform.service.impl;
 
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.dsform.dao.DsFormDisplayTemplateDao;
 import com.skyeye.dsform.entity.DsFormDisplayTemplate;
 import com.skyeye.dsform.service.DsFormDisplayTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,13 +26,9 @@ import java.util.Map;
 @Service
 public class DsFormDisplayTemplateServiceImpl extends SkyeyeBusinessServiceImpl<DsFormDisplayTemplateDao, DsFormDisplayTemplate> implements DsFormDisplayTemplateService {
 
-    @Autowired
-    private DsFormDisplayTemplateDao dsFormDisplayTemplateDao;
-
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = dsFormDisplayTemplateDao.queryDsFormDisplayTemplateList(commonPageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
         return beans;
     }
