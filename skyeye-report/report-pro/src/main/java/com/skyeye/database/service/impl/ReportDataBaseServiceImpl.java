@@ -8,7 +8,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.ReportConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.database.dao.ReportDataBaseDao;
@@ -35,8 +34,7 @@ public class ReportDataBaseServiceImpl extends SkyeyeBusinessServiceImpl<ReportD
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.getReportDataBaseList(commonPageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         beans.forEach(bean -> {
             String driverClass = bean.get("driverClass").toString();
             String poolClass = bean.get("poolClass").toString();

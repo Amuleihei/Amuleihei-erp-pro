@@ -4,12 +4,8 @@
 
 package com.skyeye.page.dao;
 
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.page.entity.ReportPage;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: ReportPageDao
@@ -20,7 +16,5 @@ import java.util.Map;
  * 注意：本内容具体规则请参照readme执行，地址：https://gitee.com/doc_wei01/skyeye-report/blob/master/README.md
  */
 public interface ReportPageDao extends SkyeyeBaseMapper<ReportPage> {
-
-    List<Map<String, Object>> getReportPageList(CommonPageInfo pageInfo);
 
 }

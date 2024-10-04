@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.jayway.jsonpath.JsonPath;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.HttpRequestUtil;
@@ -60,8 +59,7 @@ public class ReportDataFromServiceImpl extends SkyeyeBusinessServiceImpl<ReportD
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.getReportDataFromList(commonPageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         beans.forEach(bean -> {
             bean.put("typeName", ReportDataFromType.getNameByType(Integer.parseInt(bean.get("type").toString())));
         });

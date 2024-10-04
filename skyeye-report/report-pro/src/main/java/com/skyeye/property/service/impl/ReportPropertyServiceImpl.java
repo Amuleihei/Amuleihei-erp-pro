@@ -8,7 +8,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.exception.CustomException;
@@ -41,8 +40,7 @@ public class ReportPropertyServiceImpl extends SkyeyeBusinessServiceImpl<ReportP
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.queryReportPropertyList(pageInfo);
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
         // 设置属性值
         List<String> ids = beans.stream().filter(property -> Integer.parseInt(property.get("optional").toString()) == WhetherEnum.ENABLE_USING.getKey())
             .map(property -> property.get("id").toString()).collect(Collectors.toList());

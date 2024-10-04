@@ -8,20 +8,18 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.bgimg.dao.ReportBgImageDao;
+import com.skyeye.bgimg.entity.BgImage;
+import com.skyeye.bgimg.service.ReportBgImageService;
 import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.FileUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.bgimg.dao.ReportBgImageDao;
-import com.skyeye.bgimg.entity.BgImage;
-import com.skyeye.bgimg.service.ReportBgImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: ReportBgImageServiceImpl
@@ -37,13 +35,6 @@ public class ReportBgImageServiceImpl extends SkyeyeBusinessServiceImpl<ReportBg
 
     @Value("${IMAGES_PATH}")
     private String tPath;
-
-    @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
-        List<Map<String, Object>> beans = skyeyeBaseMapper.queryReportBgImageList(pageInfo);
-        return beans;
-    }
 
     @Override
     public void deletePostpose(BgImage entity) {
