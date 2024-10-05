@@ -42,6 +42,22 @@ public class PayAppServiceImpl extends SkyeyeBusinessServiceImpl<PayAppDao, PayA
         verify(payApp.getId());
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    public void updateEnabled(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String id = params.get("id").toString();
+        String enabled = params.get("enabled").toString();
+        verify(id);
+        UpdateWrapper<PayApp> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set(MybatisPlusUtil.toColumns(PayApp::getEnabled), enabled)
+            .eq(CommonConstants.ID, id);
+        update(updateWrapper);
+        refreshCache(id);
+    }
+
+>>>>>>> 6ea701f278e38aa5a863728a89295f400d79faff
     private void verify(String id){
         QueryWrapper<PayApp> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstants.ID, id);
