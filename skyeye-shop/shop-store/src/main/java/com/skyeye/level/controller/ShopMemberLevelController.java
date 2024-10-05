@@ -62,12 +62,12 @@ public class ShopMemberLevelController {
     }
 
     /**
-     * 批量删除快递运费费用模版信息
+     * 批量删除快递运费费用模版信息[ids]
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deleteMemberLeveByIds", value = "批量删除快递运费模版信息", method = "DELETE", allUse = "2")
+    @ApiOperation(id = "deleteMemberLeveByIds", value = "批量删除会员等级信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ShopMemberLevelController/deleteMemberLeveByIds")
