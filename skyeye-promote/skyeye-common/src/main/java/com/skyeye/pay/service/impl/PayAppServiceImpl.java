@@ -50,6 +50,7 @@ public class PayAppServiceImpl extends SkyeyeBusinessServiceImpl<PayAppDao, PayA
         update(updateWrapper);
         refreshCache(id);
     }
+
     private void verify(String id){
         QueryWrapper<PayApp> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstants.ID, id);

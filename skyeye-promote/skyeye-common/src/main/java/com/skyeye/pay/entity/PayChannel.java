@@ -9,10 +9,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.pay.core.PayClientConfig;
 import lombok.Data;
 
 /**
@@ -26,7 +28,7 @@ import lombok.Data;
 @Data
 @UniqueField({"codeNum", "appId"})
 @RedisCacheField(name = "skyeye:payChannel", cacheTime = RedisConstants.THIRTY_DAY_SECONDS)
-@TableName("skyeye_pay_channel")
+@TableName(value = "skyeye_pay_channel", autoResultMap = true)
 @ApiModel("支付渠道实体类")
 public class PayChannel extends OperatorUserInfo {
 
@@ -50,9 +52,13 @@ public class PayChannel extends OperatorUserInfo {
     @ApiModelProperty(value = "应用id", required = "required")
     private String appId;
 
+    @TableField(exist = false)
+    @Property("应用信息")
+    private PayApp appMation;
+
     @TableField("config")
     @ApiModelProperty(value = "支付渠道配置", required = "required")
-    private String config;
+    private PayClientConfig config;
 
     @TableField("remark")
     @ApiModelProperty(value = "备注")

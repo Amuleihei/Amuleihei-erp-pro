@@ -12,10 +12,14 @@ import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.exception.CustomException;
 import com.skyeye.pay.dao.PayChannelDao;
-import com.skyeye.pay.entity.PayApp;
 import com.skyeye.pay.entity.PayChannel;
+import com.skyeye.pay.service.PayAppService;
 import com.skyeye.pay.service.PayChannelService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: PayChannelServiceImpl
@@ -26,8 +30,25 @@ import org.springframework.stereotype.Service;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService(name = "支付渠道",groupName = "支付渠道")
+@SkyeyeService(name = "支付渠道", groupName = "支付渠道")
 public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelDao, PayChannel> implements PayChannelService {
+
+    @Autowired
+    private PayAppService payAppService;
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        payAppService.setMationForMap(beans, "appId", "appMation");
+        return beans;
+    }
+
+    @Override
+    public PayChannel selectById(String id) {
+        PayChannel payChannel = super.selectById(id);
+        payAppService.setDataMation(payChannel, PayChannel::getAppId);
+        return payChannel;
+    }
 
     @Override
     public void updatePrepose(PayChannel payChannel) {
