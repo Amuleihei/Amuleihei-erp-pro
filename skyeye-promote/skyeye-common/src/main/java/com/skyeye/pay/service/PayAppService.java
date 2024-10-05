@@ -5,8 +5,6 @@
 package com.skyeye.pay.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
-import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.pay.entity.PayApp;
 
 /**
@@ -18,5 +16,4 @@ import com.skyeye.pay.entity.PayApp;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface PayAppService extends SkyeyeBusinessService<PayApp> {
-    void updateEnabled(InputObject inputObject, OutputObject outputObject);
 }

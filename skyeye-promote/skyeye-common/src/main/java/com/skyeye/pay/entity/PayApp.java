@@ -34,7 +34,7 @@ public class PayApp extends BaseGeneralInfo {
     private String appKey;
 
     @TableField("enabled")
-    @ApiModelProperty(value = "状态", required = "required")
+    @ApiModelProperty(value = "状态1:启用，2:禁用", required = "required")
     private String enabled;
 
     @TableField("order_notify_url")

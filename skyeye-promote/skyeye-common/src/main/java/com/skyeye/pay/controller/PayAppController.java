@@ -46,18 +46,15 @@ public class PayAppController {
     }
 
     /**
-     * 更新支付应用的状态信息
+     * 获取全部已启用的支付应用信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "updateEnabled", value = "更新支付应用的状态信息", method = "POST", allUse = "1")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required"),
-        @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态", required = "required")})
+    @ApiOperation(id = "queryAllEnabledList", value = "获取全部已启用的支付应用信息", method = "POST", allUse = "1")
     @RequestMapping("/post/PayAppController/updateEnabled")
-    public void updateEnabled(InputObject inputObject, OutputObject outputObject) {
-        payAppService.updateEnabled(inputObject, outputObject);
+    public void queryAllEnabledList(InputObject inputObject, OutputObject outputObject) {
+        payAppService.queryList(inputObject, outputObject);
     }
 
     /**
