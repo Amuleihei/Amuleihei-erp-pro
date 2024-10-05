@@ -44,9 +44,9 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
     @Override
     public QueryWrapper<ShopDeliveryCompany> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<ShopDeliveryCompany> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        String objectStr =  commonPageInfo.getObjectId();
-        if (StrUtil.isNotEmpty(objectStr)) {
-            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryCompany::getName), objectStr);
+        String objectKey =  commonPageInfo.getObjectKey();
+        if (StrUtil.isNotEmpty(objectKey)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryCompany::getStoreId), objectKey);
         }
         return queryWrapper;
     }

@@ -12,6 +12,7 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.delivery.dao.ShopDeliveryTemplateDao;
+import com.skyeye.delivery.entity.ShopDeliveryCompany;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 import com.skyeye.delivery.service.ShopDeliveryTemplateService;
 import com.skyeye.delivery.vo.ShopDeliveryTemplateVo;
@@ -42,9 +43,9 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
     @Override
     public QueryWrapper<ShopDeliveryTemplate> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<ShopDeliveryTemplate> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        String objectStr =  commonPageInfo.getObjectId();
-        if (StrUtil.isNotEmpty(objectStr)) {
-            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getName), objectStr);
+        String objectKey =  commonPageInfo.getObjectKey();
+        if (StrUtil.isNotEmpty(objectKey)) {
+            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getStoreId), objectKey);
         }
         return queryWrapper;
     }
