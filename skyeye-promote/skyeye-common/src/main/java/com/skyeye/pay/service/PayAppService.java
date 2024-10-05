@@ -16,10 +16,4 @@ import com.skyeye.pay.entity.PayApp;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface PayAppService extends SkyeyeBusinessService<PayApp> {
-<<<<<<< HEAD
-=======
-
-    void updateEnabled(InputObject inputObject, OutputObject outputObject);
-
->>>>>>> 6ea701f278e38aa5a863728a89295f400d79faff
 }
