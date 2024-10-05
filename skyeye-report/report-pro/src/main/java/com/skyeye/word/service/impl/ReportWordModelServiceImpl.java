@@ -51,6 +51,13 @@ public class ReportWordModelServiceImpl extends SkyeyeBusinessServiceImpl<Report
     private String tPath;
 
     @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
+        return beans;
+    }
+
+    @Override
     public void writePostpose(WordModel entity, String userId) {
         super.writePostpose(entity, userId);
         reportWordModelAttrService.save(entity.getId(), entity.getWordModelAttrList());

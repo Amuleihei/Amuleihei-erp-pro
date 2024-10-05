@@ -17,6 +17,7 @@ import com.skyeye.dom.service.DomModelService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: DomModelServiceImpl
@@ -29,6 +30,13 @@ import java.util.List;
 @Service
 @SkyeyeService(name = "DOM模型管理", groupName = "DOM模型管理")
 public class DomModelServiceImpl extends SkyeyeBusinessServiceImpl<DomModelDao, DomModel> implements DomModelService {
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
+        return beans;
+    }
 
     @Override
     public void queryAllEnabledDomModelList(InputObject inputObject, OutputObject outputObject) {

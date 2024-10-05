@@ -17,6 +17,7 @@ import com.skyeye.img.service.ReportImgModelService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ReportImgModelServiceImpl
@@ -29,6 +30,13 @@ import java.util.List;
 @Service
 @SkyeyeService(name = "图片模型管理", groupName = "图片模型管理")
 public class ReportImgModelServiceImpl extends SkyeyeBusinessServiceImpl<ReportImgModelDao, ImgModel> implements ReportImgModelService {
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
+        return beans;
+    }
 
     @Override
     public void queryAllEnabledImgModelList(InputObject inputObject, OutputObject outputObject) {

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ReportBgImageServiceImpl
@@ -35,6 +36,13 @@ public class ReportBgImageServiceImpl extends SkyeyeBusinessServiceImpl<ReportBg
 
     @Value("${IMAGES_PATH}")
     private String tPath;
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        iSysDictDataService.setNameForMap(beans, "typeId", "typeName");
+        return beans;
+    }
 
     @Override
     public void deletePostpose(BgImage entity) {
