@@ -132,14 +132,23 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         Page pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
         // 商品名称，型号，门店，品牌
         MPJLambdaWrapper<ShopMaterialStore> wrapper = new MPJLambdaWrapper<ShopMaterialStore>()
-            .innerJoin(Material.class, Material::getId, ShopMaterialStore::getMaterialId)
-            .eq(StrUtil.isNotBlank(commonPageInfo.getObjectId()), ShopMaterialStore::getStoreId, commonPageInfo.getObjectId())
-            .eq(StrUtil.isNotBlank(commonPageInfo.getHolderId()), ShopMaterialStore::getMaterialId, commonPageInfo.getHolderId())
-            .eq(StrUtil.isNotBlank(commonPageInfo.getType()), Material::getBrandId, commonPageInfo.getType())
-            .and(wra -> {
-                wra.or().like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getName, commonPageInfo.getKeyword());
-                wra.or().like(StrUtil.isNotBlank(commonPageInfo.getKeyword()), Material::getModel, commonPageInfo.getKeyword());
+            .innerJoin(Material.class, Material::getId, ShopMaterialStore::getMaterialId);
+        if (StrUtil.isNotBlank(commonPageInfo.getObjectId())) {
+            wrapper.eq(ShopMaterialStore::getStoreId, commonPageInfo.getObjectId());
+        }
+        if (StrUtil.isNotBlank(commonPageInfo.getHolderId())) {
+            wrapper.eq(ShopMaterialStore::getMaterialId, commonPageInfo.getHolderId());
+        }
+        if (StrUtil.isNotBlank(commonPageInfo.getType())) {
+            wrapper.eq(Material::getBrandId, commonPageInfo.getType());
+        }
+        if (StrUtil.isNotBlank(commonPageInfo.getKeyword())) {
+            wrapper.and(wra -> {
+                wra.or().like(Material::getName, commonPageInfo.getKeyword());
+                wra.or().like(Material::getModel, commonPageInfo.getKeyword());
             });
+        }
+
 
         List<ShopMaterialStore> shopMaterialStoreList = skyeyeBaseMapper.selectJoinList(ShopMaterialStore.class, wrapper);
         iShopStoreService.setDataMation(shopMaterialStoreList, ShopMaterialStore::getStoreId);
