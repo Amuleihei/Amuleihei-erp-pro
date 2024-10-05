@@ -37,7 +37,7 @@ public class ShopDeliveryTemplate extends OperatorUserInfo {
     private Integer orderBy;
 
     @TableField(value = "`store_id`")
-    @ApiModelProperty(value = "门店id")
+    @ApiModelProperty(value = "门店id",fuzzyLike = true)
     private String storeId;
 
 }

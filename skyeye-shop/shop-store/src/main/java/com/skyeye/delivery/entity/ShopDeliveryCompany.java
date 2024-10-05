@@ -24,7 +24,7 @@ public class ShopDeliveryCompany extends OperatorUserInfo {
     private String codeNum;
 
     @TableField(value = "`name`")
-    @ApiModelProperty(value = "快递公司名称", required = "required")
+    @ApiModelProperty(value = "快递公司名称", required = "required",fuzzyLike = true)
     private String name;
 
     @TableField(value = "`logo`")
