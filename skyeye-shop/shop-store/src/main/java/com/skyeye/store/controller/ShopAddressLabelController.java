@@ -40,14 +40,6 @@ public class ShopAddressLabelController {
     public void queryShopAddressLabelList(InputObject inputObject, OutputObject outputObject) {
         shopAddressLabelService.queryList(inputObject, outputObject);
     }
-
-    @ApiOperation(id = "queryShopAddressLabelPageList", value = "分页获取收件地址标签信息", method = "POST", allUse = "2")
-    @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/ShopAddressLabelController/queryShopAddressLabelPageList")
-    public void queryShopAddressLabelPageList(InputObject inputObject, OutputObject outputObject) {
-        shopAddressLabelService.queryPageList(inputObject, outputObject);
-    }
-
     @ApiOperation(id = "selectShopAddressLabelById", value = "根据id查询收件地址标签信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})

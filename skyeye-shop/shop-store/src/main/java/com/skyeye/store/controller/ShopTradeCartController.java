@@ -40,7 +40,7 @@ public class ShopTradeCartController {
     @ApiOperation(id = "queryShopTradeCartList", value = "获取购物车信息", method = "POST", allUse = "2")
     @RequestMapping("/post/ShopTradeCartController/queryShopTradeCartList")
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
-        shopTradeCartService.queryList(inputObject, outputObject);
+        shopTradeCartService.queryShopTradeCartList(inputObject, outputObject);
     }
 
     /**

@@ -6,7 +6,6 @@ package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
@@ -25,6 +24,7 @@ import com.skyeye.erp.service.IMaterialService;
 import com.skyeye.exception.CustomException;
 import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import com.skyeye.store.dao.ShopTradeCartDao;
+import com.skyeye.store.entity.ShopStore;
 import com.skyeye.store.entity.ShopTradeCart;
 import com.skyeye.store.service.ShopStoreService;
 import com.skyeye.store.service.ShopTradeCartService;
@@ -67,17 +67,20 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
     }
 
     @Override
-    public List<Map<String, Object>> queryDataList(InputObject inputObject) {
+    public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
-        wrapper.groupBy(MybatisPlusUtil.toColumns(ShopTradeCart::getStoreId));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
-        shopStoreService.setDataMation(beans, ShopTradeCart::getStoreId);
-        return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+        Map<String, List<ShopTradeCart>> collect = beans.stream().collect(Collectors.groupingBy(ShopTradeCart::getStoreId));
+        List<String> storeIdList = beans.stream().map(ShopTradeCart::getStoreId).collect(Collectors.toList());
+        List<ShopStore> shopStoreList = shopStoreService.selectByIds(storeIdList.toArray(new String[]{}));
+        Map<String, Object> shopStoreMap = shopStoreList.stream().collect(Collectors.toMap(ShopStore::getId, ShopStore::getName));
+        outputObject.setBean(collect);
+        outputObject.setCustomBean("AllShopStoreInfo", shopStoreMap);
     }
 
     @Override

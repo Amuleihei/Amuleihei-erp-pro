@@ -4,7 +4,6 @@
 
 package com.skyeye.type.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
@@ -56,9 +55,7 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
     public QueryWrapper<StoreType> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<StoreType> queryWrapper = super.getQueryWrapper(commonPageInfo);
         String objectId = commonPageInfo.getObjectId();
-        if (StrUtil.isNotEmpty(objectId)) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), objectId);
-        }
+        queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), objectId);
         return queryWrapper;
     }
 
