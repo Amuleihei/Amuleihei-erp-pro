@@ -4,20 +4,27 @@
 
 package com.skyeye.pay.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.exception.CustomException;
+import com.skyeye.pay.core.PayClient;
+import com.skyeye.pay.core.PayClientConfig;
+import com.skyeye.pay.core.PayClientFactory;
 import com.skyeye.pay.dao.PayChannelDao;
 import com.skyeye.pay.entity.PayChannel;
+import com.skyeye.pay.enums.PayType;
 import com.skyeye.pay.service.PayAppService;
 import com.skyeye.pay.service.PayChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +43,12 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
     @Autowired
     private PayAppService payAppService;
 
+    @Autowired
+    private PayClientFactory payClientFactory;
+
+    @Autowired
+    private Validator validator;
+
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
@@ -51,6 +64,20 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
     }
 
     @Override
+    public void validatorEntity(PayChannel entity) {
+        super.validatorEntity(entity);
+        // 解析配置
+        Class<? extends PayClientConfig> payClass = PayType.getByCode(entity.getCodeNum()).getConfigClass();
+        if (ObjectUtil.isNull(payClass)) {
+            throw new CustomException("支付渠道的配置不存在");
+        }
+        PayClientConfig config = JSONUtil.toBean(JSONUtil.toJsonStr(entity.getConfig()), payClass);
+        Assert.notNull(config);
+        // 验证参数
+        config.validate(validator);
+    }
+
+    @Override
     public void updatePrepose(PayChannel payChannel) {
         QueryWrapper<PayChannel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstants.ID, payChannel.getId());
@@ -60,4 +87,13 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
         }
     }
 
+    @Override
+    public PayClient getPayClient(String id) {
+        PayChannel payChannel = selectById(id);
+        if (ObjectUtil.isEmpty(payChannel)) {
+            throw new CustomException("该支付渠道不存在");
+        }
+        payClientFactory.createOrUpdatePayClient(id, payChannel.getCodeNum(), payChannel.getConfig());
+        return null;
+    }
 }

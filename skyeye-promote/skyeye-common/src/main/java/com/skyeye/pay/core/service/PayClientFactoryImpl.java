@@ -66,7 +66,7 @@ public class PayClientFactoryImpl implements PayClientFactory {
     }
 
     @Override
-    public PayClient getPayClient(Long channelId) {
+    public PayClient getPayClient(String channelId) {
         AbstractPayClient<?> client = clients.get(channelId);
         if (client == null) {
             log.error("[getPayClient][渠道编号({}) 找不到客户端]", channelId);
@@ -75,7 +75,7 @@ public class PayClientFactoryImpl implements PayClientFactory {
     }
 
     @Override
-    public <Config extends PayClientConfig> PayClient createOrUpdatePayClient(Long channelId, String channelCode,
+    public <Config extends PayClientConfig> PayClient createOrUpdatePayClient(String channelId, String channelCode,
                                                                               Config config) {
         AbstractPayClient<Config> client = (AbstractPayClient<Config>) clients.get(channelId);
         if (client == null) {
@@ -88,7 +88,7 @@ public class PayClientFactoryImpl implements PayClientFactory {
         return client;
     }
 
-    private <Config extends PayClientConfig> AbstractPayClient<Config> createPayClient(Long channelId, String channelCode,
+    private <Config extends PayClientConfig> AbstractPayClient<Config> createPayClient(String channelId, String channelCode,
                                                                                        Config config) {
         PayType channelEnum = PayType.getByCode(channelCode);
         Assert.notNull(channelEnum, String.format("支付渠道(%s) 为空", channelCode));

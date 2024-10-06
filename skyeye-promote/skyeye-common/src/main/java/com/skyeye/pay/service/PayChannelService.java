@@ -5,6 +5,7 @@
 package com.skyeye.pay.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
+import com.skyeye.pay.core.PayClient;
 import com.skyeye.pay.entity.PayChannel;
 
 /**
@@ -16,5 +17,7 @@ import com.skyeye.pay.entity.PayChannel;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface PayChannelService extends SkyeyeBusinessService<PayChannel> {
+
+    PayClient getPayClient(String id);
 
 }

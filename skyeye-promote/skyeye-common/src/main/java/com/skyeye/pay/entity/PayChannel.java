@@ -38,7 +38,7 @@ public class PayChannel extends OperatorUserInfo {
     private String id;
 
     @TableField("code_num")
-    @ApiModelProperty(value = "渠道编码", required = "required")
+    @ApiModelProperty(value = "渠道编码，参考#PayType", required = "required")
     private String codeNum;
 
     @TableField("enabled")
