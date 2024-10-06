@@ -12,6 +12,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.brand.entity.Brand;
+import com.skyeye.brand.service.BrandService;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.enumeration.EnableEnum;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,6 +62,9 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
 
     @Autowired
     private ShopMaterialStoreService shopMaterialStoreService;
+
+    @Autowired
+    private BrandService brandService;
 
     @Override
     public void createPrepose(ShopMaterial entity) {
@@ -228,7 +233,16 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
                 return list;
             }
         )));
+        Map<String, Object> brandMap = new HashMap<>();
+        if (CollectionUtil.isNotEmpty(collectMap)) {
+            List<String> brandIdList = shopMaterialList.stream()
+                .filter(bean -> StrUtil.isNotEmpty(bean.getMaterialMation().getBrandId()))
+                .map(bean -> bean.getMaterialMation().getBrandId()).distinct().collect(Collectors.toList());
+            brandMap = brandService.selectByIds(brandIdList.toArray(new String[]{})).stream()
+                .collect(Collectors.toMap(Brand::getId, bean -> bean.getName()));
+        }
         outputObject.setBean(collectMap);
+        outputObject.setCustomBean("brandMap", brandMap);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
