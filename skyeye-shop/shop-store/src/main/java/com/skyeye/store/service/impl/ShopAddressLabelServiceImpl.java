@@ -5,19 +5,14 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.store.dao.ShopAddressLabelDao;
 import com.skyeye.store.entity.ShopAddressLabel;
 import com.skyeye.store.service.ShopAddressLabelService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +37,6 @@ public class ShopAddressLabelServiceImpl extends SkyeyeBusinessServiceImpl<ShopA
                 throw new RuntimeException("标签重复");
             }
         }
-    }
-
-    @Override
-    public void deleteById(InputObject inputObject, OutputObject outputObject) {
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
-        super.deleteById(idList);
     }
 
     @Override

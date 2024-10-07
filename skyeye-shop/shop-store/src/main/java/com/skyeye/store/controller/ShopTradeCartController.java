@@ -67,7 +67,7 @@ public class ShopTradeCartController {
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号隔开", required = "required")})
     @RequestMapping("/post/ShopTradeCartController/deleteShopTradCartByIds")
     public void deleteShopTradCartByIds(InputObject inputObject, OutputObject outputObject) {
-        shopTradeCartService.deleteById(inputObject, outputObject);
+        shopTradeCartService.deleteByIds(inputObject, outputObject);
     }
 
     /**

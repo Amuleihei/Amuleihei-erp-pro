@@ -56,7 +56,7 @@ public class StoreTypeController {
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/StoreTypeController/deleteStoreTypeByIds")
     public void deleteStoreTypeByIds(InputObject inputObject, OutputObject outputObject) {
-        storeTypeService.deleteById(inputObject, outputObject);
+        storeTypeService.deleteByIds(inputObject, outputObject);
     }
 
     /**
