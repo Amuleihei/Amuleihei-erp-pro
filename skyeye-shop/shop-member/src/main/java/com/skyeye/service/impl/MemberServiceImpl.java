@@ -4,6 +4,7 @@
 
 package com.skyeye.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
@@ -11,6 +12,8 @@ import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.constans.CommonNumConstants;
+import com.skyeye.common.constans.SysUserAuthConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.DeleteFlagEnum;
 import com.skyeye.common.object.InputObject;
@@ -113,6 +116,45 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         updateWrapper.set(MybatisPlusUtil.toColumns(Member::getPassword), newPassword);
         updateWrapper.set(MybatisPlusUtil.toColumns(Member::getPwdNumEnc), pwdNum);
         update(updateWrapper);
+    }
+
+    @Override
+    public void updateCurrentLoginMemberNickname(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String name = params.get("name").toString();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
+        // 根据id更新会员昵称
+        UpdateWrapper<Member> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, userId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Member::getName), name);
+        update(updateWrapper);
+        editCache(outputObject, userId);
+    }
+
+    private void editCache(OutputObject outputObject, String userId) {
+        // 更新缓存
+        refreshCache(userId);
+        // 更新会员登录缓存
+        Member member = selectById(userId);
+        member.setPassword(null);
+        member.setPwdNumEnc(null);
+        SysUserAuthConstants.setUserLoginRedisCache(member.getId() + SysUserAuthConstants.APP_IDENTIFYING, BeanUtil.beanToMap(member));
+        SysUserAuthConstants.setUserLoginRedisCache(member.getId(), BeanUtil.beanToMap(member));
+        outputObject.setBean(member);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public void updateCurrentLoginMemberAvatar(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String avatar = params.get("avatar").toString();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
+        // 根据id更新会员昵称
+        UpdateWrapper<Member> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, userId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Member::getAvatar), avatar);
+        update(updateWrapper);
+        editCache(outputObject, userId);
     }
 
 }

@@ -32,12 +32,6 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    /**
-     * 获取会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "member001", value = "获取会员信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/MemberController/queryMemberByList")
@@ -45,12 +39,6 @@ public class MemberController {
         memberService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 添加/编辑会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeMember", value = "添加/编辑会员信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = Member.class)
     @RequestMapping("/post/MemberController/writeMember")
@@ -58,12 +46,6 @@ public class MemberController {
         memberService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 根据ID查询会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMemberById", value = "据ID查询会员信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -72,12 +54,6 @@ public class MemberController {
         memberService.selectById(inputObject, outputObject);
     }
 
-    /**
-     * 根据ID批量查询会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMemberListById", value = "根据ID批量查询会员信息", method = "POST", allUse = "0")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id", required = "required")})
@@ -86,12 +62,6 @@ public class MemberController {
         memberService.selectByIds(inputObject, outputObject);
     }
 
-    /**
-     * 删除会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "member004", value = "删除会员信息", method = "DELETE", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -100,17 +70,27 @@ public class MemberController {
         memberService.deleteById(inputObject, outputObject);
     }
 
-    /**
-     * 获取我录入的会员信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMyWriteMemberList", value = "获取我录入的会员信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/MemberController/queryMyWriteMemberList")
     public void queryMyWriteMemberList(InputObject inputObject, OutputObject outputObject) {
         memberService.queryMyWriteMemberList(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "updateCurrentLoginMemberNickname", value = "修改当前登录用户的昵称", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "name", name = "name", value = "昵称", required = "required")})
+    @RequestMapping("/post/MemberController/updateCurrentLoginMemberNickname")
+    public void updateCurrentLoginMemberNickname(InputObject inputObject, OutputObject outputObject) {
+        memberService.updateCurrentLoginMemberNickname(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "updateCurrentLoginMemberAvatar", value = "修改当前登录用户的头像", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "avatar", name = "avatar", value = "头像地址", required = "required")})
+    @RequestMapping("/post/MemberController/updateCurrentLoginMemberAvatar")
+    public void updateCurrentLoginMemberAvatar(InputObject inputObject, OutputObject outputObject) {
+        memberService.updateCurrentLoginMemberAvatar(inputObject, outputObject);
     }
 
 }

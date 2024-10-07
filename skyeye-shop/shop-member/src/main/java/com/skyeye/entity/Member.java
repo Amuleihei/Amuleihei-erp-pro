@@ -41,6 +41,10 @@ public class Member extends AreaInfo implements EnclosureFace {
     @ApiModelProperty(value = "名称", required = "required")
     private String name;
 
+    @TableField(value = "avatar")
+    @ApiModelProperty(value = "头像")
+    private String avatar;
+
     @TableField(value = "remark")
     @ApiModelProperty(value = "相关描述")
     private String remark;
