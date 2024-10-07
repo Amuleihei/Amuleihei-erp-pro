@@ -31,7 +31,10 @@ import com.skyeye.store.service.ShopTradeCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -95,13 +98,6 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
             return super.updateEntity(shopTradeCart, userId);
         }
         return super.createEntity(shopTradeCart, userId);
-    }
-
-    @Override
-    public void deleteById(InputObject inputObject, OutputObject outputObject) {
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
-        super.deleteById(idList);
     }
 
     @Override

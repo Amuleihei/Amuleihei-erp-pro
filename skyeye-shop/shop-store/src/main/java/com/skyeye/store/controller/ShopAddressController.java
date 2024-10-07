@@ -56,7 +56,7 @@ public class ShopAddressController {
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ShopAddressController/deleteShopAddressByIds")
     public void deleteShopAddressByIds(InputObject inputObject, OutputObject outputObject) {
-        shopAddressService.deleteById(inputObject, outputObject);
+        shopAddressService.deleteByIds(inputObject, outputObject);
     }
 
     /**

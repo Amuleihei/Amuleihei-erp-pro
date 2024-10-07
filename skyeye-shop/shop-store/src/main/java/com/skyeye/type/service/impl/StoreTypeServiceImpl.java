@@ -8,11 +8,9 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.store.service.ShopStoreService;
 import com.skyeye.type.dao.StoreTypeDao;
@@ -21,7 +19,6 @@ import com.skyeye.type.service.StoreTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -57,12 +54,5 @@ public class StoreTypeServiceImpl extends SkyeyeBusinessServiceImpl<StoreTypeDao
         String objectId = commonPageInfo.getObjectId();
         queryWrapper.eq(MybatisPlusUtil.toColumns(StoreType::getStoreId), objectId);
         return queryWrapper;
-    }
-
-    @Override
-    public void deleteById(InputObject inputObject, OutputObject outputObject) {
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
-        super.deleteById(idList);
     }
 }

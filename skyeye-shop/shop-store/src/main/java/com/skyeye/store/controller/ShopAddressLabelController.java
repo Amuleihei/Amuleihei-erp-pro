@@ -32,7 +32,7 @@ public class ShopAddressLabelController {
         @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ShopAddressLabelController/deleteShopAddressLabelByIds")
     public void deleteShopAddressLabelByIds(InputObject inputObject, OutputObject outputObject) {
-        shopAddressLabelService.deleteById(inputObject, outputObject);
+        shopAddressLabelService.deleteByIds(inputObject, outputObject);
     }
 
     @ApiOperation(id = "queryShopAddressLabelList", value = "获取自己的收件地址标签信息", method = "POST", allUse = "2")
