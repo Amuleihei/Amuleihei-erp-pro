@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.delivery.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
@@ -12,22 +16,27 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.delivery.dao.ShopDeliveryTemplateDao;
-import com.skyeye.delivery.entity.ShopDeliveryCompany;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 import com.skyeye.delivery.service.ShopDeliveryTemplateService;
-import com.skyeye.delivery.vo.ShopDeliveryTemplateVo;
 import com.skyeye.exception.CustomException;
+import com.skyeye.level.entity.ShopMemberLevel;
 import com.skyeye.store.entity.ShopStore;
 import com.skyeye.store.service.ShopStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * @ClassName: ShopDeliveryTemplateServiceImpl
+ * @Description: 快递运费模版服务层
+ * @author: skyeye云系列--卫志强
+ * @date: 2022/2/4 10:06
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Service
 @SkyeyeService(name = "快递运费模版", groupName = "快递运费模版")
 public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<ShopDeliveryTemplateDao, ShopDeliveryTemplate> implements ShopDeliveryTemplateService {
@@ -37,34 +46,15 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
 
     /**
      * 分页查询-快递运费模版
+     *
      * @param commonPageInfo
      * @return
      */
     @Override
     public QueryWrapper<ShopDeliveryTemplate> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<ShopDeliveryTemplate> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        String objectId =  commonPageInfo.getObjectId();
-        String keyword = commonPageInfo.getKeyword();
-        if (StrUtil.isNotEmpty(objectId)) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getStoreId), objectId);
-        }
-        if (StrUtil.isNotEmpty(keyword)) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getName), keyword);
-        }
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getStoreId), commonPageInfo.getObjectId());
         return queryWrapper;
-    }
-
-    /**
-     * 批量删除快递运费模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void deleteById(InputObject inputObject, OutputObject outputObject) {
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
-        super.deleteById(idList);
     }
 
     /**
@@ -74,16 +64,7 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
      */
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
-        Map<String, Object> params = inputObject.getParams();
         QueryWrapper<ShopDeliveryTemplate> queryWrapper = new QueryWrapper<>();
-        //如果enabled不为空，则添加该模糊查询条件
-        if (params.containsKey("name") && StrUtil.isNotEmpty(params.get("name").toString())) {
-            queryWrapper.like(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getName), params.get("name").toString());
-        }
-        if (params.containsKey("storeId") && StrUtil.isNotEmpty(params.get("storeId").toString())) {
-            //如果enabled不为空，则添加该精确查询条件
-            queryWrapper.eq(MybatisPlusUtil.toColumns(ShopDeliveryTemplate::getStoreId), params.get("storeId"));
-        }
         List<ShopDeliveryTemplate> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
@@ -102,31 +83,5 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
                 throw new CustomException("门店不存在: " + shopDeliveryTemplate.getStoreId());
             }
         }
-    }
-
-    /**
-     * 获取精简的快递运费模版信息，主要用于下拉列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void shopDeliveryTemplateList(InputObject inputObject, OutputObject outputObject) {
-        QueryWrapper<ShopDeliveryTemplate> queryWrapper = new QueryWrapper<>();
-        List<ShopDeliveryTemplate> list = list(queryWrapper);
-
-        // 创建一个VO列表来存储转换后的结果
-        List<ShopDeliveryTemplateVo> voList = new ArrayList<>();
-
-        // 遍历原始列表并转换每个对象
-        for (ShopDeliveryTemplate template : list) {
-            ShopDeliveryTemplateVo vo = new ShopDeliveryTemplateVo();
-            //进行属性复制
-            vo.setId(template.getId());
-            vo.setName(template.getName());
-            voList.add(vo);
-        }
-        outputObject.setBeans(voList);
-        outputObject.settotal(voList.size());
     }
 }

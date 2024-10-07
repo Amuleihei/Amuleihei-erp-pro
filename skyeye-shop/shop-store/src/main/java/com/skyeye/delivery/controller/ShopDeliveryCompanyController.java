@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.delivery.controller;
 
 import com.skyeye.annotation.api.Api;
@@ -13,6 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @ClassName: ShopDeliveryCompanyController
+ * @Description: 快递公司管理控制类
+ * @author: skyeye云系列--卫志强
+ * @date: 2022/2/4 10:06
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @RestController
 @Api(value = "快递公司管理", tags = "快递公司管理", modelName = "快递公司管理")
 public class ShopDeliveryCompanyController {
@@ -21,7 +33,7 @@ public class ShopDeliveryCompanyController {
     private ShopDeliveryCompanyService shopDeliveryCompanyService;
 
     /**
-     * 获取快递公司信息
+     * 分页获取快递公司信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
@@ -73,14 +85,14 @@ public class ShopDeliveryCompanyController {
     }
 
     /**
-     * 获取精简的快递公司信息，主要用于下拉列表
+     * 获取广告位管理信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deliveryListAllSimple",value = "获取精简的快递公司信息，主要用于下拉列表",method = "GET",allUse = "2")
-    @RequestMapping("/post/ShopDeliveryCompanyController/deliveryListAllSimple")
-    public void streamlineDeliveryList(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryCompanyService.streamlineDeliveryList(inputObject,outputObject);
+    @ApiOperation(id = "queryDelivery", value = "获取快递公司", method = "POST", allUse = "0")
+    @RequestMapping("/post/ShopDeliveryCompanyController/queryDelivery")
+    public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
+        shopDeliveryCompanyService.queryList(inputObject, outputObject);
     }
 }

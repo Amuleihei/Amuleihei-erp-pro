@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.adsense.controller;
 
 import com.skyeye.adsense.entity.Adsense;
@@ -13,7 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * @ClassName: AdsenseController
+ * @Description: 广告位管理控制类
+ * @author: skyeye云系列--卫志强
+ * @date: 2022/2/4 10:06
+ *
+ *
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @RestController
 @Api(value = "广告位管理", tags = "广告位管理", modelName = "广告位管理")
 public class AdsenseController {
@@ -58,7 +71,7 @@ public class AdsenseController {
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/AdsenseController/deleteAdsenseByIds")
     public void deleteAdsenseByIds(InputObject inputObject, OutputObject outputObject) {
-        adsenseService.deleteById(inputObject, outputObject);
+        adsenseService.deleteByIds(inputObject, outputObject);
     }
 
     /**
@@ -67,10 +80,7 @@ public class AdsenseController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryAdsenseList", value = "获取广告位管理信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(id = "name", name = "name", value = "标题"),
-            @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态1是0否")})
+    @ApiOperation(id = "queryAdsenseList", value = "获取广告位管理信息", method = "POST", allUse = "0")
     @RequestMapping("/post/AdsenseController/queryAdsenseList")
     public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
         adsenseService.queryList(inputObject, outputObject);
@@ -88,17 +98,5 @@ public class AdsenseController {
     @RequestMapping("/post/AdsenseController/selectAdsenseById")
     public void selectAdsenseById(InputObject inputObject, OutputObject outputObject) {
         adsenseService.selectById(inputObject, outputObject);
-    }
-
-    /**
-     * 获取精简的广告位管理信息，主要用于下拉列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "adsenseListAllSimple",value = "获取状态正常的精简的广告位管理信息，主要用于下拉列表",method = "GET",allUse = "2")
-    @RequestMapping("/post/AdsenseController/adsenseListAllSimple")
-    public void streamlineAdSenseList(InputObject inputObject, OutputObject outputObject) {
-        adsenseService.streamlineAdsenseList(inputObject,outputObject);
     }
 }

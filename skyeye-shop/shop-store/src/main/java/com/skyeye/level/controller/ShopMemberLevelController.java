@@ -1,5 +1,8 @@
-package com.skyeye.level.controller;
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
 
+package com.skyeye.level.controller;
 
 import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
@@ -14,6 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @ClassName: ShopMemberLevelController
+ * @Description: 会员等级控制类
+ * @author: skyeye云系列--卫志强
+ * @date: 2022/2/4 10:06
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @RestController
 @Api(value = "会员等级", tags = "会员等级", modelName = "会员等级")
 public class ShopMemberLevelController {
@@ -28,7 +39,7 @@ public class ShopMemberLevelController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryMemberLevel", value = "获取会员等级信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryMemberLevel", value = "分页获取会员等级信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ShopMemberLevelController/queryMemberLevel")
     public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
@@ -72,7 +83,7 @@ public class ShopMemberLevelController {
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ShopMemberLevelController/deleteMemberLeveByIds")
     public void deleteMemberLeveByIds(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.deleteById(inputObject, outputObject);
+        shopMemberLevelService.deleteByIds(inputObject, outputObject);
     }
 
     /**
@@ -87,29 +98,16 @@ public class ShopMemberLevelController {
     public void queryStoreByIds(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.selectById(inputObject, outputObject);
     }
-    /**
-     * 获取精简的会员等级信息，主要用于下拉列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "memberLevelListAllSimple", value = "获取精简的会员等级信息，主要用于下拉列表", method = "GET", allUse = "2")
-    @RequestMapping("/post/ShopMemberLevelController/memberLevelListAllSimple")
-    public void streamlineMemberLevelList(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.streamlineMemberLevelList(inputObject, outputObject);
-    }
+
     /**
      * 获得会员等级列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "memberLevelList", value = "获得会员等级列表", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "name", name = "name", value = "等级名称"),
-        @ApiImplicitParam(id = "enabled", name = "enabled", value = "状态")})
+    @ApiOperation(id = "memberLevelList", value = "获得会员等级列表", method = "POST", allUse = "0")
     @RequestMapping("/post/ShopMemberLevelController/memberLevelList")
     public void memberLevelList(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.memberLevelList(inputObject, outputObject);
+        shopMemberLevelService.queryList(inputObject, outputObject);
     }
 }

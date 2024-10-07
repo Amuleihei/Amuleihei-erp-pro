@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.delivery.controller;
 
 import com.skyeye.annotation.api.Api;
@@ -9,11 +13,18 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.delivery.entity.ShopDeliveryTemplateCharge;
 import com.skyeye.delivery.service.ShopDeliveryTemplateChargeService;
-import com.skyeye.delivery.vo.ShopDeliveryTemplateChargeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @ClassName: ShopDeliveryTemplateChargeController
+ * @Description: 快递运费费用模版控制类
+ * @author: skyeye云系列--卫志强
+ * @date: 2022/2/4 10:06
+ * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @RestController
 @Api(value = "快递运费费用模版", tags = "快递运费费用模版", modelName = "快递运费费用模版")
 public class ShopDeliveryTemplateChargeController {
@@ -45,7 +56,7 @@ public class ShopDeliveryTemplateChargeController {
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/shopDeliveryTemplateChargeController/deleteShopDeliveryTemplateChargeByIds")
     public void deleteShopDeliveryTemplateChargeByIds(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryTemplateChargeService.deleteById(inputObject, outputObject);
+        shopDeliveryTemplateChargeService.deleteByIds(inputObject, outputObject);
     }
 
     /**
@@ -57,7 +68,7 @@ public class ShopDeliveryTemplateChargeController {
     @ApiOperation(id = "queryShopDeliveryTemplateCharge", value = "分页查询快递运费模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateCharge")
-    public void queryShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
+    public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryPageList(inputObject, outputObject);
     }
 
@@ -67,12 +78,9 @@ public class ShopDeliveryTemplateChargeController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryShopDeliveryTemplateChargeList", value = "获取快递运费模版信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(id = "templateId", name = "templateId", value = "模版id"),
-            @ApiImplicitParam(id = "areaId", name = "areaId", value = "区域id，集合")})
+    @ApiOperation(id = "queryShopDeliveryTemplateChargeList", value = "获取快递运费模版信息", method = "POST", allUse = "0")
     @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateChargeList")
-    public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
+    public void queryShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryList(inputObject, outputObject);
     }
 
@@ -90,16 +98,5 @@ public class ShopDeliveryTemplateChargeController {
         shopDeliveryTemplateChargeService.selectById(inputObject, outputObject);
     }
 
-    /**
-     * 获取精简的快递运费费用模版信息，主要用于下拉列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "shopDeliveryTemplateChargeAllSimple",value = "获取精简的快递运费模版信息，主要用于下拉列表",method = "GET",allUse = "2")
-    @ApiImplicitParams(classBean = ShopDeliveryTemplateChargeVo.class)
-    @RequestMapping("/post/shopDeliveryTemplateChargeController/shopDeliveryTemplateChargeAllSimple")
-    public void streamlineShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryTemplateChargeService.shopDeliveryTemplateChargeList(inputObject,outputObject);
-    }
+
 }
