@@ -10,6 +10,8 @@ import com.skyeye.common.entity.CommonInfo;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @RedisCacheField(name = "exam:answer")
 @TableName(value = "exam_survey_answer")
@@ -26,31 +28,31 @@ public class ExamSurveyAnswer extends CommonInfo {
 
     @TableField("bg_an_date")
     @ApiModelProperty(value = "回答开始时间", required = "required")
-    private Data bg_an_date;
+    private LocalDateTime bgAnDate;
 
     @TableField("end_an_date")
     @ApiModelProperty(value = "回答结束时间", required = "required")
-    private Data end_an_date;
+    private LocalDateTime endAnDate;
 
     @TableField("complete_num")
     @ApiModelProperty(value = "回答的题数")
-    private Integer complete_num;
+    private Integer completeNum;
 
     @TableField("complete_item_num")
     @ApiModelProperty(value = "回答的题项目数 ---- 表示有些题下面会有多重回答")
-    private Integer complete_item_num;
+    private Integer completeItemNum;
 
     @TableField("data_source")
     @ApiModelProperty(value = "数据来源  0网调  1录入数据 2移动数据 3导入数据", required = "required")
-    private Integer data_source;
+    private Integer dataSource;
 
     @TableField("handle_state")
     @ApiModelProperty(value = "审核状态  0未处理 1通过 2不通过", required = "required")
-    private Integer handle_state;
+    private Integer handleState;
 
     @TableField("ip_addr")
     @ApiModelProperty(value = "回答者IP")
-    private String ip_addr;
+    private String ipAddr;
 
     @TableField("addr")
     @ApiModelProperty(value = "回答者是详细地址")
@@ -62,23 +64,23 @@ public class ExamSurveyAnswer extends CommonInfo {
 
     @TableField("is_complete")
     @ApiModelProperty(value = "是否完成  1完成 0未完成", required = "required")
-    private Integer is_complete;
+    private Integer isComplete;
 
     @TableField("is_effective")
     @ApiModelProperty(value = "是否是有效数据  1有效  0无效", required = "required")
-    private Integer is_effective;
+    private Integer isEffective;
 
     @TableField("qu_num")
     @ApiModelProperty(value = "回答的题数", required = "required")
-    private Integer qu_num;
+    private Integer quNum;
 
     @TableField("total_time")
     @ApiModelProperty(value = "用时", required = "required")
-    private Float total_time;
+    private Float totalTime;
 
     @TableField("create_id")
     @ApiModelProperty(value = "学生ID", required = "required")
-    private String create_id;
+    private String createId;
 
     @TableField("state")
     @ApiModelProperty(value = "教师是否阅卷  1.否  2.是", required = "required")
@@ -86,17 +88,17 @@ public class ExamSurveyAnswer extends CommonInfo {
 
     @TableField("mark_fraction")
     @ApiModelProperty(value = "最后得分")
-    private Integer mark_fraction;
+    private Integer markFraction;
 
     @TableField("mark_people")
     @ApiModelProperty(value = "阅卷人")
-    private String mark_people;
+    private String markPeople;
 
     @TableField("mark_start_time")
     @ApiModelProperty(value = "开始阅卷时间")
-    private Data mark_start_time;
+    private LocalDateTime markStartTime;
 
     @TableField("mark_end_time")
     @ApiModelProperty(value = "结束阅卷时间")
-    private Data mark_end_time;
+    private LocalDateTime markEndTime;
 }

@@ -26,8 +26,8 @@ public class Groups extends OperatorUserInfo {
     private String groupName;
 
     @TableField("state")
-    @ApiModelProperty(value = "组状态(已解散，未解散)")
-    private String state;
+    @ApiModelProperty(value = "组状态(1已解散，0未解散)")
+    private Integer state;
 
     @TableField("group_barcode")
     @ApiModelProperty(value = "加组二维码")

@@ -9,9 +9,6 @@ import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.CommonInfo;
-import com.skyeye.common.entity.features.BaseGeneralInfo;
-import com.skyeye.common.entity.features.OperatorUserInfo;
-import com.skyeye.school.semester.entity.Semester;
 import lombok.Data;
 
 @Data

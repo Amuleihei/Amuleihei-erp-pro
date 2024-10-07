@@ -18,10 +18,7 @@ import com.skyeye.common.util.qrcode.QRCodeLogoUtil;
 import com.skyeye.school.groups.dao.GroupsDao;
 import com.skyeye.school.groups.entity.Groups;
 import com.skyeye.school.groups.entity.GroupsInformation;
-import com.skyeye.school.groups.service.GroupsInformationService;
 import com.skyeye.school.groups.service.GroupsService;
-import com.skyeye.school.subject.service.SubjectClassesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,15 +33,6 @@ public class GroupServiceImpl extends SkyeyeBusinessServiceImpl<GroupsDao, Group
 
     @Value("${IMAGES_PATH}")
     private String tPath;
-
-    @Autowired
-    private SubjectClassesService subjectClassesService;
-
-    @Autowired
-    private GroupsInformationService groupsInformationService;
-
-    @Autowired
-    private GroupsService groupsService;
 
     @Override
     public QueryWrapper<Groups> getQueryWrapper(CommonPageInfo commonPageInfo) {
@@ -64,19 +52,7 @@ public class GroupServiceImpl extends SkyeyeBusinessServiceImpl<GroupsDao, Group
             Integer groNumber = groupsInformation.getGroNumber();
             // 生成分组
             for (int i = 1; i <= groNumber; i++) {
-                Groups entity = new Groups();
-                entity.setGroupName("第" +i+ "组");
-                entity.setState("未解散");
-                entity.setGroupsInformationId(groupsInformation.getId());
-                //设置二维码
-                String imgPath = tPath.replace("images", StrUtil.EMPTY + entity.getGroupBarcode());
-                //生成分组编码
-                String code = ToolUtil.getFourWord();
-                entity.setGroupBarcode(code);
-                //生成分组二维码
-                String content = QRCodeLinkType.getJsonStrByType(QRCodeLinkType.STUDENT_CHECKWORK.getKey(),code);
-                String sourCodeLogo = QRCodeLogoUtil.encode(content,imgPath,tPath,true, FileConstants.FileUploadPath.SCHOOL_SUBJECT.getType()[0]);
-                entity.setGrCodeUrl(sourCodeLogo);
+                Groups entity = getGroups(groupsInformation,i);
                 groupsList.add(entity);
             }
             super.createEntity(groupsList, groupsInformation.getCreateId());
@@ -86,18 +62,7 @@ public class GroupServiceImpl extends SkyeyeBusinessServiceImpl<GroupsDao, Group
         if (status.equals(CommonNumConstants.NUM_ONE)){
             Integer groupsNumber = groupsInformation.getGroupsNumber();
             for(int i = 1; i <= groupsNumber; i++){
-                Groups entity = new Groups();
-                entity.setGroupName("第" +i+ "组");
-                entity.setState("未解散");
-                entity.setGroupsInformationId(groupsInformation.getId());
-                String imgPath = tPath.replace("images", StrUtil.EMPTY + entity.getGroupBarcode());
-                //生成分组编码
-                String code = ToolUtil.getFourWord();
-                entity.setGroupBarcode(code);
-                //生成分组二维码
-                String content = QRCodeLinkType.getJsonStrByType(QRCodeLinkType.STUDENT_CHECKWORK.getKey(),code);
-                String sourCodeLogo = QRCodeLogoUtil.encode(content,imgPath,tPath,true, FileConstants.FileUploadPath.SCHOOL_SUBJECT.getType()[0]);
-                entity.setGrCodeUrl(sourCodeLogo);
+                Groups entity = getGroups(groupsInformation,i);
                 entity.setGroupsInformationId(groupsInformation.getId());
                 groupsList.add(entity);
             }
@@ -105,6 +70,21 @@ public class GroupServiceImpl extends SkyeyeBusinessServiceImpl<GroupsDao, Group
             List<String> groupsIds = groupsList.stream().map(Groups::getId).collect(Collectors.toList());
             refreshCache(groupsIds);
         }
+    }
+
+    private Groups getGroups(GroupsInformation groupsInformation,int i){
+        Groups entity = new Groups();
+        entity.setGroupName("第" +i+ "组");
+        entity.setGroupsInformationId(groupsInformation.getId());
+        String imgPath = tPath.replace("images", StrUtil.EMPTY + entity.getGroupBarcode());
+        //生成分组编码
+        String code = ToolUtil.getFourWord();
+        entity.setGroupBarcode(code);
+        //生成分组二维码
+        String content = QRCodeLinkType.getJsonStrByType(QRCodeLinkType.STUDENT_CHECKWORK.getKey(),code);
+        String sourCodeLogo = QRCodeLogoUtil.encode(content,imgPath,tPath,true, FileConstants.FileUploadPath.SCHOOL_SUBJECT.getType()[0]);
+        entity.setGrCodeUrl(sourCodeLogo);
+        return entity;
     }
 
     @Override
@@ -134,7 +114,7 @@ public class GroupServiceImpl extends SkyeyeBusinessServiceImpl<GroupsDao, Group
     public void changeState(InputObject inputObject, OutputObject outputObject) {
         Map<String ,Object> map = inputObject.getParams();
         String id = map.get("id").toString();
-        String state = map.get("state").toString();
+        Integer state = (Integer) map.get("state");
         UpdateWrapper<Groups> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq(CommonConstants.ID,id);
         updateWrapper.set(MybatisPlusUtil.toColumns(Groups::getState),state);
