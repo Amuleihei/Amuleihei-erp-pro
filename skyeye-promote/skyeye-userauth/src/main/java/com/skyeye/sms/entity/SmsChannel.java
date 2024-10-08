@@ -8,11 +8,14 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.Map;
 
 /**
  * @ClassName: SmsChannel
@@ -32,6 +35,10 @@ public class SmsChannel extends BaseGeneralInfo {
     @TableField("code_num")
     @ApiModelProperty(value = "渠道编码，参考#SmsChannelEnum", required = "required", fuzzyLike = true)
     private String codeNum;
+
+    @TableField(exist = false)
+    @Property("渠道编码对应的信息")
+    private Map<String, Object> codeNumMation;
 
     @TableField("enabled")
     @ApiModelProperty(value = "状态，参考#EnableEnum枚举类", required = "required,num")

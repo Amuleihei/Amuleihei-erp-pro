@@ -18,6 +18,8 @@ import com.skyeye.common.entity.features.OperatorUserInfo;
 import com.skyeye.pay.core.PayClientConfig;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @ClassName: PayChannel
  * @Description: 支付渠道实体类
@@ -40,6 +42,10 @@ public class PayChannel extends OperatorUserInfo {
     @TableField("code_num")
     @ApiModelProperty(value = "渠道编码，参考#PayType", required = "required")
     private String codeNum;
+
+    @TableField(exist = false)
+    @Property("渠道编码对应的信息")
+    private Map<String, Object> codeNumMation;
 
     @TableField("enabled")
     @ApiModelProperty(value = "启用状态", required = "required")

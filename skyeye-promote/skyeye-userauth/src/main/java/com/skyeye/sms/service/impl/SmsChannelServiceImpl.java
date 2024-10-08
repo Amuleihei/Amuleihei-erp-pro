@@ -14,6 +14,7 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
+import com.skyeye.sms.classenum.SmsChannelEnum;
 import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.core.service.SmsClientFactory;
 import com.skyeye.sms.dao.SmsChannelDao;
@@ -61,6 +62,13 @@ public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelD
             smsClientFactory.createOrUpdateSmsClient(smsChannel);
         }
         return smsClientFactory.getSmsClientById(channelId);
+    }
+
+    @Override
+    public SmsChannel selectById(String id) {
+        SmsChannel smsChannel = super.selectById(id);
+        smsChannel.setCodeNumMation(SmsChannelEnum.getMation(smsChannel.getCodeNum()));
+        return smsChannel;
     }
 
     @Override
