@@ -9,10 +9,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.AreaInfo;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * @ClassName: ShopAddress
@@ -39,6 +42,14 @@ public class ShopAddress extends AreaInfo {
     @TableField("mobile")
     @ApiModelProperty(value = "手机号", required = "required")
     private String mobile;
+
+    @TableField(value = "label_id")
+    @ApiModelProperty(value = "地址标签id")
+    private String labelId;
+
+    @TableField(exist = false)
+    @Property(value = "地址标签id")
+    private Map<String, Object> labelMation;
 
     @TableField("is_default")
     @ApiModelProperty(value = "是否是默认地址，参考#WhetherEnum", required = "required,num")

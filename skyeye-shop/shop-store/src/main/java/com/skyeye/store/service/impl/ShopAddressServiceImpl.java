@@ -20,6 +20,8 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.service.IAreaService;
 import com.skyeye.store.dao.ShopAddressDao;
 import com.skyeye.store.entity.ShopAddress;
+import com.skyeye.store.entity.ShopAddressLabel;
+import com.skyeye.store.service.ShopAddressLabelService;
 import com.skyeye.store.service.ShopAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,9 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
 
     @Autowired
     private IAreaService iAreaService;
+
+    @Autowired
+    private ShopAddressLabelService shopAddressLabelService;
 
     @Override
     public void writePostpose(ShopAddress shopAddress, String userId) {
@@ -74,6 +79,7 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         iAreaService.setDataMation(one, ShopAddress::getCityId);
         iAreaService.setDataMation(one, ShopAddress::getAreaId);
         iAreaService.setDataMation(one, ShopAddress::getTownshipId);
+        shopAddressLabelService.setDataMation(one, ShopAddress::getLabelId);
         outputObject.setBean(one);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
@@ -91,6 +97,7 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         iAreaService.setDataMation(list, ShopAddress::getCityId);
         iAreaService.setDataMation(list, ShopAddress::getAreaId);
         iAreaService.setDataMation(list, ShopAddress::getTownshipId);
+        shopAddressLabelService.setDataMation(list, ShopAddress::getLabelId);
         return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
     }
 }
