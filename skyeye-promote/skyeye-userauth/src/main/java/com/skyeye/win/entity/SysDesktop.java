@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
-import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
@@ -45,7 +44,7 @@ public class SysDesktop extends OperatorUserInfo {
     private String appPageUrl;
 
     @TableField("order_by")
-    @Property(value = "序号")
+    @ApiModelProperty(value = "序号", required = "required,num")
     private Integer orderBy;
 
     @TableField("enabled")

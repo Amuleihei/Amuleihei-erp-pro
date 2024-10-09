@@ -30,46 +30,6 @@
 		ORDER BY a.order_by ASC
 	</select>
 	
-	<select id="querySysDesktopUpMationById" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.order_by thisOrderBy,
-			b.id,
-			b.order_by prevOrderBy
-		FROM
-			sys_eve_desktop a,
-			sys_eve_desktop b
-		WHERE
-			a.id = #{id}
-		AND a.order_by > b.order_by
-		AND a.delete_flag = 0
-	    AND b.delete_flag = 0
-		ORDER BY b.order_by DESC LIMIT 1
-	</select>
-	
-	<update id="editSysDesktopMationOrderNumUpById" parameterType="java.util.Map">
-		UPDATE sys_eve_desktop
-		<set>
-			order_by = #{upOrderBy},
-		</set>
-		WHERE id = #{id}
-	</update>
-
-	<select id="querySysDesktopDownMationById" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.order_by thisOrderBy,
-			b.id,
-			b.order_by prevOrderBy
-		FROM
-			sys_eve_desktop a,
-			sys_eve_desktop b
-		WHERE
-			a.id = #{id}
-		AND b.order_by > a.order_by
-		AND a.delete_flag = 0
-		AND b.delete_flag = 0
-		ORDER BY b.order_by ASC LIMIT 1
-	</select>
-	
     <select id="querySysDesktopStateAndMenuNumById" resultType="java.util.Map">
         SELECT
             a.enabled,
@@ -78,15 +38,5 @@
             sys_eve_desktop a	
         WHERE a.id = #{id}
     </select>
-
-	<select id="querySysEveDesktopMaxOrderBum" resultType="java.lang.Integer">
-		SELECT
-			(IFNULL(a.order_by, 0) + 1) orderBy
-		FROM
-			sys_eve_desktop a
-		WHERE a.delete_flag = 0
-		ORDER BY a.order_by DESC
-		LIMIT 1
-	</select>
 
 </mapper>

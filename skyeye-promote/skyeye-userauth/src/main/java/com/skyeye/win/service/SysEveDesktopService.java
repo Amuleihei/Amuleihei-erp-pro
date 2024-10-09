@@ -19,10 +19,6 @@ import com.skyeye.win.entity.SysDesktop;
  */
 public interface SysEveDesktopService extends SkyeyeBusinessService<SysDesktop> {
 
-    void editSysDesktopMationOrderNumUpById(InputObject inputObject, OutputObject outputObject);
-
-    void editSysDesktopMationOrderNumDownById(InputObject inputObject, OutputObject outputObject);
-
     void queryAllSysDesktopList(InputObject inputObject, OutputObject outputObject);
 
 }
