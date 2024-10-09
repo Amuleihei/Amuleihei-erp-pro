@@ -21,8 +21,6 @@ import com.skyeye.win.service.SysEveDesktopService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -69,66 +67,10 @@ public class SysEveDesktopServiceImpl extends SkyeyeBusinessServiceImpl<SysEveDe
     }
 
     @Override
-    protected void createPrepose(SysDesktop entity) {
-        Integer nextOrderBy = sysEveDesktopDao.querySysEveDesktopMaxOrderBum();
-        entity.setOrderBy(nextOrderBy);
-    }
-
-    @Override
     protected void deletePreExecution(String id) {
         Map<String, Object> bean = sysEveDesktopDao.querySysDesktopStateAndMenuNumById(id);
         if (!"0".equals(bean.get("allNum").toString())) {
             throw new CustomException("该桌面下包含有子菜单，无法删除.");
-        }
-    }
-
-    /**
-     * 桌面上移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editSysDesktopMationOrderNumUpById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 获取上一条数据
-        Map<String, Object> bean = sysEveDesktopDao.querySysDesktopUpMationById(map);
-        if (CollectionUtils.isEmpty(bean)) {
-            outputObject.setreturnMessage("当前桌面名称已经是首位，无须进行上移。");
-        } else {
-            // 进行位置交换
-            map.put("upOrderBy", bean.get("prevOrderBy"));
-            bean.put("upOrderBy", bean.get("thisOrderBy"));
-            sysEveDesktopDao.editSysDesktopMationOrderNumUpById(map);
-            sysEveDesktopDao.editSysDesktopMationOrderNumUpById(bean);
-            refreshCache(map.get("id").toString());
-            refreshCache(bean.get("id").toString());
-        }
-    }
-
-    /**
-     * 桌面下移
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editSysDesktopMationOrderNumDownById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        // 获取下一条数据
-        Map<String, Object> bean = sysEveDesktopDao.querySysDesktopDownMationById(map);
-        if (CollectionUtils.isEmpty(bean)) {
-            outputObject.setreturnMessage("当前桌面名称已经是末位，无须进行下移。");
-        } else {
-            //进行位置交换
-            map.put("upOrderBy", bean.get("prevOrderBy"));
-            bean.put("upOrderBy", bean.get("thisOrderBy"));
-            sysEveDesktopDao.editSysDesktopMationOrderNumUpById(map);
-            sysEveDesktopDao.editSysDesktopMationOrderNumUpById(bean);
-            refreshCache(map.get("id").toString());
-            refreshCache(bean.get("id").toString());
         }
     }
 

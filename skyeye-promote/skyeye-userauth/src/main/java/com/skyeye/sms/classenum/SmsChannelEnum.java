@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @ClassName: SmsChannelEnum
  * @Description: 短信渠道枚举
@@ -23,10 +26,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum SmsChannelEnum implements SkyeyeEnumClass {
 
-    DEBUG_DING_TALK("DEBUG_DING_TALK", "调试(钉钉)", true, false),
-    ALIYUN("ALIYUN", "阿里云", true, false),
-    TENCENT("TENCENT", "腾讯云", true, false),
-    HUAWEI("HUAWEI", "华为云", true, false);
+    DEBUG_DING_TALK("debug_ding_talk", "调试(钉钉)", true, false),
+    ALIYUN("aliyun", "阿里云", true, true),
+    TENCENT("tencent", "腾讯云", true, false),
+    HUAWEI("huawei", "华为云", true, false);
 
     private String key;
 
@@ -38,6 +41,14 @@ public enum SmsChannelEnum implements SkyeyeEnumClass {
 
     public static SmsChannelEnum getByCode(String code) {
         return ArrayUtil.firstMatch(o -> o.getKey().equals(code), values());
+    }
+
+    public static Map<String, Object> getMation(String code) {
+        SmsChannelEnum type = getByCode(code);
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", type.getKey());
+        result.put("name", type.getValue());
+        return result;
     }
 
 }

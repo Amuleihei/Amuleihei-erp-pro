@@ -14,6 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @ClassName: PayType
  * @Description: 付款类型
@@ -60,6 +63,14 @@ public enum PayType implements SkyeyeEnumClass {
 
     public static boolean isAlipay(String channelCode) {
         return channelCode != null && channelCode.startsWith("alipay");
+    }
+
+    public static Map<String, Object> getMation(String code) {
+        PayType type = getByCode(code);
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", type.getKey());
+        result.put("name", type.getValue());
+        return result;
     }
 
 }

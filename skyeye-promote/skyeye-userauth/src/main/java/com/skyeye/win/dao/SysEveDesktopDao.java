@@ -24,13 +24,6 @@ public interface SysEveDesktopDao extends SkyeyeBaseMapper<SysDesktop> {
 
     List<Map<String, Object>> querySysDesktopList(CommonPageInfo commonPageInfo);
 
-    Map<String, Object> querySysDesktopUpMationById(Map<String, Object> map);
-
-    int editSysDesktopMationOrderNumUpById(Map<String, Object> map);
-
-    Map<String, Object> querySysDesktopDownMationById(Map<String, Object> map);
-
     Map<String, Object> querySysDesktopStateAndMenuNumById(@Param("id") String id);
 
-    Integer querySysEveDesktopMaxOrderBum();
 }

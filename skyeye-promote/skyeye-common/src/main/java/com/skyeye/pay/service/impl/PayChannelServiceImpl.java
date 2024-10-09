@@ -60,6 +60,7 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
     public PayChannel selectById(String id) {
         PayChannel payChannel = super.selectById(id);
         payAppService.setDataMation(payChannel, PayChannel::getAppId);
+        payChannel.setCodeNumMation(PayType.getMation(payChannel.getCodeNum()));
         return payChannel;
     }
 
