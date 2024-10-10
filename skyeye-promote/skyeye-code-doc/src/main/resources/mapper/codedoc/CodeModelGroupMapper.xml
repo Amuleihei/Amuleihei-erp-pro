@@ -2,96 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.skyeye.eve.dao.CodeModelGroupDao">
 	
-	<select id="queryCodeModelGroupList" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.group_name groupName,
-			a.group_num groupNum,
-			a.group_desc groupDesc,
-			a.create_id createId,
-			CONVERT(a.create_time, char) createTime,
-			a.last_update_id lastUpdateId,
-			CONVERT(a.last_update_time, char) lastUpdateTime,
-			(SELECT COUNT(*) FROM code_model b WHERE b.group_id = a.id) modelNum,
-			(SELECT COUNT(*) FROM (SELECT COUNT(*), c.group_id FROM code_model_history c GROUP BY c.file_path) d WHERE d.group_id = a.id) useNum
-		FROM
-			code_model_group a
-		<where>
-			<if test="groupName != '' and groupName != null">
-				AND a.group_name LIKE '%${groupName}%'
-			</if>
-			<if test="groupNum != '' and groupNum != null">
-				AND a.group_num LIKE '%${groupNum}%'
-			</if>
-		</where>
-		ORDER BY a.create_time DESC
-	</select>
-	
-	<select id="queryCodeModelGroupMationByName" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.group_name groupName
-		FROM
-			code_model_group a
-		WHERE a.group_name = #{groupName}
-	</select>
-	
-	<insert id="insertCodeModelGroupMation" parameterType="java.util.Map">
-	     INSERT into code_model_group 
-	     (id, group_name, group_num, group_desc,
-	      create_id, create_time, last_update_id, last_update_time)
-	     VALUES
-	     (#{id}, #{groupName}, #{groupNum}, #{groupDesc},
-	      #{createId}, #{createTime}, #{createId}, #{createTime})
-	</insert>
-	
-	<select id="queryCodeModelNumById" parameterType="java.util.Map" resultType="java.util.Map">
+	<select id="queryCodeModelNumById" resultType="java.util.Map">
 		SELECT 
 			COUNT(*) modelNum
 		FROM 
 			code_model b 
-		WHERE b.group_id = #{id}
+		WHERE b.group_id = #{groupId}
 	</select>
-	
-	<delete id="deleteCodeModelGroupById" parameterType="java.util.Map">
-		DELETE
-		FROM
-			code_model_group
-		WHERE id = #{id}
-	</delete>
-	
-	<select id="queryCodeModelGroupMationToEditById" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.group_name groupName,
-			a.group_desc groupDesc
-		FROM
-			code_model_group a
-		WHERE a.id = #{id}
-	</select>
-	
-	<select id="queryCodeModelGroupMationByIdAndName" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT
-			a.id,
-			a.group_name groupName
-		FROM
-			code_model_group a
-		WHERE a.id != #{id}
-		AND a.group_name = #{groupName}
-	</select>
-	
-	<update id="editCodeModelGroupMationById" parameterType="java.util.Map">
-		UPDATE code_model_group
-		<set>
-			<if test="groupName != '' and groupName != null">
-				group_name = #{groupName},
-			</if>
-			group_desc = #{groupDesc},
-			last_update_id = #{lastUpdateId},
-			last_update_time = #{lastUpdateTime}
-		</set>
-		WHERE id = #{id}
-	</update>
 	
 	<select id="queryTableParameterByTableName" parameterType="java.util.Map" resultType="java.util.Map">
 		SELECT

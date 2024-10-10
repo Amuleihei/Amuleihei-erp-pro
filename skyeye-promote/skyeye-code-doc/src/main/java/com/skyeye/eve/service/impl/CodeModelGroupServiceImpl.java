@@ -4,23 +4,20 @@
 
 package com.skyeye.eve.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.skyeye.common.constans.CommonNumConstants;
+import cn.hutool.core.collection.CollectionUtil;
+import com.skyeye.annotation.service.SkyeyeService;
+import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.common.util.DataCommonUtil;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.ToolUtil;
 import com.skyeye.eve.dao.CodeModelGroupDao;
-import com.skyeye.eve.entity.codedoc.group.CodeModelGroupQueryDo;
+import com.skyeye.eve.entity.CodeModelGroup;
 import com.skyeye.eve.service.CodeModelGroupService;
-import com.skyeye.eve.service.IAuthUserService;
+import com.skyeye.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +32,8 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-public class CodeModelGroupServiceImpl implements CodeModelGroupService {
+@SkyeyeService(name = "模板分组", groupName = "代码生成器")
+public class CodeModelGroupServiceImpl extends SkyeyeBusinessServiceImpl<CodeModelGroupDao, CodeModelGroup> implements CodeModelGroupService {
 
     @Autowired
     private CodeModelGroupDao codeModelGroupDao;
@@ -43,101 +41,19 @@ public class CodeModelGroupServiceImpl implements CodeModelGroupService {
     @Value("${jdbc.database.name}")
     private String dbName;
 
-    @Autowired
-    private IAuthUserService iAuthUserService;
-
-    /**
-     * 获取模板分组列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    public void queryCodeModelGroupList(InputObject inputObject, OutputObject outputObject) {
-        CodeModelGroupQueryDo codeModelGroupQuery = inputObject.getParams(CodeModelGroupQueryDo.class);
-        Page pages = PageHelper.startPage(codeModelGroupQuery.getPage(), codeModelGroupQuery.getLimit());
-        List<Map<String, Object>> beans = codeModelGroupDao.queryCodeModelGroupList(codeModelGroupQuery);
-        iAuthUserService.setNameForMap(beans, "createId", "createName");
-        iAuthUserService.setNameForMap(beans, "lastUpdateId", "lastUpdateName");
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
+    public void createPrepose(CodeModelGroup entity) {
+        entity.setCodeNum(String.valueOf(ToolUtil.card()));
     }
 
-    /**
-     * 新增模板分组列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void insertCodeModelGroupMation(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> checkBean = codeModelGroupDao.queryCodeModelGroupMationByName(map);
-        if (CollectionUtils.isEmpty(checkBean)) {
-            DataCommonUtil.setCommonData(map, inputObject.getLogParams().get("id").toString());
-            map.put("groupNum", ToolUtil.card());
-            codeModelGroupDao.insertCodeModelGroupMation(map);
-        } else {
-            outputObject.setreturnMessage("该模板分组已存在，请更换。");
-        }
-    }
-
-    /**
-     * 删除模板分组信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void deleteCodeModelGroupById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = codeModelGroupDao.queryCodeModelNumById(map);
-        if (CollectionUtils.isEmpty(bean)) {
-            codeModelGroupDao.deleteCodeModelGroupById(map);
-        } else {
-            if (Integer.parseInt(bean.get("modelNum").toString()) == 0) {
-                // 该模板分组下没有模板
-                codeModelGroupDao.deleteCodeModelGroupById(map);
-            } else {
-                outputObject.setreturnMessage("该模板分组下存在模板，无法删除。");
+    public void deletePreExecution(String id) {
+        Map<String, Object> bean = codeModelGroupDao.queryCodeModelNumById(id);
+        if (CollectionUtil.isNotEmpty(bean)) {
+            if (Integer.parseInt(bean.get("modelNum").toString()) > 0) {
+                // 该模板分组下存在模板
+                throw new CustomException("该模板分组下存在模板，无法删除。");
             }
-        }
-    }
-
-    /**
-     * 编辑模板分组信息时进行回显
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void queryCodeModelGroupMationToEditById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = codeModelGroupDao.queryCodeModelGroupMationToEditById(map);
-        outputObject.setBean(bean);
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
-    }
-
-    /**
-     * 编辑模板分组信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
-    public void editCodeModelGroupMationById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        Map<String, Object> bean = codeModelGroupDao.queryCodeModelGroupMationByIdAndName(map);
-        if (CollectionUtils.isEmpty(bean)) {
-            Map<String, Object> user = inputObject.getLogParams();
-            map.put("lastUpdateId", user.get("id"));
-            map.put("lastUpdateTime", DateUtil.getTimeAndToString());
-            codeModelGroupDao.editCodeModelGroupMationById(map);
-        } else {
-            outputObject.setreturnMessage("该模板分组已存在，请更换。");
         }
     }
 
