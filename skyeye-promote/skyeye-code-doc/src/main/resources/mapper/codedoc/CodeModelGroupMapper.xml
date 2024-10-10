@@ -38,6 +38,7 @@
 			a.model_name modelName,
 			a.model_content modelContent,
 			a.model_text modelText,
+			a.group_id groupId,
 			a.model_type modelType,
 			CONVERT(a.create_time, char) createTime
 		FROM
