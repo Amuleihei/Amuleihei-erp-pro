@@ -211,7 +211,8 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
             .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
             .innerJoin(Brand.class, Brand::getId, Material::getBrandId)
-            .eq(Brand::getEnabled, EnableEnum.ENABLE_USING.getKey());
+            .eq(Brand::getEnabled, EnableEnum.ENABLE_USING.getKey())
+            .in(Material::getShelvesState, Arrays.asList(MaterialShelvesState.ON_SHELVE.getKey(), MaterialShelvesState.PART_ON_SHELVE.getKey()));
         List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
         // 根据id批量查询详细的商品信息
         List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
