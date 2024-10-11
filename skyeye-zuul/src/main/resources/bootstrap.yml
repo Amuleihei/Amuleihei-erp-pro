@@ -131,6 +131,12 @@ spring:
             - Path=/${spring.profiles.active}/tms/**
           filters:
             - StripPrefix=2
+        - id: project
+          uri: lb://skyeye-project-${spring.profiles.active}
+          predicates:
+            - Path=/${spring.profiles.active}/project/**
+          filters:
+            - StripPrefix=2
 logging:
   level:
     com: debug
