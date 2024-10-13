@@ -5,15 +5,18 @@
 package com.skyeye.sms.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
+import com.skyeye.pay.entity.PayApp;
 import com.skyeye.sms.classenum.SmsChannelEnum;
 import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.core.service.SmsClientFactory;
@@ -24,7 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: SmsChannelServiceImpl
@@ -54,6 +59,15 @@ public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelD
             throw new CustomException("渠道编码已存在.");
         }
     }
+
+    @Override
+    protected List<Map<String, Object>> queryDataList(InputObject inputObject) {
+        QueryWrapper<SmsChannel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SmsChannel::getEnabled), CommonNumConstants.NUM_ONE);
+        List<SmsChannel> list = list(queryWrapper);
+        return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
+    }
+
 
     @Override
     public SmsClient getSmsClientById(String channelId) {
