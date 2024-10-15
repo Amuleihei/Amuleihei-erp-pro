@@ -676,8 +676,8 @@ public class MachinServiceImpl extends SkyeyeFlowableServiceImpl<MachinDao, Mach
                 List<BomChild> bomChildList = new ArrayList<>(bom.getBomChildList());
                 bomChildList.forEach(bomChild -> {
                     // 计算需要的原材料数量 = 订单数量 / bom方案制造的数量 * bom子项的需求数量
-                    String divide = CalculationUtil.divide(String.valueOf(machinChild.getOperNumber()), String.valueOf(bom.getMakeNum()));
-                    divide = CalculationUtil.multiply(divide, String.valueOf(bomChild.getNeedNum()));
+                    String divide = CalculationUtil.divide(String.valueOf(machinChild.getOperNumber()), String.valueOf(bom.getMakeNum()), CommonNumConstants.NUM_TWO);
+                    divide = CalculationUtil.multiply(divide, String.valueOf(bomChild.getNeedNum()), CommonNumConstants.NUM_ZERO);
                     bomChild.setNeedNum(Integer.parseInt(divide));
                 });
                 needRawMaterial.addAll(bomChildList);
