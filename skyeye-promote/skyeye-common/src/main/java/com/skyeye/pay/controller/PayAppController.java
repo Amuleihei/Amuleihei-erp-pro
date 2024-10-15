@@ -51,9 +51,9 @@ public class PayAppController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryAllEnabledList", value = "获取全部已启用的支付应用信息", method = "POST", allUse = "2")
-    @RequestMapping("/post/PayAppController/updateEnabled")
-    public void queryAllEnabledList(InputObject inputObject, OutputObject outputObject) {
+    @ApiOperation(id = "queryAllEnabledPayAppList", value = "获取全部已启用的支付应用信息", method = "POST", allUse = "2")
+    @RequestMapping("/post/PayAppController/queryAllEnabledPayAppList")
+    public void queryAllEnabledPayAppList(InputObject inputObject, OutputObject outputObject) {
         payAppService.queryList(inputObject, outputObject);
     }
 
