@@ -89,6 +89,7 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<ShopAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopAddress::getCreateId), userId);
+        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopAddress::getCreateTime));
         List<ShopAddress> list = list(queryWrapper);
         if (CollectionUtil.isEmpty(list)) {
             return new ArrayList<>();
