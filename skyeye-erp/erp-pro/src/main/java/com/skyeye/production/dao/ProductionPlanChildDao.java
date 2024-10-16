@@ -9,7 +9,7 @@ import com.skyeye.production.entity.ProductionPlanChild;
 
 /**
  * @ClassName: ProductionPlanChildDao
- * @Description: 预生产计划单子单据数据接口层
+ * @Description: 出货计划单子单据数据接口层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:36
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.

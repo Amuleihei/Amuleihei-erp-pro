@@ -159,12 +159,12 @@ public class SalesOrderController {
     }
 
     /**
-     * 转预生产计划单时，根据id查询销售订单信息
+     * 转出货计划单时，根据id查询销售订单信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "querySealsOrderTransProductionPlanById", value = "转预生产计划单时，根据id查询销售订单信息", method = "GET", allUse = "2")
+    @ApiOperation(id = "querySealsOrderTransProductionPlanById", value = "转出货计划单时，根据id查询销售订单信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/SalesOrderController/querySealsOrderTransProductionPlanById")
@@ -173,12 +173,12 @@ public class SalesOrderController {
     }
 
     /**
-     * 销售订单转预生产计划单
+     * 销售订单转出货计划单
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "insertSealsOrderToProductionPlan", value = "销售订单转预生产计划单", method = "POST", allUse = "1")
+    @ApiOperation(id = "insertSealsOrderToProductionPlan", value = "销售订单转出货计划单", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = ProductionPlan.class, value = {
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/SalesOrderController/insertSealsOrderToProductionPlan")

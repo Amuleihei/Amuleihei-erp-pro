@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * @ClassName: ProductionPlanService
- * @Description: 预生产计划单服务接口层
+ * @Description: 出货计划单服务接口层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:29
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.

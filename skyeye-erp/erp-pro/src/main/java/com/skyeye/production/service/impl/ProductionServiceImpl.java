@@ -141,7 +141,7 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
         materialService.setDataMation(production.getProductionChildList(), ProductionChild::getMaterialId);
         materialNormsService.setDataMation(production.getProductionChildList(), ProductionChild::getNormsId);
         if (production.getFromTypeId() == ProductionFromType.PRODUCTION_PLAN.getKey()) {
-            // 预生产计划单
+            // 出货计划单
             productionPlanService.setDataMation(production, Production::getFromId);
         }
         // 获取规格对应的所有bom信息
@@ -217,21 +217,21 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
         Map<String, Integer> executeNum = calcMaterialNormsNumByFromId(entity.getFromId());
         List<String> inSqlNormsId = new ArrayList<>(executeNum.keySet());
         if (entity.getFromTypeId() == ProductionFromType.PRODUCTION_PLAN.getKey()) {
-            // 预生产计划单
+            // 出货计划单
             ProductionPlan productionPlan = productionPlanService.selectById(entity.getFromId());
             List<String> fromNormsIds = productionPlan.getProductionPlanChildList().stream()
                 .map(ProductionPlanChild::getNormsId).collect(Collectors.toList());
-            // 求差集(预生产计划单不包含的商品)
+            // 求差集(出货计划单不包含的商品)
             List<String> diffList = inSqlNormsId.stream()
                 .filter(num -> !fromNormsIds.contains(num)).collect(Collectors.toList());
             if (CollectionUtil.isNotEmpty(diffList)) {
                 List<MaterialNorms> materialNormsList = materialNormsService.selectByIds(diffList.toArray(new String[]{}));
                 List<String> normsNames = materialNormsList.stream().map(MaterialNorms::getName).collect(Collectors.toList());
-                throw new CustomException(String.format(Locale.ROOT, "该预生产计划单下未包含如下商品规格：【%s】.",
+                throw new CustomException(String.format(Locale.ROOT, "该出货计划单下未包含如下商品规格：【%s】.",
                     Joiner.on(CommonCharConstants.COMMA_MARK).join(normsNames)));
             }
             productionPlan.getProductionPlanChildList().forEach(productionPlanChild -> {
-                // 预生产计划单数量 - 当前生产计划单数量 - 已经审批通过的生产计划单数量
+                // 出货计划单数量 - 当前生产计划单数量 - 已经审批通过的生产计划单数量
                 Integer surplusNum = ErpOrderUtil.checkOperNumber(productionPlanChild.getOperNumber(), productionPlanChild.getNormsId(),
                     orderNormsNum, executeNum);
                 if (setData) {
@@ -242,7 +242,7 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
                 // 过滤掉剩余数量为0的商品
                 List<ProductionPlanChild> list = productionPlan.getProductionPlanChildList().stream()
                     .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList());
-                // 该预生产计划单的商品已经全部下达了生产计划单
+                // 该出货计划单的商品已经全部下达了生产计划单
                 if (CollectionUtil.isEmpty(list)) {
                     productionPlanService.editStateById(productionPlan.getId(), ErpOrderStateEnum.COMPLETED.getKey());
                 } else {

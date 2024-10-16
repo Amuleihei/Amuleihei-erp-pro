@@ -47,14 +47,14 @@ import java.util.stream.Collectors;
 
 /**
  * @ClassName: ProductionPlanServiceImpl
- * @Description: 预生产计划单服务层
+ * @Description: 出货计划单服务层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:30
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService(name = "预生产计划单", groupName = "预生产计划单", flowable = true)
+@SkyeyeService(name = "出货计划单", groupName = "出货计划单", flowable = true)
 public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<ProductionPlanDao, ProductionPlan> implements ProductionPlanService {
 
     @Autowired
@@ -161,10 +161,10 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
         if (StrUtil.isEmpty(entity.getFromId())) {
             return;
         }
-        // 当前预生产计划单的商品数量
+        // 当前出货计划单的商品数量
         Map<String, Integer> orderNormsNum = entity.getProductionPlanChildList().stream()
             .collect(Collectors.toMap(ProductionPlanChild::getNormsId, ProductionPlanChild::getOperNumber));
-        // 获取同一个来源单据下已经审批通过的预生产计划单的商品信息
+        // 获取同一个来源单据下已经审批通过的出货计划单的商品信息
         Map<String, Integer> executeNum = calcMaterialNormsNumByFromId(entity.getFromId());
         List<String> inSqlNormsId = new ArrayList<>(executeNum.keySet());
         if (entity.getFromTypeId() == ProductionPlanFromType.SEAL_ORDER.getKey()) {
@@ -182,7 +182,7 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
                     Joiner.on(CommonCharConstants.COMMA_MARK).join(normsNames)));
             }
             salesOrder.getErpOrderItemList().forEach(erpOrderItem -> {
-                // 销售订单数量 - 当前预生产计划单数量 - 已经审批通过的预生产计划单数量
+                // 销售订单数量 - 当前出货计划单数量 - 已经审批通过的出货计划单数量
                 Integer surplusNum = erpOrderItem.getOperNumber()
                     - (orderNormsNum.containsKey(erpOrderItem.getNormsId()) ? orderNormsNum.get(erpOrderItem.getNormsId()) : 0)
                     - (executeNum.containsKey(erpOrderItem.getNormsId()) ? executeNum.get(erpOrderItem.getNormsId()) : 0);
@@ -194,7 +194,7 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
                 }
             });
             if (setData) {
-                // 该销售订单的商品是否已经全部下达了预生产计划单-----目前先不做任何操作
+                // 该销售订单的商品是否已经全部下达了出货计划单-----目前先不做任何操作
             }
         }
     }
@@ -256,7 +256,7 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
     @Override
     public void insertProductionPlanToProduction(InputObject inputObject, OutputObject outputObject) {
         Production production = inputObject.getParams(Production.class);
-        // 获取预生产计划单状态
+        // 获取出货计划单状态
         ProductionPlan order = selectById(production.getId());
         if (ObjectUtil.isEmpty(order)) {
             throw new CustomException("该数据不存在.");

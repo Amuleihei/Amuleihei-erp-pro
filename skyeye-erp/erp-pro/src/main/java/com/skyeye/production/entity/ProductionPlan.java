@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * @ClassName: ProductionPlan
- * @Description: 预生产计划单
+ * @Description: 出货计划单
  * @author: skyeye云系列--卫志强
  * @date: 2023/3/29 10:53
  * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -30,7 +30,7 @@ import java.util.Map;
 @Data
 @RedisCacheField(name = CacheConstants.MES_PRODUCTION_PLAN_CACHE_KEY, cacheTime = RedisConstants.HALF_A_YEAR_SECONDS)
 @TableName(value = "erp_production_plan_head", autoResultMap = true)
-@ApiModel("预生产计划单实体类")
+@ApiModel("出货计划单实体类")
 public class ProductionPlan extends SkyeyeFlowable {
 
     @TableField(value = "from_type_id", updateStrategy = FieldStrategy.NEVER)

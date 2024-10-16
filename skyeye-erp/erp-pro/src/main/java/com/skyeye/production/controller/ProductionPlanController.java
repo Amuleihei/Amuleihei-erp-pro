@@ -20,26 +20,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @ClassName: ProductionPlanController
- * @Description: 预生产计划单控制层
+ * @Description: 出货计划单控制层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:31
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "预生产计划单", tags = "预生产计划单", modelName = "预生产计划单")
+@Api(value = "出货计划单", tags = "出货计划单", modelName = "出货计划单")
 public class ProductionPlanController {
 
     @Autowired
     private ProductionPlanService productionPlanService;
 
     /**
-     * 获取预生产计划单信息列表
+     * 获取出货计划单信息列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryProductionPlanList", value = "获取预生产计划单信息列表", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryProductionPlanList", value = "获取出货计划单信息列表", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ProductionPlanController/queryProductionPlanList")
     public void queryProductionPlanList(InputObject inputObject, OutputObject outputObject) {
@@ -47,12 +47,12 @@ public class ProductionPlanController {
     }
 
     /**
-     * 新增/编辑预生产计划单
+     * 新增/编辑出货计划单
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "writeProductionPlan", value = "新增/编辑预生产计划单", method = "POST", allUse = "1")
+    @ApiOperation(id = "writeProductionPlan", value = "新增/编辑出货计划单", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = ProductionPlan.class)
     @RequestMapping("/post/ProductionPlanController/writeProductionPlan")
     public void writeProductionPlan(InputObject inputObject, OutputObject outputObject) {
@@ -75,12 +75,12 @@ public class ProductionPlanController {
     }
 
     /**
-     * 删除预生产计划单
+     * 删除出货计划单
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deleteProductionPlan", value = "删除预生产计划单", method = "DELETE", allUse = "1")
+    @ApiOperation(id = "deleteProductionPlan", value = "删除出货计划单", method = "DELETE", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/ProductionPlanController/deleteProductionPlan")
@@ -89,12 +89,12 @@ public class ProductionPlanController {
     }
 
     /**
-     * 撤销预生产计划单
+     * 撤销出货计划单
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "revokeProductionPlan", value = "撤销预生产计划单", method = "PUT", allUse = "1")
+    @ApiOperation(id = "revokeProductionPlan", value = "撤销出货计划单", method = "PUT", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "processInstanceId", name = "processInstanceId", value = "流程实例id", required = "required")})
     @RequestMapping("/post/ProductionPlanController/revoke")
@@ -103,12 +103,12 @@ public class ProductionPlanController {
     }
 
     /**
-     * 转生产计划单时，根据id查询预生产计划单信息
+     * 转生产计划单时，根据id查询出货计划单信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryProductionPlanTransById", value = "转生产计划单时，根据id查询预生产计划单信息", method = "GET", allUse = "2")
+    @ApiOperation(id = "queryProductionPlanTransById", value = "转生产计划单时，根据id查询出货计划单信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/ProductionPlanController/queryProductionPlanTransById")
@@ -117,12 +117,12 @@ public class ProductionPlanController {
     }
 
     /**
-     * 预生产计划单转生产计划单
+     * 出货计划单转生产计划单
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "insertProductionPlanToProduction", value = "预生产计划单转生产计划单", method = "POST", allUse = "1")
+    @ApiOperation(id = "insertProductionPlanToProduction", value = "出货计划单转生产计划单", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = Production.class, value = {
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/ProductionPlanController/insertProductionPlanToProduction")

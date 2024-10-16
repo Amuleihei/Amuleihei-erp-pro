@@ -22,7 +22,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum PurchaseOrderFromType implements SkyeyeEnumClass {
 
-    SUPPLIER_CONTRACT(1, "采购合同", true, false);
+    SUPPLIER_CONTRACT(1, "采购合同", true, false),
+    DELIVERY_PLAN(2, "出货计划", true, false);
 
     private Integer key;
 
