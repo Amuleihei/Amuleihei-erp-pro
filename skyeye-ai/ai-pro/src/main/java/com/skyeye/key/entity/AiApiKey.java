@@ -9,8 +9,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.role.entity.Role;
 import lombok.Data;
 
 /**
@@ -62,4 +64,8 @@ public class AiApiKey extends OperatorUserInfo {
     @TableField(value = "`role_id`")
     @ApiModelProperty(value = "角色id")
     private String roleId;
+
+    @TableField(exist = false)
+    @Property("AI角色")
+    private Role roleMation;
 }

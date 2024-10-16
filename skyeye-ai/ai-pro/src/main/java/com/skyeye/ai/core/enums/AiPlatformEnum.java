@@ -24,7 +24,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum AiPlatformEnum implements SkyeyeEnumClass {
 
-    YI_YAN("YiYan", "文心一言", "百度", true, false);
+    YI_YAN("YiYan", "文心一言", "百度", true, false),
+    XUN_FEI("XunFei", "讯飞星火", "讯飞", true, false),
+    DEEP_SEEK("DeepSeek","DeepSeek","豆包", true, false),
+    TONG_YI("TongYi","通义千问","阿里", true, false),
+    ZHI_PU("ZhiPu","智普","智普AI", true, false),;
 
     private String key;
 
@@ -39,6 +43,15 @@ public enum AiPlatformEnum implements SkyeyeEnumClass {
     public static AiPlatformEnum getName(String key) {
         for (AiPlatformEnum bean : AiPlatformEnum.values()) {
             if (StrUtil.equals(key, bean.getKey())) {
+                return bean;
+            }
+        }
+        throw new CustomException("非法的AI平台状态");
+    }
+
+    public static AiPlatformEnum getValue(String value) {
+        for (AiPlatformEnum bean : AiPlatformEnum.values()) {
+            if (StrUtil.equals(value, bean.getValue())) {
                 return bean;
             }
         }

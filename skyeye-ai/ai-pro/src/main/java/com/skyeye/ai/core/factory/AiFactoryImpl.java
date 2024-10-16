@@ -8,12 +8,16 @@ import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.func.Func0;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.dashscope.aigc.generation.Generation;
 import com.baidubce.qianfan.Qianfan;
 import com.baidubce.qianfan.core.auth.Auth;
 import com.skyeye.ai.core.config.SkyeyeAiProperties;
 import com.skyeye.ai.core.enums.AiPlatformEnum;
 import com.skyeye.exception.CustomException;
+import com.zhipu.oapi.ClientV4;
+import io.github.briqt.spark4j.SparkClient;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * @ClassName: AiFactoryImpl
@@ -35,6 +39,18 @@ public class AiFactoryImpl implements AiFactory {
             switch (platform) {
                 case YI_YAN:
                     return buildYiYanChatModel(apiKey, secretKey);
+                case XUN_FEI:
+                    return buildXunFeiClient(
+                            skyeyeAiProperties.getXunfei().getAppId(),apiKey,secretKey);
+                case DEEP_SEEK:
+                    // todo deepseek AI
+                    return null;
+                case TONG_YI:
+                    return buildTongYiChatClient();
+                case ZHI_PU:
+                    // todo ZhiPu AI
+                    return buildZhiPuChatClient(skyeyeAiProperties.getZhiPu().getApiKey(),
+                            skyeyeAiProperties.getZhiPu().getSecretKey());
                 default:
                     throw new IllegalArgumentException(StrUtil.format("未知平台({})", platform));
             }
@@ -43,7 +59,36 @@ public class AiFactoryImpl implements AiFactory {
 
     @Override
     public Object getDefaultChatModel(AiPlatformEnum platform) {
-        return getOrCreateChatModel(platform, skyeyeAiProperties.getQianfan().getApiKey(), skyeyeAiProperties.getQianfan().getSecretKey(), null);
+        switch (platform) {
+            case YI_YAN:
+                return getOrCreateChatModel(platform,
+                        skyeyeAiProperties.getQianfan().getApiKey(),
+                        skyeyeAiProperties.getQianfan().getSecretKey(),
+                        null);
+            case XUN_FEI:
+                return getOrCreateChatModel(platform,
+                        skyeyeAiProperties.getXunfei().getApiKey(),
+                        skyeyeAiProperties.getXunfei().getSecretKey(),
+                        null);
+            case DEEP_SEEK:
+                return getOrCreateChatModel(platform,
+                        skyeyeAiProperties.getDeepSeek().getApiKey(),
+                        skyeyeAiProperties.getDeepSeek().getSecretKey(),
+                        skyeyeAiProperties.getDeepSeek().getUrl());
+            case TONG_YI:
+                return  getOrCreateChatModel(platform,
+                        skyeyeAiProperties.getTongYi().getApiKey(),
+                        skyeyeAiProperties.getTongYi().getSecretKey(),
+                        null);
+            case ZHI_PU:
+                return getOrCreateChatModel(platform,
+                        skyeyeAiProperties.getZhiPu().getApiKey(),
+                        skyeyeAiProperties.getZhiPu().getSecretKey(),
+                        skyeyeAiProperties.getZhiPu().getUrl());
+            default:
+                return null;
+        }
+//        return getOrCreateChatModel(platform, skyeyeAiProperties.getQianfan().getApiKey(), skyeyeAiProperties.getQianfan().getSecretKey(), null);
     }
 
     @Override
@@ -79,4 +124,20 @@ public class AiFactoryImpl implements AiFactory {
         return qianFanApi;
     }
 
+    private static SparkClient buildXunFeiClient(String appId, String apiKey, String secretKey) {
+        SparkClient xunFeiApi = new SparkClient();
+        xunFeiApi.appid = appId;
+        xunFeiApi.apiKey = apiKey;
+        xunFeiApi.apiSecret = secretKey;
+        return xunFeiApi;
+    }
+
+
+    private static Generation buildTongYiChatClient() {
+        return new Generation();
+    }
+
+    private static ClientV4 buildZhiPuChatClient(String apiKey,String secretKey) {
+        return new ClientV4.Builder(apiKey,secretKey).build();
+    }
 }

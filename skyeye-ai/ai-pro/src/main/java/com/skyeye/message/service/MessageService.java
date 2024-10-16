@@ -4,8 +4,13 @@
 
 package com.skyeye.message.service;
 
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @ClassName: MessageService
@@ -17,6 +22,5 @@ import com.skyeye.common.object.OutputObject;
  */
 public interface MessageService {
 
-    void sendMessage(InputObject inputObject, OutputObject outputObject);
-
+    void sendMessage(InputObject inputObject,OutputObject outputObject);
 }

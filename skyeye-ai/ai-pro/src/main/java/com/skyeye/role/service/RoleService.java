@@ -7,6 +7,8 @@ package com.skyeye.role.service;
 import com.skyeye.role.entity.Role;
 import com.skyeye.base.business.service.SkyeyeBusinessService;
 
+import java.util.List;
+
 /**
  * @ClassName: ShopDeliveryCompanyController
  * @Description: ai角色服务接口层
@@ -16,4 +18,5 @@ import com.skyeye.base.business.service.SkyeyeBusinessService;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface RoleService extends SkyeyeBusinessService<Role> {
+    List<Role> queryRoleList(String id);
 }

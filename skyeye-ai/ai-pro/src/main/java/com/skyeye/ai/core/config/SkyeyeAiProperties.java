@@ -21,9 +21,45 @@ public class SkyeyeAiProperties {
 
     private QianfanProperties qianfan;
 
+    private  XunfeiProperties xunfei;
+
+    private  DeepseekProperties deepSeek;
+
+    private TongyiProperties tongYi;
+
+    private  ZhupuProperties zhiPu;
+
     @Data
     public static class QianfanProperties {
         private String apiKey;
         private String secretKey;
+    }
+
+    @Data
+    public static class XunfeiProperties {
+        private String appId;
+        private String apiKey;
+        private String secretKey;
+    }
+
+    @Data
+    public static class DeepseekProperties {
+        private String apiKey;
+        private String secretKey = "DEEP_SEEK";
+        private String url;
+    }
+
+    @Data
+    public static class TongyiProperties {
+        private String apiKey;
+        private String secretKey = "TONG_YI";
+        private String message;
+    }
+
+    @Data
+    public static class ZhupuProperties {
+        private String apiKey;
+        private String secretKey;
+        private String url;
     }
 }

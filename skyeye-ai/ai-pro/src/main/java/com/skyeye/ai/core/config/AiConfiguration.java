@@ -6,6 +6,8 @@ package com.skyeye.ai.core.config;
 
 import com.skyeye.ai.core.factory.AiFactory;
 import com.skyeye.ai.core.factory.AiFactoryImpl;
+import io.github.briqt.spark4j.SparkClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

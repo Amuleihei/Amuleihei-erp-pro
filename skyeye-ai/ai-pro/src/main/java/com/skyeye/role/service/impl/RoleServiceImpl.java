@@ -12,14 +12,11 @@ import com.skyeye.role.entity.Role;
 import com.skyeye.role.service.RoleService;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -61,5 +58,12 @@ public class RoleServiceImpl extends SkyeyeBusinessServiceImpl<RoleDao, Role> im
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         List<Role> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+    }
+
+    @Override
+    public List<Role> queryRoleList(String id){
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Role::getId), id);
+        return list(queryWrapper);
     }
 }
