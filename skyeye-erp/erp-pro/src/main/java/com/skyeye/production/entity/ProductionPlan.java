@@ -53,6 +53,14 @@ public class ProductionPlan extends SkyeyeFlowable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @TableField("purchase_state")
+    @Property("采购状态，参考#ProductionPlanPurchaseState")
+    private Integer purchaseState;
+
+    @TableField("produce_state")
+    @Property("生产状态，参考#ProductionPlanProduceState")
+    private Integer produceState;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "子单据信息", required = "required,json")
     private List<ProductionPlanChild> productionPlanChildList;

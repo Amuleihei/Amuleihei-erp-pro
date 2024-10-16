@@ -14,7 +14,6 @@ import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeFlowableServiceImpl;
 import com.skyeye.bom.entity.Bom;
 import com.skyeye.bom.service.BomService;
-import com.skyeye.classenum.ErpOrderStateEnum;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
@@ -27,13 +26,11 @@ import com.skyeye.exception.CustomException;
 import com.skyeye.machin.classenum.MachinFromType;
 import com.skyeye.machin.entity.Machin;
 import com.skyeye.machin.service.MachinService;
+import com.skyeye.material.classenum.MaterialFromType;
 import com.skyeye.material.entity.MaterialNorms;
 import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.material.service.MaterialService;
-import com.skyeye.production.classenum.ProductionChildType;
-import com.skyeye.production.classenum.ProductionFromType;
-import com.skyeye.production.classenum.ProductionMachinOrderState;
-import com.skyeye.production.classenum.ProductionOutState;
+import com.skyeye.production.classenum.*;
 import com.skyeye.production.dao.ProductionDao;
 import com.skyeye.production.entity.Production;
 import com.skyeye.production.entity.ProductionChild;
@@ -219,7 +216,11 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
         if (entity.getFromTypeId() == ProductionFromType.PRODUCTION_PLAN.getKey()) {
             // 出货计划单
             ProductionPlan productionPlan = productionPlanService.selectById(entity.getFromId());
-            List<String> fromNormsIds = productionPlan.getProductionPlanChildList().stream()
+            // 只查询自产商品
+            List<ProductionPlanChild> productionPlanChildList = productionPlan.getProductionPlanChildList().stream()
+                .filter(productionPlanChild -> productionPlanChild.getMaterialMation().getFromType() == MaterialFromType.SELF_PRODUCED.getKey())
+                .collect(Collectors.toList());
+            List<String> fromNormsIds = productionPlanChildList.stream()
                 .map(ProductionPlanChild::getNormsId).collect(Collectors.toList());
             // 求差集(出货计划单不包含的商品)
             List<String> diffList = inSqlNormsId.stream()
@@ -230,7 +231,7 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
                 throw new CustomException(String.format(Locale.ROOT, "该出货计划单下未包含如下商品规格：【%s】.",
                     Joiner.on(CommonCharConstants.COMMA_MARK).join(normsNames)));
             }
-            productionPlan.getProductionPlanChildList().forEach(productionPlanChild -> {
+            productionPlanChildList.forEach(productionPlanChild -> {
                 // 出货计划单数量 - 当前生产计划单数量 - 已经审批通过的生产计划单数量
                 Integer surplusNum = ErpOrderUtil.checkOperNumber(productionPlanChild.getOperNumber(), productionPlanChild.getNormsId(),
                     orderNormsNum, executeNum);
@@ -240,13 +241,13 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
             });
             if (setData) {
                 // 过滤掉剩余数量为0的商品
-                List<ProductionPlanChild> list = productionPlan.getProductionPlanChildList().stream()
+                List<ProductionPlanChild> list = productionPlanChildList.stream()
                     .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList());
                 // 该出货计划单的商品已经全部下达了生产计划单
                 if (CollectionUtil.isEmpty(list)) {
-                    productionPlanService.editStateById(productionPlan.getId(), ErpOrderStateEnum.COMPLETED.getKey());
+                    productionPlanService.editProduceState(productionPlan.getId(), ProductionPlanProduceState.COMPLATE.getKey());
                 } else {
-                    productionPlanService.editStateById(productionPlan.getId(), ErpOrderStateEnum.PARTIALLY_COMPLETED.getKey());
+                    productionPlanService.editProduceState(productionPlan.getId(), ProductionPlanProduceState.PARTIAL.getKey());
                 }
             }
         }

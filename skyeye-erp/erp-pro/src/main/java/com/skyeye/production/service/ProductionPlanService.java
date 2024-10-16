@@ -26,6 +26,22 @@ public interface ProductionPlanService extends SkyeyeFlowableService<ProductionP
 
     Map<String, Integer> calcMaterialNormsNumByFromId(String fromId);
 
+    /**
+     * 修改采购状态
+     *
+     * @param id            出货计划单id
+     * @param purchaseState 采购状态 {@link com.skyeye.production.classenum.ProductionPlanPurchaseState}
+     */
+    void editPurchaseState(String id, Integer purchaseState);
+
+    /**
+     * 修改生产状态
+     *
+     * @param id           出货计划单id
+     * @param produceState 生产状态 {@link com.skyeye.production.classenum.ProductionPlanProduceState}
+     */
+    void editProduceState(String id, Integer produceState);
+
     void queryProductionPlanTransById(InputObject inputObject, OutputObject outputObject);
 
     void insertProductionPlanToProduction(InputObject inputObject, OutputObject outputObject);
