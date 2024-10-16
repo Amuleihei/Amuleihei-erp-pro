@@ -115,7 +115,6 @@ public class CommentServiceImpl extends SkyeyeBusinessServiceImpl<CommentDao, Co
             // 设置点赞信息
             bean.put("checkUpvote", checkUpvoteMap.get(id));
         });
-
         userService.setMationForMap(beans, "createId", "createMation");
         userService.setMationForMap(beans, "userId", "userMation");
         return beans;

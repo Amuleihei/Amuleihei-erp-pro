@@ -8,6 +8,15 @@ import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.common.entity.CommonInfo;
 import lombok.Data;
 
+
+/**
+ * @ClassName: VideoRecord
+ * @Description: 收藏点赞记录实体类
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/3/9 14:31
+ * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Data
 @TableName(value = "wall_comment_tasn_record")
 @ApiModel(value = "收藏点赞记录实体类")
