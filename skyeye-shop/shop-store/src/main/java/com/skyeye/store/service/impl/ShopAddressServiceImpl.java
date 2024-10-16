@@ -23,6 +23,7 @@ import com.skyeye.store.entity.ShopAddress;
 import com.skyeye.store.entity.ShopAddressLabel;
 import com.skyeye.store.service.ShopAddressLabelService;
 import com.skyeye.store.service.ShopAddressService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +66,16 @@ public class ShopAddressServiceImpl extends SkyeyeBusinessServiceImpl<ShopAddres
         }
     }
 
+    @Override
+    public ShopAddress selectById(String id) {
+        ShopAddress shopAddress = super.selectById(id);
+        iAreaService.setDataMation(shopAddress, ShopAddress::getProvinceId);
+        iAreaService.setDataMation(shopAddress, ShopAddress::getCityId);
+        iAreaService.setDataMation(shopAddress, ShopAddress::getAreaId);
+        iAreaService.setDataMation(shopAddress, ShopAddress::getTownshipId);
+        shopAddressLabelService.setDataMation(shopAddress, ShopAddress::getLabelId);
+        return shopAddress;
+    }
     @Override
     public void queryDefaultShopAddress(InputObject inputObject, OutputObject outputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
