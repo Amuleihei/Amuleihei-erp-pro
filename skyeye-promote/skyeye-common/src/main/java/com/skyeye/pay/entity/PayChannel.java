@@ -7,7 +7,6 @@ package com.skyeye.pay.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
@@ -63,9 +62,13 @@ public class PayChannel extends OperatorUserInfo {
     @Property("应用信息")
     private PayApp appMation;
 
-    @TableField(value = "config", typeHandler = JacksonTypeHandler.class)
+    @TableField(value = "config")
     @ApiModelProperty(value = "支付渠道配置", required = "required")
-    private PayClientConfig config;
+    private String config;
+
+    @TableField(exist = false)
+    @Property(value = "支付渠道配置信息")
+    private PayClientConfig configMation;
 
     @TableField("remark")
     @ApiModelProperty(value = "备注")
