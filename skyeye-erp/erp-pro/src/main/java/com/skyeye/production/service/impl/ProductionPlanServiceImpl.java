@@ -8,12 +8,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeFlowableServiceImpl;
 import com.skyeye.bom.entity.Bom;
 import com.skyeye.bom.service.BomService;
-import com.skyeye.classenum.ErpOrderStateEnum;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
@@ -24,11 +24,15 @@ import com.skyeye.common.util.MapUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.entity.ErpOrderItem;
 import com.skyeye.exception.CustomException;
+import com.skyeye.material.classenum.MaterialFromType;
+import com.skyeye.material.entity.Material;
 import com.skyeye.material.entity.MaterialNorms;
 import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.material.service.MaterialService;
 import com.skyeye.production.classenum.ProductionFromType;
 import com.skyeye.production.classenum.ProductionPlanFromType;
+import com.skyeye.production.classenum.ProductionPlanProduceState;
+import com.skyeye.production.classenum.ProductionPlanPurchaseState;
 import com.skyeye.production.dao.ProductionPlanDao;
 import com.skyeye.production.entity.Production;
 import com.skyeye.production.entity.ProductionPlan;
@@ -47,14 +51,14 @@ import java.util.stream.Collectors;
 
 /**
  * @ClassName: ProductionPlanServiceImpl
- * @Description: 预生产计划单服务层
+ * @Description: 出货计划单服务层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:30
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService(name = "预生产计划单", groupName = "预生产计划单", flowable = true)
+@SkyeyeService(name = "出货计划单", groupName = "出货计划单", flowable = true)
 public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<ProductionPlanDao, ProductionPlan> implements ProductionPlanService {
 
     @Autowired
@@ -88,10 +92,44 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
     }
 
     @Override
+    public void createPrepose(ProductionPlan entity) {
+        super.createPrepose(entity);
+        setOtherMation(entity);
+    }
+
+    @Override
+    public void updatePrepose(ProductionPlan entity) {
+        super.updatePrepose(entity);
+        setOtherMation(entity);
+    }
+
+    @Override
     public void writeChild(ProductionPlan entity, String userId) {
         // 保存子单据信息
         productionPlanChildService.saveList(entity.getId(), entity.getProductionPlanChildList());
         super.writeChild(entity, userId);
+    }
+
+    private void setOtherMation(ProductionPlan entity) {
+        // 设置采购状态
+        Integer purchaseState = ProductionPlanPurchaseState.NOT_NEED.getKey();
+        Integer produceState = ProductionPlanProduceState.NOT_NEED.getKey();
+        List<String> materialIds = entity.getProductionPlanChildList().stream()
+            .map(ProductionPlanChild::getMaterialId).distinct().collect(Collectors.toList());
+        List<Material> materials = materialService.selectByIds(materialIds.toArray(new String[]{}));
+        for (Material material : materials) {
+            if (material.getFromType() == MaterialFromType.OUTSOURCING.getKey()) {
+                // 外购件
+                purchaseState = ProductionPlanPurchaseState.NEED.getKey();
+                break;
+            }
+            if (material.getFromType() == MaterialFromType.SELF_PRODUCED.getKey()) {
+                // 自产件
+                produceState = ProductionPlanProduceState.NEED.getKey();
+            }
+        }
+        entity.setPurchaseState(purchaseState);
+        entity.setProduceState(produceState);
     }
 
     @Override
@@ -161,10 +199,10 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
         if (StrUtil.isEmpty(entity.getFromId())) {
             return;
         }
-        // 当前预生产计划单的商品数量
+        // 当前出货计划单的商品数量
         Map<String, Integer> orderNormsNum = entity.getProductionPlanChildList().stream()
             .collect(Collectors.toMap(ProductionPlanChild::getNormsId, ProductionPlanChild::getOperNumber));
-        // 获取同一个来源单据下已经审批通过的预生产计划单的商品信息
+        // 获取同一个来源单据下已经审批通过的出货计划单的商品信息
         Map<String, Integer> executeNum = calcMaterialNormsNumByFromId(entity.getFromId());
         List<String> inSqlNormsId = new ArrayList<>(executeNum.keySet());
         if (entity.getFromTypeId() == ProductionPlanFromType.SEAL_ORDER.getKey()) {
@@ -182,7 +220,7 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
                     Joiner.on(CommonCharConstants.COMMA_MARK).join(normsNames)));
             }
             salesOrder.getErpOrderItemList().forEach(erpOrderItem -> {
-                // 销售订单数量 - 当前预生产计划单数量 - 已经审批通过的预生产计划单数量
+                // 销售订单数量 - 当前出货计划单数量 - 已经审批通过的出货计划单数量
                 Integer surplusNum = erpOrderItem.getOperNumber()
                     - (orderNormsNum.containsKey(erpOrderItem.getNormsId()) ? orderNormsNum.get(erpOrderItem.getNormsId()) : 0)
                     - (executeNum.containsKey(erpOrderItem.getNormsId()) ? executeNum.get(erpOrderItem.getNormsId()) : 0);
@@ -194,7 +232,7 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
                 }
             });
             if (setData) {
-                // 该销售订单的商品是否已经全部下达了预生产计划单-----目前先不做任何操作
+                // TODO 该销售订单的商品是否已经全部下达了出货计划单-----目前先不做任何操作
             }
         }
     }
@@ -211,8 +249,8 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
         QueryWrapper<ProductionPlan> queryWrapper = new QueryWrapper<>();
         queryWrapper.select(CommonConstants.ID);
         queryWrapper.eq(MybatisPlusUtil.toColumns(ProductionPlan::getFromId), fromId);
-        // 只查询审批通过，部分完成的
-        List<String> stateList = Arrays.asList(new String[]{FlowableStateEnum.PASS.getKey(), ErpOrderStateEnum.PARTIALLY_COMPLETED.getKey()});
+        // 只查询审批通过的
+        List<String> stateList = Arrays.asList(new String[]{FlowableStateEnum.PASS.getKey()});
         queryWrapper.in(MybatisPlusUtil.toColumns(ProductionPlan::getState), stateList);
         List<ProductionPlan> productionList = list(queryWrapper);
         List<String> ids = productionList.stream().map(ProductionPlan::getId).collect(Collectors.toList());
@@ -226,12 +264,34 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
     }
 
     @Override
+    public void editPurchaseState(String id, Integer purchaseState) {
+        UpdateWrapper<ProductionPlan> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(ProductionPlan::getPurchaseState), purchaseState);
+        update(updateWrapper);
+        refreshCache(id);
+    }
+
+    @Override
+    public void editProduceState(String id, Integer produceState) {
+        UpdateWrapper<ProductionPlan> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(CommonConstants.ID, id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(ProductionPlan::getProduceState), produceState);
+        update(updateWrapper);
+        refreshCache(id);
+    }
+
+    @Override
     public void queryProductionPlanTransById(InputObject inputObject, OutputObject outputObject) {
         String id = inputObject.getParams().get("id").toString();
         ProductionPlan productionPlan = selectById(id);
+        // 只查询自产商品
+        List<ProductionPlanChild> productionPlanChildList = productionPlan.getProductionPlanChildList().stream()
+            .filter(productionPlanChild -> productionPlanChild.getMaterialMation().getFromType() == MaterialFromType.SELF_PRODUCED.getKey())
+            .collect(Collectors.toList());
         // 获取已经下达生产计划单的数量
         Map<String, Integer> normsNum = productionService.calcMaterialNormsNumByFromId(id);
-        productionPlan.getProductionPlanChildList().forEach(productionPlanChild -> {
+        productionPlanChildList.forEach(productionPlanChild -> {
             // 订单数量 - 已经下达生产计划单的数量
             Integer surplusNum = productionPlanChild.getOperNumber()
                 - (normsNum.containsKey(productionPlanChild.getNormsId()) ? normsNum.get(productionPlanChild.getNormsId()) : 0);
@@ -239,16 +299,17 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
             productionPlanChild.setOperNumber(surplusNum);
         });
         // 过滤掉数量为0的进行生成生产计划单
-        productionPlan.setProductionPlanChildList(productionPlan.getProductionPlanChildList().stream()
+        productionPlan.setProductionPlanChildList(productionPlanChildList.stream()
             .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList()));
         // 获取规格对应的所有bom信息
-        List<String> normsId = productionPlan.getProductionPlanChildList().stream()
+        List<String> normsId = productionPlanChildList.stream()
             .map(ProductionPlanChild::getNormsId).distinct().collect(Collectors.toList());
         Map<String, List<Bom>> listMap = bomService.getBomListByNormsId(normsId.toArray(new String[]{}));
         // 设置生产类型信息
-        productionPlan.getProductionPlanChildList().forEach(productionPlanChild -> {
+        productionPlanChildList.forEach(productionPlanChild -> {
             productionPlanChild.setBomList(listMap.get(productionPlanChild.getNormsId()));
         });
+        productionPlan.setProductionPlanChildList(productionPlanChildList);
         outputObject.setBean(productionPlan);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
@@ -256,13 +317,15 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
     @Override
     public void insertProductionPlanToProduction(InputObject inputObject, OutputObject outputObject) {
         Production production = inputObject.getParams(Production.class);
-        // 获取预生产计划单状态
+        // 获取出货计划单状态
         ProductionPlan order = selectById(production.getId());
         if (ObjectUtil.isEmpty(order)) {
             throw new CustomException("该数据不存在.");
         }
-        // 审核通过/部分完成的可以转生产计划单
-        if (FlowableStateEnum.PASS.getKey().equals(order.getState()) || ErpOrderStateEnum.PARTIALLY_COMPLETED.getKey().equals(order.getState())) {
+        // 审核通过 && 生产状态为待生产/部分生产 的可以转生产计划单
+        if (FlowableStateEnum.PASS.getKey().equals(order.getState()) &&
+            (ProductionPlanProduceState.NEED.getKey().equals(order.getProduceState())
+                || ProductionPlanProduceState.PARTIAL.getKey().equals(order.getProduceState()))) {
             String userId = inputObject.getLogParams().get("id").toString();
             production.setFromId(production.getId());
             production.setFromTypeId(ProductionFromType.PRODUCTION_PLAN.getKey());

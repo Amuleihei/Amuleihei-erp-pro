@@ -28,7 +28,7 @@ public interface QualityInspectionService extends SkyeyeFlowableService<QualityI
      * 修改入库状态
      *
      * @param id       质检单id
-     * @param putState 入库状态
+     * @param putState 入库状态 {@link com.skyeye.inspection.classenum.QualityInspectionPutState}
      */
     void editPutState(String id, Integer putState);
 
@@ -36,7 +36,7 @@ public interface QualityInspectionService extends SkyeyeFlowableService<QualityI
      * 修改退货状态
      *
      * @param id          质检单id
-     * @param returnState 退货状态
+     * @param returnState 退货状态 {@link com.skyeye.inspection.classenum.QualityInspectionReturnState}
      */
     void editReturnState(String id, Integer returnState);
 

@@ -19,14 +19,14 @@ import java.util.List;
 
 /**
  * @ClassName: ProductionPlanChildServiceImpl
- * @Description: 预生产计划单子单据服务层
+ * @Description: 出货计划单子单据服务层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:38
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService(name = "预生产计划单子单据", groupName = "预生产计划单子单据", manageShow = false)
+@SkyeyeService(name = "出货计划单子单据", groupName = "出货计划单子单据", manageShow = false)
 public class ProductionPlanChildServiceImpl extends SkyeyeBusinessServiceImpl<ProductionPlanChildDao, ProductionPlanChild> implements ProductionPlanChildService {
 
     @Override

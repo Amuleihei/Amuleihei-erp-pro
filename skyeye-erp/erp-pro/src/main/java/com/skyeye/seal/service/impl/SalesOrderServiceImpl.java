@@ -308,11 +308,11 @@ public class SalesOrderServiceImpl extends SkyeyeErpOrderServiceImpl<SalesOrderD
     public void querySealsOrderTransProductionPlanById(InputObject inputObject, OutputObject outputObject) {
         String id = inputObject.getParams().get("id").toString();
         SalesOrder salesOrder = selectById(id);
-        // 获取已经下达预生产计划单的数量
+        // 获取已经下达出货计划单的数量
         Map<String, Integer> normsNum = productionPlanService.calcMaterialNormsNumByFromId(id);
-        // 设置未下达销售出库单/销售退货单的商品数量-----订单数量 - 已经下达预生产计划单的数量
+        // 设置未下达销售出库单/销售退货单的商品数量-----订单数量 - 已经下达出货计划单的数量
         super.setOrCheckOperNumber(salesOrder.getErpOrderItemList(), true, normsNum);
-        // 过滤掉数量为0的进行生成预生产计划单
+        // 过滤掉数量为0的进行生成出货计划单
         salesOrder.setErpOrderItemList(salesOrder.getErpOrderItemList().stream()
             .filter(erpOrderItem -> erpOrderItem.getOperNumber() > 0).collect(Collectors.toList()));
         outputObject.setBean(salesOrder);
@@ -328,7 +328,7 @@ public class SalesOrderServiceImpl extends SkyeyeErpOrderServiceImpl<SalesOrderD
         if (ObjectUtil.isEmpty(order)) {
             throw new CustomException("该数据不存在.");
         }
-        // 审核通过/部分完成的可以进行下达预生产计划单
+        // 审核通过/部分完成的可以进行下达出货计划单
         if (FlowableStateEnum.PASS.getKey().equals(order.getState()) || ErpOrderStateEnum.PARTIALLY_COMPLETED.getKey().equals(order.getState())) {
             String userId = inputObject.getLogParams().get("id").toString();
             productionPlan.setFromId(productionPlan.getId());

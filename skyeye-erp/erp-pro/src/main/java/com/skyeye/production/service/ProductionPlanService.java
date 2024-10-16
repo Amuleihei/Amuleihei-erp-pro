@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * @ClassName: ProductionPlanService
- * @Description: 预生产计划单服务接口层
+ * @Description: 出货计划单服务接口层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:29
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -25,6 +25,22 @@ public interface ProductionPlanService extends SkyeyeFlowableService<ProductionP
     void setOrderMationByFromId(List<Map<String, Object>> beans, String idKey, String mationKey);
 
     Map<String, Integer> calcMaterialNormsNumByFromId(String fromId);
+
+    /**
+     * 修改采购状态
+     *
+     * @param id            出货计划单id
+     * @param purchaseState 采购状态 {@link com.skyeye.production.classenum.ProductionPlanPurchaseState}
+     */
+    void editPurchaseState(String id, Integer purchaseState);
+
+    /**
+     * 修改生产状态
+     *
+     * @param id           出货计划单id
+     * @param produceState 生产状态 {@link com.skyeye.production.classenum.ProductionPlanProduceState}
+     */
+    void editProduceState(String id, Integer produceState);
 
     void queryProductionPlanTransById(InputObject inputObject, OutputObject outputObject);
 

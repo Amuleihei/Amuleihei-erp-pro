@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public enum SmsTemplateTypeEnum implements SkyeyeEnumClass {
 
     VERIFICATION_CODE(1, "验证码", true, false),
-    NOTICE(2, "通知", true, false),
+    NOTICE(2, "通知", true, true),
     PROMOTION(3, "营销", true, false);
 
     private Integer key;

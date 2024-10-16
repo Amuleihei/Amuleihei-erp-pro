@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * @ClassName: ProductionPlanChild
- * @Description: 预生产计划单子单据实体类
+ * @Description: 出货计划单子单据实体类
  * @author: skyeye云系列--卫志强
  * @date: 2023/3/28 21:19
  * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Data
 @TableName(value = "erp_production_plan_child", autoResultMap = true)
-@ApiModel("预生产计划单子单据实体类")
+@ApiModel("出货计划单子单据实体类")
 public class ProductionPlanChild extends CommonInfo {
 
     @TableId("id")

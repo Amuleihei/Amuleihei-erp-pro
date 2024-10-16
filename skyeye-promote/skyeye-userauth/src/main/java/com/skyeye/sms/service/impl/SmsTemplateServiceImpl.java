@@ -84,7 +84,7 @@ public class SmsTemplateServiceImpl extends SkyeyeBusinessServiceImpl<SmsTemplat
     private void validateApiTemplate(String channelId, String apiTemplateId) {
         // 获得短信模板
         SmsClient smsClient = smsChannelService.getSmsClientById(channelId);
-        Assert.notNull(smsClient, String.format("短信客户端(%d) 不存在", channelId));
+        Assert.notNull(smsClient, String.format("短信客户端(%s) 不存在", channelId));
         SmsTemplateResp template;
         try {
             template = smsClient.getSmsTemplate(apiTemplateId);

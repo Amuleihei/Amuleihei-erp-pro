@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @ClassName: ProductionPlanChildService
- * @Description: 预生产计划单子单据服务接口层
+ * @Description: 出货计划单子单据服务接口层
  * @author: skyeye云系列--卫志强
  * @date: 2024/6/21 20:37
  * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.

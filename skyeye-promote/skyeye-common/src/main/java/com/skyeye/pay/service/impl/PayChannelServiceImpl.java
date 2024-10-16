@@ -61,6 +61,15 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
         PayChannel payChannel = super.selectById(id);
         payAppService.setDataMation(payChannel, PayChannel::getAppId);
         payChannel.setCodeNumMation(PayType.getMation(payChannel.getCodeNum()));
+
+        // 解析配置
+        Class<? extends PayClientConfig> payClass = PayType.getByCode(payChannel.getCodeNum()).getConfigClass();
+        if (ObjectUtil.isNull(payClass)) {
+            throw new CustomException("支付渠道的配置不存在");
+        }
+        PayClientConfig config = JSONUtil.toBean(payChannel.getConfig(), payClass);
+        payChannel.setConfigMation(config);
+
         return payChannel;
     }
 
@@ -72,7 +81,7 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
         if (ObjectUtil.isNull(payClass)) {
             throw new CustomException("支付渠道的配置不存在");
         }
-        PayClientConfig config = JSONUtil.toBean(JSONUtil.toJsonStr(entity.getConfig()), payClass);
+        PayClientConfig config = JSONUtil.toBean(entity.getConfig(), payClass);
         Assert.notNull(config);
         // 验证参数
         config.validate(validator);
@@ -94,7 +103,7 @@ public class PayChannelServiceImpl extends SkyeyeBusinessServiceImpl<PayChannelD
         if (ObjectUtil.isEmpty(payChannel)) {
             throw new CustomException("该支付渠道不存在");
         }
-        payClientFactory.createOrUpdatePayClient(id, payChannel.getCodeNum(), payChannel.getConfig());
+        payClientFactory.createOrUpdatePayClient(id, payChannel.getCodeNum(), payChannel.getConfigMation());
         return null;
     }
 }
