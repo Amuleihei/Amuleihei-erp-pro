@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.object.InputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.sms.classenum.SmsTemplateAuditStatusEnum;
@@ -49,6 +50,13 @@ public class SmsTemplateServiceImpl extends SkyeyeBusinessServiceImpl<SmsTemplat
 
     @Autowired
     private SmsChannelService smsChannelService;
+
+    @Override
+    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> beans = super.queryPageDataList(inputObject);
+        smsChannelService.setMationForMap(beans, "channelId", "channelMation");
+        return beans;
+    }
 
     @Override
     public void validatorEntity(SmsTemplate entity) {
