@@ -23,4 +23,6 @@ import java.io.IOException;
 public interface MessageService {
 
     void sendMessage(InputObject inputObject,OutputObject outputObject);
+
+    void sendMessageStream(InputObject inputObject, OutputObject outputObject);
 }

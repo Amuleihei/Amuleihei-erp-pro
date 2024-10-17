@@ -46,11 +46,19 @@ public class MessageController {
         messageService.sendMessage(inputObject, outputObject);
     }*/
 
-    @ApiOperation(id = "sendMessage", value = "发送消息", method = "POST", allUse = "0")
+    @ApiOperation(id = "sendMessage", value = "发送消息（段式）一次性返回，响应较慢", method = "POST", allUse = "0")
     @ApiImplicitParams({
-            @ApiImplicitParam(id = "message", name = "message", value = "消息", required = "required")})
+            @ApiImplicitParam(id = "content", name = "content", value = "消息", required = "required")})
     @RequestMapping("/post/MessageController/sendMessage")
     public void sendMessage(InputObject inputObject, OutputObject outputObject) {
         messageService.sendMessage(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "sendMessageStream", value = "发送消息（流式）流式返回，响应较快", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "content", name = "content", value = "消息", required = "required")})
+    @RequestMapping("/post/MessageController/sendMessageStream")
+    public void sendMessageStream(InputObject inputObject, OutputObject outputObject) {
+        messageService.sendMessageStream(inputObject, outputObject);
     }
 }
