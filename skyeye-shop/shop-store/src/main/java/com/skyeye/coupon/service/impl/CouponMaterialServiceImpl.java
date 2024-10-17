@@ -31,18 +31,8 @@ public class CouponMaterialServiceImpl extends SkyeyeBusinessServiceImpl<CouponM
         QueryWrapper<CouponMaterial> queryWrapper = new QueryWrapper<>();
         queryWrapper.in(MybatisPlusUtil.toColumns(CouponMaterial::getCouponId), couponIdList);
         List<CouponMaterial> list = list(queryWrapper);
-        Map<String, List<CouponMaterial>> result = new HashMap<>();
-        for (CouponMaterial couponMaterial : list) {
-            String id = couponMaterial.getId();
-            if (result.containsKey(id)) {
-                result.get(id).add(couponMaterial);
-            }else{
-                List<CouponMaterial> materialList = new ArrayList<>();
-                materialList.add(couponMaterial);
-                result.put(id, materialList);
-            }
-        }
-        return result;
+        Map<String, List<CouponMaterial>> collect = list.stream().collect(Collectors.groupingBy(CouponMaterial::getCouponId));
+        return collect;
     }
 
     @Override
