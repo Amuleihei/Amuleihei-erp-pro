@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@SkyeyeService(name = "优惠券/模版适用商品对象管理", groupName = "优惠券/模版适用商品对象管理")
+@SkyeyeService(name = "优惠券/模版适用商品对象管理", groupName = "优惠券/模版适用商品对象管理", manageShow = false)
 public class CouponMaterialServiceImpl extends SkyeyeBusinessServiceImpl<CouponMaterialDao, CouponMaterial> implements CouponMaterialService {
     @Override
     public List<CouponMaterial> queryListByCouponId(String couponId) {

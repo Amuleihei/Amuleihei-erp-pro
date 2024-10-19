@@ -8,6 +8,6 @@ import com.skyeye.coupon.service.CouponUseMaterialService;
 import org.springframework.stereotype.Service;
 
 @Service
-@SkyeyeService(name = "用户领取的优惠券适用商品对象管理", groupName = "用户领取的优惠券适用商品对象管理")
+@SkyeyeService(name = "用户领取的优惠券适用商品对象管理", groupName = "用户领取的优惠券适用商品对象管理",manageShow = false)
 public class CouponUseMaterialServiceImpl extends SkyeyeBusinessServiceImpl<CouponUseMaterialDao, CouponUseMaterial> implements CouponUseMaterialService {
 }
