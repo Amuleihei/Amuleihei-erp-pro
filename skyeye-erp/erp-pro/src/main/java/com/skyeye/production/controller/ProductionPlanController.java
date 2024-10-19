@@ -14,6 +14,7 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.production.entity.Production;
 import com.skyeye.production.entity.ProductionPlan;
 import com.skyeye.production.service.ProductionPlanService;
+import com.skyeye.purchase.entity.PurchaseOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,6 +129,34 @@ public class ProductionPlanController {
     @RequestMapping("/post/ProductionPlanController/insertProductionPlanToProduction")
     public void insertProductionPlanToProduction(InputObject inputObject, OutputObject outputObject) {
         productionPlanService.insertProductionPlanToProduction(inputObject, outputObject);
+    }
+
+    /**
+     * 转采购订单时，根据id查询出货计划单信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryProductionPlanTransPurchaseOrderById", value = "转采购订单时，根据id查询出货计划单信息", method = "GET", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/ProductionPlanController/queryProductionPlanTransPurchaseOrderById")
+    public void queryProductionPlanTransPurchaseOrderById(InputObject inputObject, OutputObject outputObject) {
+        productionPlanService.queryProductionPlanTransPurchaseOrderById(inputObject, outputObject);
+    }
+
+    /**
+     * 出货计划单转采购订单
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "insertProductionPlanToPurchaseOrder", value = "出货计划单转采购订单", method = "POST", allUse = "1")
+    @ApiImplicitParams(classBean = PurchaseOrder.class, value = {
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/ProductionPlanController/insertProductionPlanToPurchaseOrder")
+    public void insertProductionPlanToPurchaseOrder(InputObject inputObject, OutputObject outputObject) {
+        productionPlanService.insertProductionPlanToPurchaseOrder(inputObject, outputObject);
     }
 
 }

@@ -30,6 +30,7 @@ import com.skyeye.depot.classenum.DepotPutOutType;
 import com.skyeye.entity.ErpOrderItem;
 import com.skyeye.exception.CustomException;
 import com.skyeye.material.classenum.MaterialInOrderType;
+import com.skyeye.production.service.ProductionPlanService;
 import com.skyeye.purchase.classenum.*;
 import com.skyeye.purchase.dao.PurchaseOrderDao;
 import com.skyeye.purchase.entity.PurchaseDelivery;
@@ -71,6 +72,9 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
 
     @Autowired
     private SupplierContractService supplierContractService;
+
+    @Autowired
+    private ProductionPlanService productionPlanService;
 
     @Override
     public QueryWrapper<PurchaseOrder> getQueryWrapper(CommonPageInfo commonPageInfo) {
@@ -164,6 +168,9 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
                     supplierContractService.editChildState(supplierContract.getId(), SupplierContractChildStateEnum.PARTIAL_RELEASE.getKey());
                 }
             }
+        } else if (entity.getFromTypeId() == PurchaseOrderFromType.DELIVERY_PLAN.getKey()) {
+            // 到货计划
+
         }
     }
 
@@ -197,6 +204,9 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
         if (purchaseOrder.getFromTypeId() == PurchaseOrderFromType.SUPPLIER_CONTRACT.getKey()) {
             // 采购合同
             supplierContractService.setDataMation(purchaseOrder, PurchaseOrder::getFromId);
+        } else if (purchaseOrder.getFromTypeId() == PurchaseOrderFromType.DELIVERY_PLAN.getKey()) {
+            // 到货计划
+            // TODO
         }
         purchaseOrder.getErpOrderItemList().forEach(erpOrderItem -> {
             erpOrderItem.setQualityInspectionMation(OrderItemQualityInspectionType.getMation(erpOrderItem.getQualityInspection()));
