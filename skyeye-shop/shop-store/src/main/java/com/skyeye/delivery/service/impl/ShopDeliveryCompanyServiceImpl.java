@@ -7,12 +7,11 @@ package com.skyeye.delivery.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.skyeye.adsense.entity.Adsense;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.delivery.dao.ShopDeliveryCompanyDao;
 import com.skyeye.delivery.entity.ShopDeliveryCompany;
@@ -55,7 +54,7 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
     }
 
     /**
-     * 获取全部快递公司管理信息
+     * 获取全部已启用广告位管理信息
      *
      * @param inputObject 入参以及用户信息等获取对象
      * @return
@@ -63,6 +62,7 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         QueryWrapper<ShopDeliveryCompany> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopDeliveryCompany::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<ShopDeliveryCompany> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }

@@ -66,36 +66,22 @@ public class ShopDeliveryTemplateController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryShopDeliveryTemplate", value = "分页查询快递运费模版信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryShopDeliveryTemplateList", value = "分页查询快递运费模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/ShopDeliveryTemplateController/queryShopDeliveryTemplate")
-    public void queryShopDeliveryTemplatePageList(InputObject inputObject, OutputObject outputObject) {
+    @RequestMapping("/post/ShopDeliveryTemplateController/queryShopDeliveryTemplateList")
+    public void queryShopDeliveryTemplateList(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.queryPageList(inputObject, outputObject);
     }
 
     /**
-     * 获取快递运费模版信息
+     * 获取全部已启用的快递运费模版信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryShopDeliveryTemplateList", value = "获取快递运费模版信息", method = "POST", allUse = "0")
-    @RequestMapping("/post/ShopDeliveryTemplateController/queryShopDeliveryTemplateList")
-    public void queryShopDeliveryTemplateList(InputObject inputObject, OutputObject outputObject) {
+    @ApiOperation(id = "queryShopDeliveryTemplate", value = "获取全部快递运费模版信息", method = "POST", allUse = "0")
+    @RequestMapping("/post/ShopDeliveryTemplateController/queryShopDeliveryTemplate")
+    public void queryShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.queryList(inputObject, outputObject);
-    }
-
-    /**
-     * 根据id获取快递运费模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "selectShopDeliveryTemplateById", value = "根据id获取快递运费模版信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopDeliveryTemplateController/selectShopDeliveryTemplateById")
-    public void selectShopDeliveryTemplateById(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryTemplateService.selectById(inputObject, outputObject);
     }
 }

@@ -65,38 +65,22 @@ public class ShopDeliveryTemplateChargeController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryShopDeliveryTemplateCharge", value = "分页查询快递运费模版信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryShopDeliveryTemplateChargeList", value = "分页查询快递运费模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateCharge")
-    public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateChargeList")
+    public void queryShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryPageList(inputObject, outputObject);
     }
 
     /**
-     * 获取快递运费费用模版信息
+     * 获取已启用的快递运费费用模版信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryShopDeliveryTemplateChargeList", value = "获取快递运费模版信息", method = "POST", allUse = "0")
-    @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateChargeList")
-    public void queryShopDeliveryTemplateChargeList(InputObject inputObject, OutputObject outputObject) {
+    @ApiOperation(id = "queryShopDeliveryTemplateCharge", value = "获取全部快递运费费用模版信息", method = "POST", allUse = "0")
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateCharge")
+    public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryList(inputObject, outputObject);
     }
-
-    /**
-     * 根据id获取快递运费费用模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "selectShopDeliveryTemplateChargeById", value = "根据id获取快递运费模版信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/shopDeliveryTemplateChargeController/selectShopDeliveryTemplateChargeById")
-    public void selectShopDeliveryTemplateChargeById(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryTemplateChargeService.selectById(inputObject, outputObject);
-    }
-
-
 }

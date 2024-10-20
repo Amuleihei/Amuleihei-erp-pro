@@ -14,7 +14,6 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
-import com.skyeye.level.entity.ShopMemberLevel;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -34,20 +33,7 @@ import java.util.Map;
 public class AdsenseServiceImpl extends SkyeyeBusinessServiceImpl<AdsenseDao, Adsense> implements AdsenseService {
 
     /**
-     * 批量删除广告位管理信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void deleteByIds(InputObject inputObject, OutputObject outputObject) {
-        String ids = inputObject.getParams().get("ids").toString();
-        List<String> idList = Arrays.asList(ids.split(CommonCharConstants.COMMA_MARK));
-        super.deleteById(idList);
-    }
-
-    /**
-     * 获取广告位管理信息
+     * 获取已启用广告位管理信息
      *
      * @param inputObject 入参以及用户信息等获取对象
      * @return

@@ -4,24 +4,19 @@
 
 package com.skyeye.level.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonCharConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 import com.skyeye.level.dao.ShopMemberLevelDao;
 import com.skyeye.level.entity.ShopMemberLevel;
 import com.skyeye.level.service.ShopMemberLevelService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +46,7 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
     }
 
     /**
-     * 获取会员等级列表
+     * 获取已启用的会员等级列表
      *
      * @param inputObject 入参以及用户信息等获取对象
      * @return
@@ -59,6 +54,7 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         QueryWrapper<ShopMemberLevel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<ShopMemberLevel> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
