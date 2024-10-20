@@ -40,6 +40,9 @@ import com.skyeye.production.entity.ProductionPlanChild;
 import com.skyeye.production.service.ProductionPlanChildService;
 import com.skyeye.production.service.ProductionPlanService;
 import com.skyeye.production.service.ProductionService;
+import com.skyeye.purchase.classenum.PurchaseOrderFromType;
+import com.skyeye.purchase.entity.PurchaseOrder;
+import com.skyeye.purchase.service.PurchaseOrderService;
 import com.skyeye.seal.entity.SalesOrder;
 import com.skyeye.seal.service.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +78,9 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
 
     @Autowired
     private SalesOrderService salesOrderService;
+
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
 
     @Autowired
     private BomService bomService;
@@ -299,8 +305,8 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
             productionPlanChild.setOperNumber(surplusNum);
         });
         // 过滤掉数量为0的进行生成生产计划单
-        productionPlan.setProductionPlanChildList(productionPlanChildList.stream()
-            .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList()));
+        productionPlanChildList = productionPlanChildList.stream()
+            .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList());
         // 获取规格对应的所有bom信息
         List<String> normsId = productionPlanChildList.stream()
             .map(ProductionPlanChild::getNormsId).distinct().collect(Collectors.toList());
@@ -328,11 +334,57 @@ public class ProductionPlanServiceImpl extends SkyeyeFlowableServiceImpl<Product
                 || ProductionPlanProduceState.PARTIAL.getKey().equals(order.getProduceState()))) {
             String userId = inputObject.getLogParams().get("id").toString();
             production.setFromId(production.getId());
-            production.setFromTypeId(ProductionFromType.PRODUCTION_PLAN.getKey());
+            production.setFromTypeId(ProductionFromType.DELIVERY_PLAN.getKey());
             production.setId(StrUtil.EMPTY);
             productionService.createEntity(production, userId);
         } else {
-            outputObject.setreturnMessage("状态错误，无法出库.");
+            outputObject.setreturnMessage("状态错误，无法生成生产计划单.");
+        }
+    }
+
+    @Override
+    public void queryProductionPlanTransPurchaseOrderById(InputObject inputObject, OutputObject outputObject) {
+        String id = inputObject.getParams().get("id").toString();
+        ProductionPlan productionPlan = selectById(id);
+        // 只查询外购商品
+        List<ProductionPlanChild> productionPlanChildList = productionPlan.getProductionPlanChildList().stream()
+            .filter(productionPlanChild -> productionPlanChild.getMaterialMation().getFromType() == MaterialFromType.OUTSOURCING.getKey())
+            .collect(Collectors.toList());
+        // 获取已经下达采购订单的数量
+        Map<String, Integer> normsNum = purchaseOrderService.calcMaterialNormsNumByFromId(id);
+        productionPlanChildList.forEach(productionPlanChild -> {
+            // 订单数量 - 已经下达采购订单的数量
+            Integer surplusNum = productionPlanChild.getOperNumber()
+                - (normsNum.containsKey(productionPlanChild.getNormsId()) ? normsNum.get(productionPlanChild.getNormsId()) : 0);
+            // 设置未下达采购订单的商品数量
+            productionPlanChild.setOperNumber(surplusNum);
+        });
+        // 过滤掉数量为0的进行生成采购订单
+        productionPlan.setProductionPlanChildList(productionPlanChildList.stream()
+            .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList()));
+        outputObject.setBean(productionPlan);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public void insertProductionPlanToPurchaseOrder(InputObject inputObject, OutputObject outputObject) {
+        PurchaseOrder purchaseOrder = inputObject.getParams(PurchaseOrder.class);
+        // 获取出货计划单状态
+        ProductionPlan order = selectById(purchaseOrder.getId());
+        if (ObjectUtil.isEmpty(order)) {
+            throw new CustomException("该数据不存在.");
+        }
+        // 审核通过 && 采购状态为待生产/部分生产 的可以转生产计划单
+        if (FlowableStateEnum.PASS.getKey().equals(order.getState()) &&
+            (ProductionPlanPurchaseState.NEED.getKey().equals(order.getPurchaseState())
+                || ProductionPlanPurchaseState.PARTIAL.getKey().equals(order.getPurchaseState()))) {
+            String userId = inputObject.getLogParams().get("id").toString();
+            purchaseOrder.setFromId(purchaseOrder.getId());
+            purchaseOrder.setFromTypeId(PurchaseOrderFromType.DELIVERY_PLAN.getKey());
+            purchaseOrder.setId(StrUtil.EMPTY);
+            purchaseOrderService.createEntity(purchaseOrder, userId);
+        } else {
+            outputObject.setreturnMessage("状态错误，无法生成采购订单.");
         }
     }
 }

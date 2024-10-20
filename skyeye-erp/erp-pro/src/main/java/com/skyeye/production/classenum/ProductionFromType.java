@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum ProductionFromType implements SkyeyeEnumClass {
 
-    PRODUCTION_PLAN(1, "出货计划", true, false);
+    DELIVERY_PLAN(1, "出货计划", true, false);
 
     private Integer key;
 

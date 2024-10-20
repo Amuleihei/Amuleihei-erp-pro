@@ -29,7 +29,12 @@ import com.skyeye.contract.service.SupplierContractService;
 import com.skyeye.depot.classenum.DepotPutOutType;
 import com.skyeye.entity.ErpOrderItem;
 import com.skyeye.exception.CustomException;
+import com.skyeye.material.classenum.MaterialFromType;
 import com.skyeye.material.classenum.MaterialInOrderType;
+import com.skyeye.production.classenum.ProductionPlanPurchaseState;
+import com.skyeye.production.entity.ProductionPlan;
+import com.skyeye.production.entity.ProductionPlanChild;
+import com.skyeye.production.service.ProductionPlanService;
 import com.skyeye.purchase.classenum.*;
 import com.skyeye.purchase.dao.PurchaseOrderDao;
 import com.skyeye.purchase.entity.PurchaseDelivery;
@@ -72,6 +77,9 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
     @Autowired
     private SupplierContractService supplierContractService;
 
+    @Autowired
+    private ProductionPlanService productionPlanService;
+
     @Override
     public QueryWrapper<PurchaseOrder> getQueryWrapper(CommonPageInfo commonPageInfo) {
         QueryWrapper<PurchaseOrder> queryWrapper = super.getQueryWrapper(commonPageInfo);
@@ -106,6 +114,7 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
     public List<Map<String, Object>> queryPageData(InputObject inputObject) {
         List<Map<String, Object>> beans = super.queryPageData(inputObject);
         supplierContractService.setContractMationByFromId(beans, "fromId", "fromMation");
+        productionPlanService.setOrderMationByFromId(beans, "fromId", "fromMation");
         return beans;
     }
 
@@ -133,36 +142,78 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
         // 当前采购订单的商品数量
         Map<String, Integer> orderNormsNum = entity.getErpOrderItemList().stream()
             .collect(Collectors.toMap(ErpOrderItem::getNormsId, ErpOrderItem::getOperNumber));
-        // 获取已经下达订单的商品信息
+        // 获取已经下达采购订单的商品信息
         Map<String, Integer> executeNum = calcMaterialNormsNumByFromId(entity.getFromId());
         List<String> inSqlNormsId = new ArrayList<>(executeNum.keySet());
         if (entity.getFromTypeId() == PurchaseOrderFromType.SUPPLIER_CONTRACT.getKey()) {
-            SupplierContract supplierContract = supplierContractService.selectById(entity.getFromId());
-            if (CollectionUtil.isEmpty(supplierContract.getSupplierContractChildList())) {
-                throw new CustomException("该采购合同下未包含商品.");
-            }
-            List<String> fromNormsIds = supplierContract.getSupplierContractChildList().stream()
-                .map(SupplierContractChild::getNormsId).collect(Collectors.toList());
+            // 采购合同
+            checkAndUpdateSupplierContractState(entity, setData, orderNormsNum, executeNum, inSqlNormsId);
+        } else if (entity.getFromTypeId() == PurchaseOrderFromType.DELIVERY_PLAN.getKey()) {
+            // 到货计划
+            checkAndUpdateDeliveryPlanState(entity, setData, orderNormsNum, executeNum, inSqlNormsId);
+        }
+    }
 
-            super.checkIdFromOrderMaterialNorms(fromNormsIds, inSqlNormsId);
-            supplierContract.getSupplierContractChildList().forEach(supplierContractChild -> {
-                // 合同数量 - 当前采购订单的数量 - 已经下达采购订单的数量
-                Integer surplusNum = ErpOrderUtil.checkOperNumber(supplierContractChild.getOperNumber(), supplierContractChild.getNormsId(),
-                    orderNormsNum, executeNum);
-                if (setData) {
-                    supplierContractChild.setOperNumber(surplusNum);
-                }
-            });
+    private void checkAndUpdateSupplierContractState(PurchaseOrder entity, boolean setData, Map<String, Integer> orderNormsNum, Map<String, Integer> executeNum, List<String> inSqlNormsId) {
+        SupplierContract supplierContract = supplierContractService.selectById(entity.getFromId());
+        if (CollectionUtil.isEmpty(supplierContract.getSupplierContractChildList())) {
+            throw new CustomException("该采购合同下未包含商品.");
+        }
+        List<String> fromNormsIds = supplierContract.getSupplierContractChildList().stream()
+            .map(SupplierContractChild::getNormsId).collect(Collectors.toList());
+
+        super.checkIdFromOrderMaterialNorms(fromNormsIds, inSqlNormsId);
+        supplierContract.getSupplierContractChildList().forEach(supplierContractChild -> {
+            // 合同数量 - 当前采购订单的数量 - 已经下达采购订单的数量
+            Integer surplusNum = ErpOrderUtil.checkOperNumber(supplierContractChild.getOperNumber(), supplierContractChild.getNormsId(),
+                orderNormsNum, executeNum);
             if (setData) {
-                // 过滤掉剩余数量为0的商品
-                List<SupplierContractChild> supplierContractChildList = supplierContract.getSupplierContractChildList().stream()
-                    .filter(supplierContractChild -> supplierContractChild.getOperNumber() > 0).collect(Collectors.toList());
-                // 如果该合同的商品已经全部下达订单，那说明已经完成了合同的内容
-                if (CollectionUtil.isEmpty(supplierContractChildList)) {
-                    supplierContractService.editChildState(supplierContract.getId(), SupplierContractChildStateEnum.ALL_ISSUED.getKey());
-                } else {
-                    supplierContractService.editChildState(supplierContract.getId(), SupplierContractChildStateEnum.PARTIAL_RELEASE.getKey());
-                }
+                supplierContractChild.setOperNumber(surplusNum);
+            }
+        });
+        if (setData) {
+            // 过滤掉剩余数量为0的商品
+            List<SupplierContractChild> supplierContractChildList = supplierContract.getSupplierContractChildList().stream()
+                .filter(supplierContractChild -> supplierContractChild.getOperNumber() > 0).collect(Collectors.toList());
+            // 如果该合同的商品已经全部下达订单，那说明已经完成了合同的内容
+            if (CollectionUtil.isEmpty(supplierContractChildList)) {
+                supplierContractService.editChildState(supplierContract.getId(), SupplierContractChildStateEnum.ALL_ISSUED.getKey());
+            } else {
+                supplierContractService.editChildState(supplierContract.getId(), SupplierContractChildStateEnum.PARTIAL_RELEASE.getKey());
+            }
+        }
+    }
+
+    private void checkAndUpdateDeliveryPlanState(PurchaseOrder entity, boolean setData, Map<String, Integer> orderNormsNum, Map<String, Integer> executeNum, List<String> inSqlNormsId) {
+        ProductionPlan productionPlan = productionPlanService.selectById(entity.getFromId());
+        // 只查询外购商品
+        List<ProductionPlanChild> productionPlanChildList = productionPlan.getProductionPlanChildList().stream()
+            .filter(productionPlanChild -> productionPlanChild.getMaterialMation().getFromType() == MaterialFromType.OUTSOURCING.getKey())
+            .collect(Collectors.toList());
+        if (CollectionUtil.isEmpty(productionPlanChildList)) {
+            throw new CustomException("该到货计划单下未包含外购商品.");
+        }
+        List<String> fromNormsIds = productionPlanChildList.stream()
+            .map(ProductionPlanChild::getNormsId).collect(Collectors.toList());
+
+        super.checkIdFromOrderMaterialNorms(fromNormsIds, inSqlNormsId);
+        productionPlanChildList.forEach(productionPlanChild -> {
+            // 到货计划单的数量 - 当前采购订单的数量 - 已经下达采购订单的数量
+            Integer surplusNum = ErpOrderUtil.checkOperNumber(productionPlanChild.getOperNumber(), productionPlanChild.getNormsId(),
+                orderNormsNum, executeNum);
+            if (setData) {
+                productionPlanChild.setOperNumber(surplusNum);
+            }
+        });
+        if (setData) {
+            // 过滤掉剩余数量为0的商品
+            productionPlanChildList = productionPlanChildList.stream()
+                .filter(productionPlanChild -> productionPlanChild.getOperNumber() > 0).collect(Collectors.toList());
+            // 如果该合同的商品已经全部下达订单，那说明已经完成了合同的内容
+            if (CollectionUtil.isEmpty(productionPlanChildList)) {
+                productionPlanService.editPurchaseState(productionPlan.getId(), ProductionPlanPurchaseState.COMPLATE.getKey());
+            } else {
+                productionPlanService.editPurchaseState(productionPlan.getId(), ProductionPlanPurchaseState.PARTIAL.getKey());
             }
         }
     }
@@ -197,6 +248,9 @@ public class PurchaseOrderServiceImpl extends SkyeyeErpOrderServiceImpl<Purchase
         if (purchaseOrder.getFromTypeId() == PurchaseOrderFromType.SUPPLIER_CONTRACT.getKey()) {
             // 采购合同
             supplierContractService.setDataMation(purchaseOrder, PurchaseOrder::getFromId);
+        } else if (purchaseOrder.getFromTypeId() == PurchaseOrderFromType.DELIVERY_PLAN.getKey()) {
+            // 到货计划
+            productionPlanService.setDataMation(purchaseOrder, PurchaseOrder::getFromId);
         }
         purchaseOrder.getErpOrderItemList().forEach(erpOrderItem -> {
             erpOrderItem.setQualityInspectionMation(OrderItemQualityInspectionType.getMation(erpOrderItem.getQualityInspection()));

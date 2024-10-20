@@ -46,4 +46,7 @@ public interface ProductionPlanService extends SkyeyeFlowableService<ProductionP
 
     void insertProductionPlanToProduction(InputObject inputObject, OutputObject outputObject);
 
+    void queryProductionPlanTransPurchaseOrderById(InputObject inputObject, OutputObject outputObject);
+
+    void insertProductionPlanToPurchaseOrder(InputObject inputObject, OutputObject outputObject);
 }

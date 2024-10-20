@@ -137,7 +137,7 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
         // 查询子单据产品信息
         materialService.setDataMation(production.getProductionChildList(), ProductionChild::getMaterialId);
         materialNormsService.setDataMation(production.getProductionChildList(), ProductionChild::getNormsId);
-        if (production.getFromTypeId() == ProductionFromType.PRODUCTION_PLAN.getKey()) {
+        if (production.getFromTypeId() == ProductionFromType.DELIVERY_PLAN.getKey()) {
             // 出货计划单
             productionPlanService.setDataMation(production, Production::getFromId);
         }
@@ -213,7 +213,7 @@ public class ProductionServiceImpl extends SkyeyeFlowableServiceImpl<ProductionD
         // 获取同一个来源单据下已经审批通过的生产计划单的商品信息
         Map<String, Integer> executeNum = calcMaterialNormsNumByFromId(entity.getFromId());
         List<String> inSqlNormsId = new ArrayList<>(executeNum.keySet());
-        if (entity.getFromTypeId() == ProductionFromType.PRODUCTION_PLAN.getKey()) {
+        if (entity.getFromTypeId() == ProductionFromType.DELIVERY_PLAN.getKey()) {
             // 出货计划单
             ProductionPlan productionPlan = productionPlanService.selectById(entity.getFromId());
             // 只查询自产商品
