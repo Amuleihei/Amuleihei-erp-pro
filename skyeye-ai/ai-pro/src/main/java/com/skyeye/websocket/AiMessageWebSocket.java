@@ -131,4 +131,13 @@ public class AiMessageWebSocket {
         return onlineNumber;
     }
 
+    /**
+     * 获取当前的session*
+     *
+     *
+     */
+     public synchronized Session getSession() {
+         return this.session;
+     }
+
 }
