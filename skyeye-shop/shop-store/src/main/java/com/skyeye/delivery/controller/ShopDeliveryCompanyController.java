@@ -59,40 +59,28 @@ public class ShopDeliveryCompanyController {
     }
 
     /**
-     * 根据id删除快递公司信息
+     * 批量删除快递公司信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deleteDeliveryById", value = "根据id删除快递公司信息", method = "DELETE", allUse = "2")
+    @ApiOperation(id = "deleteDeliveryById", value = "批量删除快递公司信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/ShopDeliveryCompanyController/deleteDeliveryById")
-    public void deleteDeliveryById(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryCompanyService.deleteById(inputObject, outputObject);
+    public void deleteDeliveryByIds(InputObject inputObject, OutputObject outputObject) {
+        shopDeliveryCompanyService.deleteByIds(inputObject, outputObject);
     }
 
+
     /**
-     * 根据ID获取快递公司
+     * 获取全部已启用广告位管理信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "getDelivery", value = "根据ID获取快递公司", method = "GET", allUse = "2")
-    @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopDeliveryCompanyController/getDelivery")
-    public void queryDeliveryByIds(InputObject inputObject, OutputObject outputObject) {
-        shopDeliveryCompanyService.selectById(inputObject, outputObject);
-    }
-
-    /**
-     * 获取广告位管理信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryDelivery", value = "获取快递公司", method = "POST", allUse = "0")
+    @ApiOperation(id = "queryDelivery", value = "获取全部已启用广告位管理信息", method = "POST", allUse = "0")
     @RequestMapping("/post/ShopDeliveryCompanyController/queryDelivery")
-    public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
+    public void queryDelivery(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryCompanyService.queryList(inputObject, outputObject);
     }
 }

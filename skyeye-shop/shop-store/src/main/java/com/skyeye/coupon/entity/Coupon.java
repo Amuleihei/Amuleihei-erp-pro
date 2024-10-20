@@ -80,7 +80,7 @@ public class Coupon extends BaseGeneralInfo {
     private String discountLimitPrice;
 
     @TableField(value = "take_count")
-    @ApiModelProperty(value = "商品范围", required = "required")
+    @ApiModelProperty(value = "已经领取优惠券的数量", required = "required")
     private Integer takeCount;
 
     @TableField(value = "use_count")
@@ -88,6 +88,6 @@ public class Coupon extends BaseGeneralInfo {
     private Integer useCount;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "优惠券适用对象列表", required = "required,json")
+    @ApiModelProperty(value = "优惠券适用对象列表", required = "json")
     private List<CouponMaterial> couponMaterialList;
 }

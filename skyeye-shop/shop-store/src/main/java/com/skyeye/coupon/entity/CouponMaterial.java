@@ -15,11 +15,11 @@ import lombok.Data;
 public class CouponMaterial extends CommonInfo {
 
     @TableId("id")
-    @ApiModelProperty("主键id。为空时新增，不为空时编辑")
+    @Property("主键id。为空时新增，不为空时编辑")
     private String id;
 
     @TableField(value = "material_id")
-    @ApiModelProperty(value = "商品id", required = "required")
+    @ApiModelProperty(value = "商品id")
     private String materialId;
 
     @TableField(value = "coupon_id")

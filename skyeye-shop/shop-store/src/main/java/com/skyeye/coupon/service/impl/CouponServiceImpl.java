@@ -1,6 +1,6 @@
 package com.skyeye.coupon.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -20,6 +20,7 @@ import com.skyeye.coupon.entity.Coupon;
 import com.skyeye.coupon.entity.CouponMaterial;
 import com.skyeye.coupon.enums.CouponValidityType;
 import com.skyeye.coupon.enums.PromotionDiscountType;
+import com.skyeye.coupon.enums.PromotionMaterialScope;
 import com.skyeye.coupon.service.CouponMaterialService;
 import com.skyeye.coupon.service.CouponService;
 import com.skyeye.exception.CustomException;
@@ -40,8 +41,14 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Override
     public void validatorEntity(Coupon coupon) {
-        if(StrUtil.isNotEmpty(coupon.getId()) && StrUtil.isNotEmpty(coupon.getTemplateId())){
+        if (StrUtil.isNotEmpty(coupon.getId()) && StrUtil.isNotEmpty(coupon.getTemplateId())) {
             throw new CustomException("更新操作不可上传模板id(templateId)");
+        }
+        // 新增时，商品范围不为全部商品，并且适用对象为空时，不可新增。
+        if (StrUtil.isEmpty(coupon.getId()) &&
+            coupon.getProductScope() != PromotionMaterialScope.ALL.getKey() &&
+            CollectionUtil.isEmpty(coupon.getCouponMaterialList())) {
+            throw new CustomException("需要指定优惠券适用的商品范围，适用全部商品时可为空");
         }
     }
 
@@ -77,11 +84,16 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Override
     public void writePostpose(Coupon coupon, String userId) {
-        if (ObjectUtil.isNotEmpty(coupon.getCouponMaterialList())) {
+        if (CollectionUtil.isNotEmpty(coupon.getCouponMaterialList())) {
             // 删除原本的适用商品信息
             couponMaterialService.deleteByCouponId(coupon.getId());
             // 设置优惠券id
-            coupon.getCouponMaterialList().forEach(couponMaterial -> couponMaterial.setCouponId(coupon.getId()));
+            coupon.getCouponMaterialList().forEach(couponMaterial -> {
+                if ((StrUtil.isEmpty(couponMaterial.getMaterialId()))) {
+                    throw new CustomException("适用对象的商品id(materialId)不能为空");
+                }
+                couponMaterial.setCouponId(coupon.getId());
+            });
             // 批量新增
             couponMaterialService.createEntity(coupon.getCouponMaterialList(), userId);
         }
@@ -108,7 +120,7 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         }
         List<Coupon> list = list(queryWrapper);
         List<String> parentIdList = list.stream().map(Coupon::getId).collect(Collectors.toList());
-        Map<String, List<CouponMaterial>> couponMapMaterialList =couponMaterialService.queryListByCouponId(parentIdList);
+        Map<String, List<CouponMaterial>> couponMapMaterialList = couponMaterialService.queryListByCouponId(parentIdList);
         for (Coupon coupon : list) {
             coupon.setCouponMaterialList(couponMapMaterialList.get(coupon.getId()));
         }
@@ -124,13 +136,14 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ZERO)) {
             queryWrapper.ne(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
         }
-        if(params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ONE)){
+        if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ONE)) {
             queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
         }
         List<Coupon> list = list(queryWrapper);
         outputObject.setBean(list);
         outputObject.settotal(list.size());
     }
+
     @Override
     public void updateTakeCount(String couponId, Integer takeCount) {
         UpdateWrapper<Coupon> updateWrapper = new UpdateWrapper<>();

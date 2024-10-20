@@ -39,15 +39,15 @@ public class ShopMemberLevelController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryMemberLevel", value = "分页获取会员等级信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryMemberLevelList", value = "分页获取会员等级信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/ShopMemberLevelController/queryMemberLevel")
+    @RequestMapping("/post/ShopMemberLevelController/queryMemberLevelList")
     public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.queryPageList(inputObject, outputObject);
     }
 
     /**
-     * 编辑会员等级信息
+     * 新增/编辑会员等级信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
@@ -57,19 +57,6 @@ public class ShopMemberLevelController {
     @RequestMapping("/post/ShopMemberLevelController/writeMemberLevel")
     public void writeMemberLevel(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.saveOrUpdateEntity(inputObject, outputObject);
-    }
-
-    /**
-     * 根据id删除会员等级信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "deleteMemberLevelById", value = "根据id删除会员级别信息", method = "DELETE", allUse = "2")
-    @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopMemberLevelController/deleteMemberLevelById")
-    public void deleteMemberLeveById(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.deleteById(inputObject, outputObject);
     }
 
     /**
@@ -87,27 +74,14 @@ public class ShopMemberLevelController {
     }
 
     /**
-     * 根据ID获取会员等级
+     * 获取已启用的会员等级列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "getMemberLevel", value = "根据ID获取会员等级", method = "GET", allUse = "2")
-    @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopMemberLevelController/getMemberLevel")
-    public void queryStoreByIds(InputObject inputObject, OutputObject outputObject) {
-        shopMemberLevelService.selectById(inputObject, outputObject);
-    }
-
-    /**
-     * 获得会员等级列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "memberLevelList", value = "获得会员等级列表", method = "POST", allUse = "0")
-    @RequestMapping("/post/ShopMemberLevelController/memberLevelList")
-    public void memberLevelList(InputObject inputObject, OutputObject outputObject) {
+    @ApiOperation(id = "queryMemberLevel", value = "获得会员等级列表", method = "POST", allUse = "0")
+    @RequestMapping("/post/ShopMemberLevelController/queryMemberLevel")
+    public void queryMemberLevel(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.queryList(inputObject, outputObject);
     }
 }
