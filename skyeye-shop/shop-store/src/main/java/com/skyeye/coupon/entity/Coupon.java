@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.cache.RedisCacheField;
+import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 
@@ -11,9 +13,13 @@ import java.util.List;
 
 @Data
 @TableName(value = "shop_coupon")
+@RedisCacheField(name = "shop:coupon", cacheTime = RedisConstants.THIRTY_DAY_SECONDS)
 @ApiModel(value = "优惠券/模版信息管理实体类")
 public class Coupon extends BaseGeneralInfo {
 
+    @TableField(value = "store_id")
+    @ApiModelProperty(value = "门店id")
+    private String storeId;
 
     @TableField(value = "template_id")
     @ApiModelProperty(value = "模板id")
@@ -80,11 +86,11 @@ public class Coupon extends BaseGeneralInfo {
     private String discountLimitPrice;
 
     @TableField(value = "take_count")
-    @ApiModelProperty(value = "已经领取优惠券的数量", required = "required")
+    @ApiModelProperty(value = "已经领取优惠券的数量")
     private Integer takeCount;
 
     @TableField(value = "use_count")
-    @ApiModelProperty(value = "使用优惠券的次数", required = "required")
+    @ApiModelProperty(value = "使用优惠券的次数")
     private Integer useCount;
 
     @TableField(exist = false)

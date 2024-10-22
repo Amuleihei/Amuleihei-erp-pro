@@ -9,6 +9,9 @@ import java.util.Map;
 public interface CouponMaterialService extends SkyeyeBusinessService<CouponMaterial> {
     List<CouponMaterial> queryListByCouponId(String couponId);
 
-    Map<String, List<CouponMaterial>> queryListByCouponId(List<String> parentIdList);
     void deleteByCouponId(String id);
+
+    void deleteByCouponId(List<String> ids);
+
+    void insertCouponMaterial(String  couponId, List<CouponMaterial> couponMaterialList, String userId);
 }

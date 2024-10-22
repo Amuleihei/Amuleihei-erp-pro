@@ -44,10 +44,11 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         if (StrUtil.isNotEmpty(coupon.getId()) && StrUtil.isNotEmpty(coupon.getTemplateId())) {
             throw new CustomException("更新操作不可上传模板id(templateId)");
         }
-        // 新增时，商品范围不为全部商品，并且适用对象为空时，不可新增。
-        if (StrUtil.isEmpty(coupon.getId()) &&
-            coupon.getProductScope() != PromotionMaterialScope.ALL.getKey() &&
-            CollectionUtil.isEmpty(coupon.getCouponMaterialList())) {
+        // 模板新增
+        if (StrUtil.isEmpty(coupon.getId()) && StrUtil.isEmpty(coupon.getTemplateId()) && // 主键和模板id为空时，即为模板
+            coupon.getProductScope() != PromotionMaterialScope.ALL.getKey() && // 判断适用商品类型
+            CollectionUtil.isEmpty(coupon.getCouponMaterialList()))  // 不适用全部商品时，适用对象不能为空。
+        {
             throw new CustomException("需要指定优惠券适用的商品范围，适用全部商品时可为空");
         }
     }
@@ -84,27 +85,24 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Override
     public void writePostpose(Coupon coupon, String userId) {
+        // 新增/编辑优惠券的适用商品对象
         if (CollectionUtil.isNotEmpty(coupon.getCouponMaterialList())) {
-            // 删除原本的适用商品信息
-            couponMaterialService.deleteByCouponId(coupon.getId());
-            // 设置优惠券id
-            coupon.getCouponMaterialList().forEach(couponMaterial -> {
-                if ((StrUtil.isEmpty(couponMaterial.getMaterialId()))) {
-                    throw new CustomException("适用对象的商品id(materialId)不能为空");
-                }
-                couponMaterial.setCouponId(coupon.getId());
-            });
-            // 批量新增
-            couponMaterialService.createEntity(coupon.getCouponMaterialList(), userId);
+            couponMaterialService.insertCouponMaterial(coupon.getId(), coupon.getCouponMaterialList(), userId);
         }
     }
 
     @Override
-    public Coupon selectById(String id) {
-        Coupon coupon = super.selectById(id);
-        List<CouponMaterial> couponMaterialList = couponMaterialService.queryListByCouponId(coupon.getId());
-        coupon.setCouponMaterialList(couponMaterialList);
-        return coupon;
+    public void getQueryWrapper(InputObject inputObject, QueryWrapper<Coupon> wrapper) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        String type = commonPageInfo.getType();
+        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
+        if (type.equals(CommonNumConstants.NUM_ZERO.toString())) {
+            wrapper.isNull(typeKey).or().eq(type, StrUtil.EMPTY);
+        }
+        if (type.equals(CommonNumConstants.NUM_ONE.toString())) {
+            wrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
+        }
+        super.getQueryWrapper(inputObject, wrapper);
     }
 
     @Override
@@ -112,18 +110,14 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
         String type = commonPageInfo.getType();
         QueryWrapper<Coupon> queryWrapper = new QueryWrapper<>();
-        if (type.equals(CommonNumConstants.NUM_ONE.toString())) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
+        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
+        if (type.equals(CommonNumConstants.NUM_ZERO.toString())) {
+            queryWrapper.isNull(typeKey).or().eq(type, StrUtil.EMPTY);
         }
-        if (type.equals(CommonNumConstants.NUM_TWO.toString())) {
-            queryWrapper.ne(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
+        if (type.equals(CommonNumConstants.NUM_ONE.toString())) {
+            queryWrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
         }
         List<Coupon> list = list(queryWrapper);
-        List<String> parentIdList = list.stream().map(Coupon::getId).collect(Collectors.toList());
-        Map<String, List<CouponMaterial>> couponMapMaterialList = couponMaterialService.queryListByCouponId(parentIdList);
-        for (Coupon coupon : list) {
-            coupon.setCouponMaterialList(couponMapMaterialList.get(coupon.getId()));
-        }
         // 分页查询时获取数据
         return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
     }
@@ -132,12 +126,13 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     public void queryCouponListByState(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         QueryWrapper<Coupon> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getEnabled), params.get("enabled"));
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getStoreId), params.get("storeId"));
+        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
         if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ZERO)) {
-            queryWrapper.ne(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
+            queryWrapper.isNull(typeKey).or().eq(typeKey, StrUtil.EMPTY);
         }
         if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ONE)) {
-            queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
+            queryWrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
         }
         List<Coupon> list = list(queryWrapper);
         outputObject.setBean(list);
@@ -158,6 +153,11 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         updateWrapper.eq(CommonConstants.ID, couponId);
         updateWrapper.set(MybatisPlusUtil.toColumns(Coupon::getUseCount), useCount);
         update(updateWrapper);
+    }
+
+    @Override
+    public void deletePostpose(List<String> ids) {
+        couponMaterialService.deleteByCouponId(ids);
     }
 
     /**
