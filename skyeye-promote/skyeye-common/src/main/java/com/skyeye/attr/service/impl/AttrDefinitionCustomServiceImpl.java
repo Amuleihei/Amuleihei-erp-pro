@@ -210,7 +210,8 @@ public class AttrDefinitionCustomServiceImpl extends SkyeyeBusinessServiceImpl<A
         // 查询服务类信息
         Map<String, ServiceBean> serviceBeanMap = serviceBeanService.queryServiceClass(classNames);
         attrDefinitionCustoms.forEach(attrDefinitionCustom -> {
-            ServiceBean serviceBean = serviceBeanMap.get(attrDefinitionCustom.getClassName());
+            String className = attrDefinitionCustom.getAppId() + attrDefinitionCustom.getClassName();
+            ServiceBean serviceBean = serviceBeanMap.get(className);
             if (ObjectUtil.isEmpty(serviceBean)) {
                 attrDefinitionCustom.setWhetherDelete(true);
                 return;
