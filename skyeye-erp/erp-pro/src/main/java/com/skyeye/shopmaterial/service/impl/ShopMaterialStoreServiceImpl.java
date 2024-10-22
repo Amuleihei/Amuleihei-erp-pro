@@ -13,18 +13,25 @@ import com.github.pagehelper.PageHelper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.material.entity.Material;
+import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.rest.shop.service.IShopStoreService;
 import com.skyeye.shopmaterial.dao.ShopMaterialStoreDao;
+import com.skyeye.shopmaterial.entity.ShopMaterial;
+import com.skyeye.shopmaterial.entity.ShopMaterialNorms;
 import com.skyeye.shopmaterial.entity.ShopMaterialStore;
+import com.skyeye.shopmaterial.service.ShopMaterialService;
 import com.skyeye.shopmaterial.service.ShopMaterialStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +50,12 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
 
     @Autowired
     private IShopStoreService iShopStoreService;
+
+    @Autowired
+    private MaterialNormsService materialNormsService;
+
+    @Autowired
+    private ShopMaterialService shopMaterialService;
 
     @Override
     public void deleteByMaterialId(String materialId) {
@@ -154,6 +167,40 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         iShopStoreService.setDataMation(shopMaterialStoreList, ShopMaterialStore::getStoreId);
         outputObject.settotal(pages.getTotal());
         return shopMaterialStoreList;
+    }
+
+    @Override
+    public Map<String, ShopMaterialStore> queryShopMaterialStoreByMaterialIds(String... materialIds) {
+        List<String> idList = Arrays.asList(materialIds).stream()
+            .filter(materialId -> StrUtil.isNotEmpty(materialId)).distinct().collect(Collectors.toList());
+        if (CollectionUtil.isEmpty(idList)) {
+            return new HashMap<>();
+        }
+        QueryWrapper<ShopMaterialStore> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(MybatisPlusUtil.toColumns(ShopMaterialStore::getMaterialId), idList);
+        List<ShopMaterialStore> shopMaterialStoreList = list(queryWrapper);
+        Map<String, ShopMaterialStore> collect = shopMaterialStoreList.stream()
+            .collect(Collectors.toMap(ShopMaterialStore::getMaterialId, shopMaterialStore -> shopMaterialStore, (existingValue, newValue) -> existingValue));
+        return collect;
+    }
+
+    @Override
+    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
+        String id = inputObject.getParams().get("id").toString();
+        ShopMaterialStore shopMaterialStore = selectById(id);
+        ShopMaterial shopMaterial = shopMaterialService.queryShopMaterialByMaterialId(shopMaterialStore.getMaterialId());
+        shopMaterial.getMaterialMation().setMaterialNorms(null);
+        shopMaterial.getMaterialMation().setUnitGroupMation(null);
+        shopMaterial.getMaterialMation().setMaterialProcedure(null);
+        shopMaterial.getMaterialMation().setNormsSpec(null);
+        materialNormsService.setDataMation(shopMaterial.getShopMaterialNormsList(), ShopMaterialNorms::getNormsId);
+        shopMaterial.getShopMaterialNormsList().forEach(shopMaterialNorms -> {
+            shopMaterialNorms.setEstimatePurchasePrice(null);
+        });
+        shopMaterial.setShopMaterialStore(shopMaterialStore);
+        shopMaterial.setDefaultStoreId(shopMaterialStore.getStoreId());
+        outputObject.setBean(shopMaterialStore);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
 }

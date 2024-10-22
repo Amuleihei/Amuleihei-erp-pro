@@ -21,7 +21,6 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.material.classenum.MaterialShelvesState;
 import com.skyeye.material.entity.Material;
-import com.skyeye.material.service.MaterialNormsService;
 import com.skyeye.material.service.MaterialService;
 import com.skyeye.shopmaterial.dao.ShopMaterialDao;
 import com.skyeye.shopmaterial.entity.ShopMaterial;
@@ -53,9 +52,6 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
 
     @Autowired
     private MaterialService materialService;
-
-    @Autowired
-    private MaterialNormsService materialNormsService;
 
     @Autowired
     private ShopMaterialNormsService shopMaterialNormsService;
@@ -93,7 +89,7 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     @Override
     public void queryTransMaterialById(InputObject inputObject, OutputObject outputObject) {
         String materialId = inputObject.getParams().get("id").toString();
-        ShopMaterial shopMaterial = selectByMaterialId(materialId);
+        ShopMaterial shopMaterial = queryShopMaterialByMaterialId(materialId);
         if (ObjectUtil.isEmpty(shopMaterial) || StrUtil.isEmpty(shopMaterial.getId())) {
             shopMaterial = new ShopMaterial();
             Material material = materialService.selectById(materialId);
@@ -113,16 +109,6 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         List<ShopMaterialNorms> shopMaterialNormsList = shopMaterialNormsService.selectByMaterialId(shopMaterial.getMaterialId());
         shopMaterial.setShopMaterialNormsList(shopMaterialNormsList);
         return shopMaterial;
-    }
-
-    private ShopMaterial selectByMaterialId(String materialId) {
-        QueryWrapper<ShopMaterial> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMaterial::getMaterialId), materialId);
-        ShopMaterial shopMaterial = super.getOne(queryWrapper);
-        if (ObjectUtil.isEmpty(shopMaterial)) {
-            return null;
-        }
-        return selectById(shopMaterial.getId());
     }
 
     @Override
@@ -191,22 +177,6 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     }
 
     @Override
-    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
-        String id = inputObject.getParams().get("id").toString();
-        ShopMaterial shopMaterial = selectById(id);
-        shopMaterial.getMaterialMation().setMaterialNorms(null);
-        shopMaterial.getMaterialMation().setUnitGroupMation(null);
-        shopMaterial.getMaterialMation().setMaterialProcedure(null);
-        shopMaterial.getMaterialMation().setNormsSpec(null);
-        materialNormsService.setDataMation(shopMaterial.getShopMaterialNormsList(), ShopMaterialNorms::getNormsId);
-        shopMaterial.getShopMaterialNormsList().forEach(shopMaterialNorms -> {
-            shopMaterialNorms.setEstimatePurchasePrice(null);
-        });
-        outputObject.setBean(shopMaterial);
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
-    }
-
-    @Override
     public void queryBrandShopMaterialList(InputObject inputObject, OutputObject outputObject) {
         MPJLambdaWrapper<ShopMaterial> wrapper = new MPJLambdaWrapper<ShopMaterial>()
             .innerJoin(Material.class, Material::getId, ShopMaterial::getMaterialId)
@@ -216,12 +186,20 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         List<ShopMaterial> shopMaterialList = skyeyeBaseMapper.selectJoinList(ShopMaterial.class, wrapper);
         // 根据id批量查询详细的商品信息
         List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
+        // 批量查询商品所属门店信息(门店随机)
+        List<String> materialIds = shopMaterialList.stream().map(ShopMaterial::getMaterialId).distinct().collect(Collectors.toList());
+        Map<String, ShopMaterialStore> stringShopMaterialStoreMap = shopMaterialStoreService.queryShopMaterialStoreByMaterialIds(materialIds.toArray(new String[]{}));
         shopMaterialList = selectByIds(idList.toArray(new String[]{}));
         shopMaterialList.forEach(shopMaterial -> {
             shopMaterial.getMaterialMation().setMaterialNorms(null);
             shopMaterial.getMaterialMation().setUnitGroupMation(null);
             shopMaterial.getMaterialMation().setMaterialProcedure(null);
             shopMaterial.getMaterialMation().setNormsSpec(null);
+            // 设置门店信息
+            shopMaterial.setShopMaterialStore(stringShopMaterialStoreMap.get(shopMaterial.getMaterialId()));
+            if (ObjectUtil.isNotEmpty(shopMaterial.getShopMaterialStore())) {
+                shopMaterial.setDefaultStoreId(shopMaterial.getShopMaterialStore().getStoreId());
+            }
         });
 
         // 根据品牌id进行分组，并且每个品牌下只取8条数据
@@ -245,6 +223,17 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         outputObject.setBean(collectMap);
         outputObject.setCustomBean("brandMap", brandMap);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public ShopMaterial queryShopMaterialByMaterialId(String materialId) {
+        QueryWrapper<ShopMaterial> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMaterial::getMaterialId), materialId);
+        ShopMaterial shopMaterial = getOne(queryWrapper, false);
+        if (ObjectUtil.isEmpty(shopMaterial)) {
+            return null;
+        }
+        return selectById(shopMaterial.getId());
     }
 
 }

@@ -86,6 +86,14 @@ public class ShopMaterial extends OperatorUserInfo {
     private String realSales;
 
     @TableField(exist = false)
+    @Property("默认门店id")
+    private String defaultStoreId;
+
+    @TableField(exist = false)
+    @Property("该商品随机支持的门店信息")
+    private ShopMaterialStore shopMaterialStore;
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "上架的规格信息", required = "json")
     private List<ShopMaterialNorms> shopMaterialNormsList;
 

@@ -47,14 +47,6 @@ public class ShopMaterialController {
         shopMaterialService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "queryShopMaterialById", value = "根据id获取商城商品信息", method = "GET", allUse = "0")
-    @ApiImplicitParams(value = {
-        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/ShopMaterialController/queryShopMaterialById")
-    public void queryShopMaterialById(InputObject inputObject, OutputObject outputObject) {
-        shopMaterialService.queryShopMaterialById(inputObject, outputObject);
-    }
-
     @ApiOperation(id = "queryShopMaterialList", value = "获取商城商品信息列表", method = "POST", allUse = "0")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ShopMaterialController/queryShopMaterialList")
