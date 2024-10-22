@@ -30,7 +30,7 @@ public class ChatController {
 
     @ApiOperation(id = "sendChatMessage", value = "发送消息", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "message", name = "message", value = "消息", required = "required"),
+        @ApiImplicitParam(id = "content", name = "content", value = "消息", required = "required"),
         @ApiImplicitParam(id = "apiKeyId", name = "apiKeyId", value = "AI配置id", required = "required")
     })
     @RequestMapping("/post/ChatController/sendChatMessage")

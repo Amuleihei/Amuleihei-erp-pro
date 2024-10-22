@@ -40,10 +40,10 @@ public class AdsenseController {
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryAdsense", value = "分页查询广告位管理信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryAdsenseList", value = "分页查询广告位管理信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
-    @RequestMapping("/post/DeliveryController/queryAdsense")
-    public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
+    @RequestMapping("/post/DeliveryController/queryAdsenseList")
+    public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
         adsenseService.queryPageList(inputObject, outputObject);
     }
 
@@ -75,28 +75,14 @@ public class AdsenseController {
     }
 
     /**
-     * 获取广告位管理信息
+     * 获取已启用广告位管理信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryAdsenseList", value = "获取广告位管理信息", method = "POST", allUse = "0")
-    @RequestMapping("/post/AdsenseController/queryAdsenseList")
-    public void queryAdsenseList(InputObject inputObject, OutputObject outputObject) {
+    @ApiOperation(id = "queryAdsense", value = "获取已启用广告位管理信息", method = "POST", allUse = "0")
+    @RequestMapping("/post/AdsenseController/queryAdsense")
+    public void queryAdsense(InputObject inputObject, OutputObject outputObject) {
         adsenseService.queryList(inputObject, outputObject);
-    }
-
-    /**
-     * 根据id获取广告位管理信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "selectAdsenseById", value = "根据id获取广告位管理信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({
-            @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/AdsenseController/selectAdsenseById")
-    public void selectAdsenseById(InputObject inputObject, OutputObject outputObject) {
-        adsenseService.selectById(inputObject, outputObject);
     }
 }
