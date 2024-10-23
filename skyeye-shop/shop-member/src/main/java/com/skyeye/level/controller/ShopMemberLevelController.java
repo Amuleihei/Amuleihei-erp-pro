@@ -29,57 +29,32 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "会员等级", tags = "会员等级", modelName = "会员等级")
 public class ShopMemberLevelController {
 
-
     @Autowired
     private ShopMemberLevelService shopMemberLevelService;
 
-    /**
-     * 分页获取会员等级
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryMemberLevelList", value = "分页获取会员等级信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryMemberLevelList", value = "分页获取会员等级信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ShopMemberLevelController/queryMemberLevelList")
     public void queryMemberLevelList(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 新增/编辑会员等级信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "writeMemberLevel", value = "添加/编辑会员等级", method = "POST", allUse = "2")
+    @ApiOperation(id = "writeMemberLevel", value = "添加/编辑会员等级", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = ShopMemberLevel.class)
     @RequestMapping("/post/ShopMemberLevelController/writeMemberLevel")
     public void writeMemberLevel(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 批量删除快递运费费用模版信息[ids]
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "deleteMemberLeveByIds", value = "批量删除会员等级信息", method = "DELETE", allUse = "2")
+    @ApiOperation(id = "deleteMemberLeveByIds", value = "批量删除会员等级信息", method = "DELETE", allUse = "1")
     @ApiImplicitParams({
-            @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
+        @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ShopMemberLevelController/deleteMemberLeveByIds")
     public void deleteMemberLeveByIds(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.deleteByIds(inputObject, outputObject);
     }
 
-    /**
-     * 获取已启用的会员等级列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryMemberLevel", value = "获得会员等级列表", method = "POST", allUse = "0")
+    @ApiOperation(id = "queryMemberLevel", value = "获得所有已启用的会员等级列表", method = "POST", allUse = "0")
     @RequestMapping("/post/ShopMemberLevelController/queryMemberLevel")
     public void queryMemberLevel(InputObject inputObject, OutputObject outputObject) {
         shopMemberLevelService.queryList(inputObject, outputObject);

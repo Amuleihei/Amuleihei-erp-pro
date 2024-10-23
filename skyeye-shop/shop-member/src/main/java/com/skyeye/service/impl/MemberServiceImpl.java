@@ -5,6 +5,8 @@
 package com.skyeye.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.Page;
@@ -23,6 +25,8 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.dao.MemberDao;
 import com.skyeye.entity.Member;
 import com.skyeye.eve.service.IAreaService;
+import com.skyeye.level.entity.ShopMemberLevel;
+import com.skyeye.level.service.ShopMemberLevelService;
 import com.skyeye.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +49,9 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
     @Autowired
     private IAreaService iAreaService;
 
+    @Autowired
+    private ShopMemberLevelService shopMemberLevelService;
+
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         CommonPageInfo pageInfo = inputObject.getParams(CommonPageInfo.class);
@@ -56,6 +63,14 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
     @Override
     public void createPrepose(Member entity) {
         setMemberMation(entity);
+        setLevel(entity);
+    }
+
+    private void setLevel(Member entity) {
+        ShopMemberLevel minLevel = shopMemberLevelService.getMinLevel();
+        if (ObjectUtil.isNotEmpty(minLevel)) {
+            entity.setLevelId(minLevel.getId());
+        }
     }
 
     @Override
@@ -65,6 +80,9 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         entity.setPassword(oldMember.getPassword());
         entity.setWechatOpenId(oldMember.getWechatOpenId());
         entity.setPwdNumEnc(oldMember.getPwdNumEnc());
+        if (StrUtil.isEmpty(entity.getLevelId())) {
+            setLevel(entity);
+        }
     }
 
     private void setMemberMation(Member entity) {
@@ -106,6 +124,9 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         queryWrapper.eq(MybatisPlusUtil.toColumns(Member::getPhone), phone);
         queryWrapper.eq(MybatisPlusUtil.toColumns(Member::getDeleteFlag), DeleteFlagEnum.NOT_DELETE.getKey());
         Member member = getOne(queryWrapper, false);
+        if (ObjectUtil.isNotEmpty(member)) {
+            shopMemberLevelService.setDataMation(member, Member::getLevelId);
+        }
         return member;
     }
 

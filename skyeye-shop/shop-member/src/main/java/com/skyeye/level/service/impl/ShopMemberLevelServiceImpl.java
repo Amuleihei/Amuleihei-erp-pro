@@ -8,7 +8,6 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
@@ -32,30 +31,23 @@ import java.util.Map;
 @SkyeyeService(name = "会员等级", groupName = "会员等级")
 public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMemberLevelDao, ShopMemberLevel> implements ShopMemberLevelService {
 
-    /**
-     * 分页查询-会员等级
-     *
-     * @param commonPageInfo
-     * @return
-     */
-    @Override
-    public QueryWrapper<ShopMemberLevel> getQueryWrapper(CommonPageInfo commonPageInfo) {
-        QueryWrapper<ShopMemberLevel> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        queryWrapper.like(MybatisPlusUtil.toColumns(ShopMemberLevel::getName), commonPageInfo.getObjectId());
-        return queryWrapper;
-    }
-
-    /**
-     * 获取已启用的会员等级列表
-     *
-     * @param inputObject 入参以及用户信息等获取对象
-     * @return
-     */
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
+        List<ShopMemberLevel> beans = queryAllEnabledMemberLevel();
+        return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+    }
+
+    private List<ShopMemberLevel> queryAllEnabledMemberLevel() {
         QueryWrapper<ShopMemberLevel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        queryWrapper.orderByAsc(MybatisPlusUtil.toColumns(ShopMemberLevel::getLevel));
         List<ShopMemberLevel> beans = list(queryWrapper);
-        return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+        return beans;
+    }
+
+    @Override
+    public ShopMemberLevel getMinLevel() {
+        List<ShopMemberLevel> beans = queryAllEnabledMemberLevel();
+        return beans.stream().findFirst().orElse(null);
     }
 }

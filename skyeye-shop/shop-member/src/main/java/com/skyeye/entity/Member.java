@@ -16,6 +16,7 @@ import com.skyeye.common.base.handler.enclosure.bean.Enclosure;
 import com.skyeye.common.base.handler.enclosure.bean.EnclosureFace;
 import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.AreaInfo;
+import com.skyeye.level.entity.ShopMemberLevel;
 import lombok.Data;
 
 /**
@@ -60,6 +61,14 @@ public class Member extends AreaInfo implements EnclosureFace {
     @TableField("pwd_num_enc")
     @Property(value = "用户密码加密次数")
     private Integer pwdNumEnc;
+
+    @TableField("level_id")
+    @Property(value = "会员等级id")
+    private String levelId;
+
+    @TableField(exist = false)
+    @Property(value = "会员等级信息")
+    private ShopMemberLevel levelMation;
 
     @TableField("wechat_open_id")
     @ApiModelProperty(value = "微信的openId")
