@@ -137,6 +137,13 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     }
 
     @Override
+    public Coupon getDataFromDb(String id) {
+        Coupon coupon = super.getDataFromDb(id);
+        coupon.setCouponMaterialList(couponMaterialService.queryListByCouponId(id));
+        return coupon;
+    }
+
+    @Override
     public void setStateByCoupon() {
         UpdateWrapper<Coupon> updateWrapper = new UpdateWrapper<>();
         // 取优惠券
