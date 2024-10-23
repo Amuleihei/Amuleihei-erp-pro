@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum CouponValidityType implements SkyeyeEnumClass {
 
-    DATE(1, "固定日期", true, false),
+    DATE(1, "固定日期", true, true),
     TERM(2, "领取之后", true, false);
 
     private Integer key;

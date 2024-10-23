@@ -22,9 +22,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum PromotionMaterialScope implements SkyeyeEnumClass {
 
-    ALL(1, "全部商品", true, false),
+    ALL(1, "全部商品", true, true),
     SPU(2, "指定商品", true, false),
-    CATEGORY(3, "指定品类", true, false);
+    CATEGORY(3, "指定品类", false, false);
 
     private Integer key;
 

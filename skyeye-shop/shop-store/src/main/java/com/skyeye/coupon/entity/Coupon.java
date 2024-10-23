@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.constans.RedisConstants;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
@@ -98,7 +99,7 @@ public class Coupon extends BaseGeneralInfo {
     private String discountLimitPrice;
 
     @TableField(value = "take_count")
-    @ApiModelProperty(value = "已经领取优惠券的数量")
+    @Property(value = "已经领取优惠券的数量")
     private Integer takeCount;
 
     @TableField(value = "use_count")

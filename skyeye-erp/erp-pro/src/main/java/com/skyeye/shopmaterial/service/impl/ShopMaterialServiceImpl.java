@@ -236,4 +236,20 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
         return selectById(shopMaterial.getId());
     }
 
+    @Override
+    public void queryAllShopMaterialListForChoose(InputObject inputObject, OutputObject outputObject) {
+        List<ShopMaterial> shopMaterialList = list();
+        // 根据id批量查询详细的商品信息
+        List<String> idList = shopMaterialList.stream().map(ShopMaterial::getId).collect(Collectors.toList());
+        List<ShopMaterial> shopMaterials = selectByIds(idList.toArray(new String[]{}));
+        List<Map<String, Object>> result = shopMaterials.stream().map(bean -> {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", bean.getMaterialId());
+            item.put("name", bean.getMaterialMation().getName());
+            return item;
+        }).collect(Collectors.toList());
+        outputObject.setBeans(result);
+        outputObject.settotal(result.size());
+    }
+
 }

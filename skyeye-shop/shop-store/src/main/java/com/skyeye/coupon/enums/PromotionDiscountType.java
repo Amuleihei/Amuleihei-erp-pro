@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum PromotionDiscountType implements SkyeyeEnumClass {
 
-    PRICE(1, "满减", "具体金额", true, false),
+    PRICE(1, "满减", "具体金额", true, true),
     PERCENT(2, "折扣", "百分比", true, false);
 
     private Integer key;

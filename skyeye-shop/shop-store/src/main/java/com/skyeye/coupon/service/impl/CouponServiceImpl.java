@@ -84,6 +84,17 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     }
 
     @Override
+    public void createPrepose(Coupon entity) {
+        entity.setTotalCount(CommonNumConstants.NUM_ZERO);
+    }
+
+    @Override
+    public void updatePrepose(Coupon entity) {
+        Coupon oldCoupon = selectById(entity.getId());
+        entity.setTotalCount(oldCoupon.getTotalCount());
+    }
+
+    @Override
     public void writePostpose(Coupon coupon, String userId) {
         // 新增/编辑优惠券的适用商品对象
         if (CollectionUtil.isNotEmpty(coupon.getCouponMaterialList())) {
