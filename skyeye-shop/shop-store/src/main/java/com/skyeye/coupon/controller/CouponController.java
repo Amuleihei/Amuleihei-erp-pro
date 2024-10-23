@@ -32,14 +32,14 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    @ApiOperation(id = "writeCoupon", value = "新增/编辑优惠券/模版信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "writeCoupon", value = "新增/编辑优惠券/模版信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = Coupon.class)
     @RequestMapping("/post/CouponController/writeCoupon")
     public void writeCoupon(InputObject inputObject, OutputObject outputObject) {
         couponService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    @ApiOperation(id = "queryCouponList", value = "分页获取优惠券/模版信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryCouponList", value = "分页获取优惠券/模版信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/CouponController/queryCouponList")
     public void queryCouponList(InputObject inputObject, OutputObject outputObject) {
@@ -48,7 +48,7 @@ public class CouponController {
 
     @ApiOperation(id = "queryCouponListByState", value = "根据状态获取优惠券/模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id", required = "required"),
+        @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id"),
         @ApiImplicitParam(id = "type", name = "type", value = "优惠券：0，优惠券模板：1，全部：为空")})
     @RequestMapping("/post/CouponController/queryCouponListByState")
     public void queryCouponListByState(InputObject inputObject, OutputObject outputObject) {
@@ -64,7 +64,8 @@ public class CouponController {
     }
 
     @ApiOperation(id = "deleteCouponById", value = "根据id删除优惠券/模版信息", method = "DELETE", allUse = "2")
-    @ApiImplicitParams({@ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个主键用逗号隔开", required = "required")})
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个主键用逗号隔开", required = "required")})
     @RequestMapping("/post/CouponController/deleteCouponById")
     public void deleteCouponById(InputObject inputObject, OutputObject outputObject) {
         couponService.deleteByIds(inputObject, outputObject);
