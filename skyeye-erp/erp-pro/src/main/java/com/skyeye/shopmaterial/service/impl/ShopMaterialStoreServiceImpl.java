@@ -199,7 +199,7 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         });
         shopMaterial.setShopMaterialStore(shopMaterialStore);
         shopMaterial.setDefaultStoreId(shopMaterialStore.getStoreId());
-        outputObject.setBean(shopMaterialStore);
+        outputObject.setBean(shopMaterial);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
