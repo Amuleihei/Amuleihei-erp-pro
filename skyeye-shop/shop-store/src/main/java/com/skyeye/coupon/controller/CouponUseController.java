@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.coupon.controller;
 
 import com.skyeye.annotation.api.Api;
@@ -13,6 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @ClassName: CouponUseController
+ * @Description: 优惠券领取信息管理控制层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/10/23 10:43
+ * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @RestController
 @Api(value = "优惠券领取信息管理", tags = "优惠券领取信息管理", modelName = "优惠券领取信息管理")
 public class CouponUseController {
@@ -20,12 +32,6 @@ public class CouponUseController {
     @Autowired
     private CouponUseService couponUseService;
 
-    /**
-     * 新增/编辑优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeCouponUse", value = "新增/编辑优惠券领取信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CouponUse.class)
     @RequestMapping("/post/CouponUseController/writeCouponUse")
@@ -33,12 +39,6 @@ public class CouponUseController {
         couponUseService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 分页查询优惠券领取信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryCouponUsePageList", value = "分页查询优惠券领取信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/CouponUseController/queryCouponUsePageList")
@@ -46,12 +46,6 @@ public class CouponUseController {
         couponUseService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 查询自己的优惠券领取信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMyCouponUseByState", value = "根据状态查询自己的优惠券领取信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "state", name = "state", value = "优惠券状态")})
@@ -60,13 +54,6 @@ public class CouponUseController {
         couponUseService.queryList(inputObject, outputObject);
     }
 
-
-    /**
-     * 批量删除优惠券领取信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "deleteCouponUseByIds", value = "批量删除优惠券领取信息", method = "POST", allUse = "2")
     @ApiImplicitParams({@ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号隔开", required = "required")})
     @RequestMapping("/post/CouponUseController/deleteCouponUseByIds")
@@ -74,12 +61,6 @@ public class CouponUseController {
         couponUseService.deleteByIds(inputObject, outputObject);
     }
 
-    /**
-     * 根据id查询优惠券领取信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryCouponUseById", value = "根据id查询优惠券领取信息", method = "POST", allUse = "2")
     @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/CouponUseController/queryCouponUseById")

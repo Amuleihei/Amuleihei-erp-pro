@@ -1,8 +1,11 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.coupon.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
@@ -17,7 +20,6 @@ import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.coupon.dao.CouponDao;
 import com.skyeye.coupon.entity.Coupon;
-import com.skyeye.coupon.entity.CouponMaterial;
 import com.skyeye.coupon.enums.CouponValidityType;
 import com.skyeye.coupon.enums.PromotionDiscountType;
 import com.skyeye.coupon.enums.PromotionMaterialScope;
@@ -30,8 +32,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+/**
+ * @ClassName: CouponServiceImpl
+ * @Description: 优惠券/模版信息管理服务层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/10/23 10:07
+ * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Service
 @SkyeyeService(name = "优惠券/模版信息管理", groupName = "优惠券/模版信息管理")
 public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coupon> implements CouponService {
@@ -51,35 +60,24 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         {
             throw new CustomException("需要指定优惠券适用的商品范围，适用全部商品时可为空");
         }
-    }
+        if (Objects.equals(coupon.getValidityType(), CouponValidityType.DATE.getKey())) {
+            if (StrUtil.isEmpty(coupon.getValidStartTime()) || StrUtil.isEmpty(coupon.getValidEndTime())) {
+                throw new CustomException("固定日期类型优惠券，有效期不能为空");
+            }
+        } else {
+            if (coupon.getFixedStartTerm() == null || coupon.getFixedEndTerm() == null) {
+                throw new CustomException("固定周期类型优惠券，有效期不能为空");
+            }
+        }
 
-    @Override
-    public void createPrepose(Coupon coupon) {
-        if (StrUtil.isNotEmpty(coupon.getTemplateId())) {
-            Coupon couponTemplate = selectById(coupon.getTemplateId());
-            coupon.setEnabled(couponTemplate.getEnabled());
-            coupon.setTotalCount(couponTemplate.getTotalCount());
-            coupon.setTakeLimitCount(couponTemplate.getTakeLimitCount());
-            coupon.setTakeType(couponTemplate.getTakeType());
-            coupon.setUsePrice(couponTemplate.getUsePrice());
-            coupon.setProductScope(couponTemplate.getProductScope());
-            coupon.setValidityType(couponTemplate.getValidityType());
-            if (Objects.equals(couponTemplate.getValidityType(), CouponValidityType.DATE.getKey())) {
-                coupon.setValidStartTime(couponTemplate.getValidStartTime());
-                coupon.setValidEndTime(couponTemplate.getValidEndTime());
-            } else {
-                coupon.setFixedStartTerm(couponTemplate.getFixedStartTerm());
-                coupon.setFixedEndTerm(couponTemplate.getFixedEndTerm());
+        if (Objects.equals(coupon.getDiscountType(), PromotionDiscountType.PRICE.getKey())) {
+            if (coupon.getDiscountPrice() == null) {
+                throw new CustomException("价格折扣类型优惠券，折扣金额不能为空");
             }
-            coupon.setDiscountType(couponTemplate.getDiscountType());
-            if (Objects.equals(couponTemplate.getDiscountType(), PromotionDiscountType.PRICE.getKey())) {
-                coupon.setDiscountPrice(couponTemplate.getDiscountPrice());
-            } else {
-                coupon.setDiscountPercent(couponTemplate.getDiscountPercent());
+        } else {
+            if (coupon.getDiscountPercent() == null) {
+                throw new CustomException("折扣率类型优惠券，折扣率不能为空");
             }
-            coupon.setDiscountLimitPrice(couponTemplate.getDiscountLimitPrice());
-            coupon.setTakeCount(couponTemplate.getTakeCount());
-            coupon.setUseCount(couponTemplate.getUseCount());
         }
     }
 
@@ -92,47 +90,33 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     }
 
     @Override
-    public void getQueryWrapper(InputObject inputObject, QueryWrapper<Coupon> wrapper) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+    public QueryWrapper<Coupon> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<Coupon> queryWrapper = super.getQueryWrapper(commonPageInfo);
         String type = commonPageInfo.getType();
+        if (StrUtil.isEmpty(type)) {
+            throw new CustomException("暂不支持该类型查询");
+        }
         String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
         if (type.equals(CommonNumConstants.NUM_ZERO.toString())) {
-            wrapper.isNull(typeKey).or().eq(type, StrUtil.EMPTY);
+            queryWrapper.isNull(typeKey).or().eq(typeKey, StrUtil.EMPTY);
         }
         if (type.equals(CommonNumConstants.NUM_ONE.toString())) {
-            wrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
+            queryWrapper.isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
         }
-        super.getQueryWrapper(inputObject, wrapper);
-    }
-
-    @Override
-    public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
-        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        String type = commonPageInfo.getType();
-        QueryWrapper<Coupon> queryWrapper = new QueryWrapper<>();
-        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
-        if (type.equals(CommonNumConstants.NUM_ZERO.toString())) {
-            queryWrapper.isNull(typeKey).or().eq(type, StrUtil.EMPTY);
-        }
-        if (type.equals(CommonNumConstants.NUM_ONE.toString())) {
-            queryWrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
-        }
-        List<Coupon> list = list(queryWrapper);
-        // 分页查询时获取数据
-        return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
+        return queryWrapper;
     }
 
     @Override
     public void queryCouponListByState(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         QueryWrapper<Coupon> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getStoreId), params.get("storeId"));
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getStoreId), params.get("storeId").toString());
         String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
         if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ZERO)) {
             queryWrapper.isNull(typeKey).or().eq(typeKey, StrUtil.EMPTY);
         }
         if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ONE)) {
-            queryWrapper.isNotNull(typeKey).or().ne(typeKey, StrUtil.EMPTY);
+            queryWrapper.isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
         }
         List<Coupon> list = list(queryWrapper);
         outputObject.setBean(list);
@@ -148,26 +132,16 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     }
 
     @Override
-    public void updateUseCount(String couponId, int useCount) {
-        UpdateWrapper<Coupon> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq(CommonConstants.ID, couponId);
-        updateWrapper.set(MybatisPlusUtil.toColumns(Coupon::getUseCount), useCount);
-        update(updateWrapper);
-    }
-
-    @Override
     public void deletePostpose(List<String> ids) {
         couponMaterialService.deleteByCouponId(ids);
     }
 
-    /**
-     * xxlJob任务管理器定时修改过期优惠券的状态
-     */
     @Override
     public void setStateByCoupon() {
         UpdateWrapper<Coupon> updateWrapper = new UpdateWrapper<>();
         // 取优惠券
-        updateWrapper.ne(MybatisPlusUtil.toColumns(Coupon::getTemplateId), "");
+        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
+        updateWrapper.isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
         // 固定日期类型的优惠券
         updateWrapper.lt(MybatisPlusUtil.toColumns(Coupon::getValidEndTime),
             DateUtil.getTimeAndToString());

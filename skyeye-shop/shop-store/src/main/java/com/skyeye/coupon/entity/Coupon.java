@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.coupon.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,6 +15,14 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * @ClassName: Coupon
+ * @Description: 优惠券/模版信息管理实体类
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/10/23 10:08
+ * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Data
 @TableName(value = "shop_coupon")
 @RedisCacheField(name = "shop:coupon", cacheTime = RedisConstants.THIRTY_DAY_SECONDS)
@@ -18,7 +30,7 @@ import java.util.List;
 public class Coupon extends BaseGeneralInfo {
 
     @TableField(value = "store_id")
-    @ApiModelProperty(value = "门店id")
+    @ApiModelProperty(value = "门店id", required = "required")
     private String storeId;
 
     @TableField(value = "template_id")
@@ -26,34 +38,34 @@ public class Coupon extends BaseGeneralInfo {
     private String templateId;
 
     @TableField(value = "enabled")
-    @ApiModelProperty(value = "状态", required = "required")
+    @ApiModelProperty(value = "状态", required = "required,num")
     private Integer enabled;
 
     @TableField(value = "total_count")
-    @ApiModelProperty(value = "发放数量，-1表示不限制发放数量")
+    @ApiModelProperty(value = "发放数量，-1表示不限制发放数量", required = "required")
     private Integer totalCount;
 
     @TableField(value = "take_limit_count")
-    @ApiModelProperty(value = "每人限领个数，-1表示不限制")
+    @ApiModelProperty(value = "每人限领个数，-1表示不限制", required = "required")
     private Integer takeLimitCount;
 
     @TableField(value = "take_type")
-    @ApiModelProperty(value = "领取方式")
+    @ApiModelProperty(value = "领取方式，参考#CouponTakeType", required = "required,num")
     private Integer takeType;
 
     @TableField(value = "use_price")
-    @ApiModelProperty(value = "是否设置满多少金额可用，单位：分。0 - 不限制，大于 0 - 多少金额可用")
+    @ApiModelProperty(value = "是否设置满多少金额可用，单位：分。0 - 不限制，大于 0 - 多少金额可用", required = "required")
     private String usePrice;
 
     @TableField(value = "product_scope")
-    @ApiModelProperty(value = "商品范围")
+    @ApiModelProperty(value = "商品范围，参考#PromotionMaterialScope", required = "required,num")
     private Integer productScope;
 
     @TableField(value = "validity_type")
-    @ApiModelProperty(value = "生效日期类型")
+    @ApiModelProperty(value = "生效日期类型，参考#CouponValidityType", required = "required,num")
     private Integer validityType;
 
-    @TableField(value = "valid_start_time   ")
+    @TableField(value = "valid_start_time")
     @ApiModelProperty(value = "固定日期 - 生效开始时间")
     private String validStartTime;
 
@@ -70,7 +82,7 @@ public class Coupon extends BaseGeneralInfo {
     private Integer fixedEndTerm;
 
     @TableField(value = "discount_type")
-    @ApiModelProperty(value = "折扣类型")
+    @ApiModelProperty(value = "折扣类型，参考#PromotionDiscountType", required = "required,num")
     private Integer discountType;
 
     @TableField(value = "discount_percent")

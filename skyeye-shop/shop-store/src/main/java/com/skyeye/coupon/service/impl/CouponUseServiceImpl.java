@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright 卫志强 QQ：598748873@qq.com Inc. All rights reserved. 开源地址：https://gitee.com/doc_wei01/skyeye
+ ******************************************************************************/
+
 package com.skyeye.coupon.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
@@ -32,6 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @ClassName: CouponUseServiceImpl
+ * @Description: 优惠券领取信息管理服务层
+ * @author: skyeye云系列--卫志强
+ * @date: 2024/10/23 10:43
+ * @Copyright: 2024 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
+ * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
+ */
 @Service
 @SkyeyeService(name = "优惠券领取信息管理", groupName = "优惠券领取信息管理")
 public class CouponUseServiceImpl extends SkyeyeBusinessServiceImpl<CouponUseDao, CouponUse> implements CouponUseService {
@@ -112,7 +124,7 @@ public class CouponUseServiceImpl extends SkyeyeBusinessServiceImpl<CouponUseDao
     }
 
     @Override
-    public void writePostpose(CouponUse couponUse,String userId){
+    public void writePostpose(CouponUse couponUse, String userId) {
         if (ObjectUtil.isNotEmpty(couponUse.getCouponUseMaterialList())) {
             couponUse.getCouponUseMaterialList().forEach(couponMaterial -> couponMaterial.setCouponId(couponUse.getId()));
             couponUseMaterialService.createEntity(couponUse.getCouponUseMaterialList(), userId);
@@ -132,7 +144,6 @@ public class CouponUseServiceImpl extends SkyeyeBusinessServiceImpl<CouponUseDao
         QueryWrapper<CouponUse> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(CouponUse::getCouponId), couponUse.getCouponId());
         queryWrapper.eq(MybatisPlusUtil.toColumns(CouponUse::getState), CouponUseState.USED.getKey());
-        couponService.updateUseCount(couponUse.getCouponId(), (int) count(queryWrapper));
     }
 
     @Override
