@@ -35,4 +35,11 @@ public class IShopMaterialNormsServiceImpl extends IServiceImpl implements IShop
         List<Map<String, Object>> rows = resultEntity.getRows();
         return rows;
     }
+
+    @Override
+    public List<Map<String, Object>> queryAllShopMaterialListForChoose() {
+        ResultEntity resultEntity = ExecuteFeignClient.get(() -> iShopMaterialNormsRest.queryAllShopMaterialListForChoose());
+        List<Map<String, Object>> rows = resultEntity.getRows();
+        return rows;
+    }
 }

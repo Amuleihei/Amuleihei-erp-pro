@@ -6,6 +6,7 @@ package com.skyeye.rest.shopmaterialnorms.rest;
 
 import com.skyeye.common.client.ClientConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,4 +32,12 @@ public interface IShopMaterialNormsRest {
      */
     @PostMapping("/saveShopMaterialStore")
     String saveShopMaterialStore(@RequestParam("storeId") String storeId);
+
+    /**
+     * 获取商城商品信息列表供选择
+     *
+     * @return
+     */
+    @GetMapping("/queryAllShopMaterialListForChoose")
+    String queryAllShopMaterialListForChoose();
 }

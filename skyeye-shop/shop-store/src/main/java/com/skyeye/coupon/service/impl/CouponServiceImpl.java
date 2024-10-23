@@ -28,12 +28,14 @@ import com.skyeye.coupon.enums.PromotionMaterialScope;
 import com.skyeye.coupon.service.CouponMaterialService;
 import com.skyeye.coupon.service.CouponService;
 import com.skyeye.exception.CustomException;
+import com.skyeye.rest.shopmaterialnorms.sevice.IShopMaterialNormsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: CouponServiceImpl
@@ -49,6 +51,9 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Autowired
     private CouponMaterialService couponMaterialService;
+
+    @Autowired
+    private IShopMaterialNormsService iShopMaterialNormsService;
 
     @Override
     public void validatorEntity(Coupon coupon) {
@@ -85,20 +90,34 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Override
     public void createPrepose(Coupon entity) {
-        entity.setTotalCount(CommonNumConstants.NUM_ZERO);
+        entity.setTakeCount(CommonNumConstants.NUM_ZERO);
     }
 
     @Override
     public void updatePrepose(Coupon entity) {
         Coupon oldCoupon = selectById(entity.getId());
-        entity.setTotalCount(oldCoupon.getTotalCount());
+        entity.setTakeCount(oldCoupon.getTakeCount());
     }
 
     @Override
     public void writePostpose(Coupon coupon, String userId) {
         // 新增/编辑优惠券的适用商品对象
-        if (CollectionUtil.isNotEmpty(coupon.getCouponMaterialList())) {
-            couponMaterialService.insertCouponMaterial(coupon.getId(), coupon.getCouponMaterialList(), userId);
+        if (coupon.getProductScope() == PromotionMaterialScope.ALL.getKey()) {
+            // 适用全部商品
+            List<Map<String, Object>> material = iShopMaterialNormsService.queryAllShopMaterialListForChoose();
+            if (CollectionUtil.isNotEmpty(material)) {
+                List<CouponMaterial> couponMaterialList = material.stream().map(bean -> {
+                    CouponMaterial couponMaterial = new CouponMaterial();
+                    couponMaterial.setMaterialId(bean.get("id").toString());
+                    return couponMaterial;
+                }).collect(Collectors.toList());
+                couponMaterialService.insertCouponMaterial(coupon.getId(), couponMaterialList, userId);
+            }
+        } else if (coupon.getProductScope() == PromotionMaterialScope.SPU.getKey()) {
+            // 适用指定商品
+            if (CollectionUtil.isNotEmpty(coupon.getCouponMaterialList())) {
+                couponMaterialService.insertCouponMaterial(coupon.getId(), coupon.getCouponMaterialList(), userId);
+            }
         }
     }
 

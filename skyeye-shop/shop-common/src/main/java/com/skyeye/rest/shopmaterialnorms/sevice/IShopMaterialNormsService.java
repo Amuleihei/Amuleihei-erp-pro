@@ -17,4 +17,6 @@ import java.util.Map;
  */
 public interface IShopMaterialNormsService {
     List<Map<String, Object>> queryShopMaterialByNormsIdList(String normsIds);
+
+    List<Map<String, Object>> queryAllShopMaterialListForChoose();
 }
