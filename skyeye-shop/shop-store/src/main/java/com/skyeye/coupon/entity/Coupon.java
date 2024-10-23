@@ -30,7 +30,7 @@ import java.util.List;
 public class Coupon extends BaseGeneralInfo {
 
     @TableField(value = "store_id")
-    @ApiModelProperty(value = "门店id", required = "required")
+    @ApiModelProperty(value = "发布门店id")
     private String storeId;
 
     @TableField(value = "template_id")
@@ -38,7 +38,7 @@ public class Coupon extends BaseGeneralInfo {
     private String templateId;
 
     @TableField(value = "enabled")
-    @ApiModelProperty(value = "状态", required = "required,num")
+    @ApiModelProperty(value = "状态，参考#EnableEnum", required = "required,num")
     private Integer enabled;
 
     @TableField(value = "total_count")

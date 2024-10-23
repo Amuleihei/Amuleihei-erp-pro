@@ -8,18 +8,20 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
-import com.skyeye.common.enumeration.WhetherEnum;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.DateUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.coupon.dao.CouponDao;
 import com.skyeye.coupon.entity.Coupon;
+import com.skyeye.coupon.entity.CouponMaterial;
 import com.skyeye.coupon.enums.CouponValidityType;
 import com.skyeye.coupon.enums.PromotionDiscountType;
 import com.skyeye.coupon.enums.PromotionMaterialScope;
@@ -144,6 +146,20 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
     }
 
     @Override
+    public void queryCouponListByMaterialId(InputObject inputObject, OutputObject outputObject) {
+        String materialId = inputObject.getParams().get("materialId").toString();
+        String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
+        MPJLambdaWrapper<Coupon> wrapper = new MPJLambdaWrapper<Coupon>()
+            .innerJoin(CouponMaterial.class, CouponMaterial::getCouponId, Coupon::getId)
+            .eq(MybatisPlusUtil.toColumns(CouponMaterial::getMaterialId), materialId)
+            .eq(MybatisPlusUtil.toColumns(Coupon::getEnabled), EnableEnum.ENABLE_USING.getKey())
+            .isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
+        List<Coupon> list = list(wrapper);
+        outputObject.setBean(list);
+        outputObject.settotal(list.size());
+    }
+
+    @Override
     public void setStateByCoupon() {
         UpdateWrapper<Coupon> updateWrapper = new UpdateWrapper<>();
         // 取优惠券
@@ -156,7 +172,7 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
             // 非固定日期的优惠券
             .lt(MybatisPlusUtil.toColumns(Coupon::getFixedEndTerm),
                 DateUtil.getTimeAndToString());
-        updateWrapper.set(MybatisPlusUtil.toColumns(Coupon::getEnabled), WhetherEnum.DISABLE_USING.getKey());
+        updateWrapper.set(MybatisPlusUtil.toColumns(Coupon::getEnabled), EnableEnum.ENABLE_USING.getKey());
         update(updateWrapper);
     }
 }

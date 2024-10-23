@@ -32,12 +32,6 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    /**
-     * 新增/编辑优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeCoupon", value = "新增/编辑优惠券/模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = Coupon.class)
     @RequestMapping("/post/CouponController/writeCoupon")
@@ -45,12 +39,6 @@ public class CouponController {
         couponService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 获取优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryCouponList", value = "分页获取优惠券/模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/CouponController/queryCouponList")
@@ -58,12 +46,6 @@ public class CouponController {
         couponService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 根据状态获取优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryCouponListByState", value = "根据状态获取优惠券/模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "storeId", name = "storeId", value = "门店id", required = "required"),
@@ -73,12 +55,6 @@ public class CouponController {
         couponService.queryCouponListByState(inputObject, outputObject);
     }
 
-    /**
-     * 根据id获取优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryCouponById", value = "根据id获取优惠券/模版信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -87,16 +63,18 @@ public class CouponController {
         couponService.selectById(inputObject, outputObject);
     }
 
-    /**
-     * 根据id获取优惠券/模版信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "deleteCouponById", value = "根据id删除优惠券/模版信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({@ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个主键用逗号隔开", required = "required")})
     @RequestMapping("/post/CouponController/deleteCouponById")
     public void deleteCouponById(InputObject inputObject, OutputObject outputObject) {
         couponService.deleteByIds(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryCouponListByMaterialId", value = "根据商品id获取所有已启用的优惠券列表", method = "GET", allUse = "0")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "materialId", name = "materialId", value = "商品id", required = "required")})
+    @RequestMapping("/post/CouponController/queryCouponListByMaterialId")
+    public void queryCouponListByMaterialId(InputObject inputObject, OutputObject outputObject) {
+        couponService.queryCouponListByMaterialId(inputObject, outputObject);
     }
 }
