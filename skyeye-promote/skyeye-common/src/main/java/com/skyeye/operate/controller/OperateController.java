@@ -31,12 +31,6 @@ public class OperateController {
     @Autowired
     private OperateService operateService;
 
-    /**
-     * 获取操作列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryOperateList", value = "获取操作列表", method = "POST", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "appId", name = "appId", value = "服务的appId", required = "required"),
@@ -46,12 +40,6 @@ public class OperateController {
         operateService.queryOperateList(inputObject, outputObject);
     }
 
-    /**
-     * 新增/编辑操作
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeOperate", value = "新增/编辑操作", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = Operate.class)
     @RequestMapping("/post/OperateController/writeOperate")
@@ -59,12 +47,6 @@ public class OperateController {
         operateService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 根据id查看操作信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryOperateById", value = "根据id查看操作信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "操作信息的id", required = "required")})
@@ -73,12 +55,6 @@ public class OperateController {
         operateService.selectById(inputObject, outputObject);
     }
 
-    /**
-     * 根据id删除操作信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "deleteOperateById", value = "根据id删除操作信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "操作信息的id", required = "required")})

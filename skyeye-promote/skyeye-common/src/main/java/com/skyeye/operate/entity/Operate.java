@@ -5,13 +5,12 @@
 package com.skyeye.operate.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.business.entity.BusinessApi;
-import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.common.entity.features.BaseGeneralInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -28,15 +27,7 @@ import java.util.List;
 @RedisCacheField(name = "skyeye:operate")
 @TableName(value = "skyeye_operate", autoResultMap = true)
 @ApiModel("操作管理实体类")
-public class Operate extends OperatorUserInfo {
-
-    @TableId("id")
-    @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
-    private String id;
-
-    @TableField("`name`")
-    @ApiModelProperty(value = "名称", required = "required")
-    private String name;
+public class Operate extends BaseGeneralInfo {
 
     @TableField("position")
     @ApiModelProperty(value = "展示位置，参考#OperatePosition", required = "required")
