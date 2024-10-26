@@ -143,18 +143,20 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         Map<String, Object> params = inputObject.getParams();
         QueryWrapper<Coupon> queryWrapper = new QueryWrapper<>();
         String storeId = params.get("storeId").toString();
+        String type = params.get("type").toString();
         if (StrUtil.isNotEmpty(storeId)) {
             queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getStoreId), storeId);
         }
         String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
-        if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ZERO)) {
+        if (StrUtil.equals(type, CommonNumConstants.NUM_ZERO.toString())) {
             queryWrapper.isNull(typeKey).or().eq(typeKey, StrUtil.EMPTY);
         }
-        if (params.containsKey("type") && Objects.equals(params.get("type"), CommonNumConstants.NUM_ONE)) {
+        if (StrUtil.equals(type, CommonNumConstants.NUM_ONE.toString())) {
             queryWrapper.isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
         }
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Coupon::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<Coupon> list = list(queryWrapper);
-        outputObject.setBean(list);
+        outputObject.setBeans(list);
         outputObject.settotal(list.size());
     }
 
