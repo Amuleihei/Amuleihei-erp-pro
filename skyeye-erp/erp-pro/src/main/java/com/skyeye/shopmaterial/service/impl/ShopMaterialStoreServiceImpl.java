@@ -203,4 +203,16 @@ public class ShopMaterialStoreServiceImpl extends SkyeyeBusinessServiceImpl<Shop
         outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
+    @Override
+    public void queryShopMaterialByMaterialIdAndStoreId(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String materialId = params.get("materialId").toString();
+        String storeId = params.get("storeId").toString();
+        ShopMaterialStore shopMaterialStore = getOne(new QueryWrapper<ShopMaterialStore>()
+            .eq(MybatisPlusUtil.toColumns(ShopMaterialStore::getMaterialId), materialId)
+            .eq(MybatisPlusUtil.toColumns(ShopMaterialStore::getStoreId), storeId));
+        outputObject.setBean(shopMaterialStore);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
 }
