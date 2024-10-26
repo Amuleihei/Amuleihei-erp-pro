@@ -4,7 +4,6 @@
 
 package com.skyeye.store.entity;
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -31,7 +30,6 @@ public class ShopTradeCart extends OperatorUserInfo {
     @TableId("id")
     @ApiModelProperty("主键id。为空时新增，不为空时编辑")
     private String id;
-
 
     @TableField("store_id")
     @ApiModelProperty(value = "门店id", required = "required")

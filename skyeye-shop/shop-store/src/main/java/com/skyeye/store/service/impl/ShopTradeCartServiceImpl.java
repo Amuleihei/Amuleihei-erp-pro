@@ -72,6 +72,7 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
     @Override
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
         String userId = InputObject.getLogParamsStatic().get("id").toString();
+        // 查询用户购物车列表
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
@@ -79,6 +80,7 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
         Map<String, List<ShopTradeCart>> collect = beans.stream().collect(Collectors.groupingBy(ShopTradeCart::getStoreId));
+        // 查询店铺信息
         List<String> storeIdList = beans.stream().map(ShopTradeCart::getStoreId).collect(Collectors.toList());
         List<ShopStore> shopStoreList = shopStoreService.selectByIds(storeIdList.toArray(new String[]{}));
         Map<String, Object> shopStoreMap = shopStoreList.stream().collect(Collectors.toMap(ShopStore::getId, ShopStore::getName));
