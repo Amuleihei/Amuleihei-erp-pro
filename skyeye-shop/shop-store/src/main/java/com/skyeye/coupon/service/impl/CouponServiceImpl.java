@@ -57,9 +57,6 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
 
     @Override
     public void validatorEntity(Coupon coupon) {
-        if (StrUtil.isNotEmpty(coupon.getId()) && StrUtil.isNotEmpty(coupon.getTemplateId())) {
-            throw new CustomException("更新操作不可上传模板id(templateId)");
-        }
         // 模板新增
         if (StrUtil.isEmpty(coupon.getId()) && StrUtil.isEmpty(coupon.getTemplateId()) && // 主键和模板id为空时，即为模板
             coupon.getProductScope() != PromotionMaterialScope.ALL.getKey() && // 判断适用商品类型
