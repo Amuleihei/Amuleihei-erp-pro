@@ -84,8 +84,6 @@
 |skyeye-report |8085 |报表设计器 |report-web.jar |
 |xxl-job-2.3.0 |8200 |定时任务 |xxl-job-admin-2.3.0.jar |
 |skyeye-school |8084 |学校模块 |school-web.jar |
-|skyeye-rmprogram |8089 |小程序设计器模块 |rmprogram-web.jar |
-|skyeye-notice |8096 |公告模块 |notice-web.jar |
 |skyeye-wages |8101 |薪资模块 |wages-web.jar |
 |skyeye-deploy |8010 |部署模块 |deploy-web.war |
 |skyeye-adm |8103 |行政模块 |adm-web.jar |
