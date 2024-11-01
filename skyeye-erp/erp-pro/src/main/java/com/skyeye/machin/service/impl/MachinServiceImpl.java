@@ -650,12 +650,14 @@ public class MachinServiceImpl extends SkyeyeFlowableServiceImpl<MachinDao, Mach
             Integer surplusNum = machinChild.getNeedNum()
                 - (requestNum.containsKey(machinChild.getNormsId()) ? requestNum.get(machinChild.getNormsId()) : 0)
                 - (patchNum.containsKey(machinChild.getNormsId()) ? patchNum.get(machinChild.getNormsId()) : 0);
+            if (surplusNum < 0) {
+                // 超出需求数量，设置为0，方便补料时进行补料
+                surplusNum = 0;
+            }
             // 设置未下达领料单/补料单的数量
             machinChild.setNeedNum(surplusNum);
         });
-        // 过滤掉数量为0的商品信息
-        needRawMaterial = needRawMaterial.stream()
-            .filter(erpOrderItem -> erpOrderItem.getNeedNum() > 0).collect(Collectors.toList());
+        // 不需要过滤掉数量为0的商品信息，方便补料时进行补料
         machin.setNeedRawMaterialList(needRawMaterial);
 
         outputObject.setBean(machin);
