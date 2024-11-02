@@ -24,6 +24,7 @@ import com.skyeye.machin.classenum.MachinPutFromType;
 import com.skyeye.machin.dao.MachinPutDao;
 import com.skyeye.machin.entity.MachinPut;
 import com.skyeye.machin.service.MachinPutService;
+import com.skyeye.machinprocedure.service.MachinProcedureFarmService;
 import com.skyeye.material.classenum.MaterialInOrderType;
 import com.skyeye.organization.service.IDepmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class MachinPutServiceImpl extends SkyeyeErpOrderServiceImpl<MachinPutDao
     @Autowired
     private DepotPutService depotPutService;
 
+    @Autowired
+    private MachinProcedureFarmService machinProcedureFarmService;
+
     @Override
     public QueryWrapper<MachinPut> getQueryWrapper(CommonPageInfo commonPageInfo) {
         return super.getQueryWrapper(commonPageInfo);
@@ -63,6 +67,8 @@ public class MachinPutServiceImpl extends SkyeyeErpOrderServiceImpl<MachinPutDao
         iDepmentService.setMationForMap(beans, "departmentId", "departmentMation");
         // 业务员
         iAuthUserService.setMationForMap(beans, "salesman", "salesmanMation");
+
+        machinProcedureFarmService.setOrderMationByFromId(beans, "fromId", "fromMation");
         return beans;
     }
 

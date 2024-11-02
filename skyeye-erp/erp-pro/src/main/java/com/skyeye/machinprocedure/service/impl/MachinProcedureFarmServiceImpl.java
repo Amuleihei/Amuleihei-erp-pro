@@ -6,6 +6,7 @@ package com.skyeye.machinprocedure.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -20,6 +21,7 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.farm.service.FarmService;
 import com.skyeye.machin.entity.MachinChild;
+import com.skyeye.machin.service.MachinPutService;
 import com.skyeye.machin.service.MachinService;
 import com.skyeye.machinprocedure.classenum.MachinProcedureFarmState;
 import com.skyeye.machinprocedure.classenum.MachinProcedureState;
@@ -31,6 +33,7 @@ import com.skyeye.machinprocedure.service.MachinProcedureFarmService;
 import com.skyeye.machinprocedure.service.MachinProcedureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,6 +64,9 @@ public class MachinProcedureFarmServiceImpl extends SkyeyeBusinessServiceImpl<Ma
 
     @Autowired
     private MachinProcedureAcceptService machinProcedureAcceptService;
+
+    @Autowired
+    private MachinPutService machinPutService;
 
     @Override
     public QueryWrapper<MachinProcedureFarm> getQueryWrapper(CommonPageInfo commonPageInfo) {
@@ -219,10 +225,43 @@ public class MachinProcedureFarmServiceImpl extends SkyeyeBusinessServiceImpl<Ma
         if (machinChild == null) {
             throw new CustomException("该车间任务未关联加工单子单据或该加工单子单据不存在");
         }
+        // 根据车间任务id查询已经生成加工入库单的商品数量
+        Map<String, Integer> normsNumMap = machinPutService.calcMaterialNormsNumByFromId(id);
+        // 计算剩余数量：加工单子单据的数量 - 已经生成的加工入库单的数量
+        Integer surplusNum = machinChild.getOperNumber()
+            - (normsNumMap.containsKey(machinChild.getNormsId()) ? normsNumMap.get(machinChild.getNormsId()) : 0);
+        surplusNum = surplusNum < 0 ? 0 : surplusNum;
+        machinChild.setOperNumber(surplusNum);
+
         Map<String, Object> result = new HashMap<>();
         result.put("erpOrderItemList", Arrays.asList(machinChild));
         outputObject.setBean(result);
         outputObject.settotal(CommonNumConstants.NUM_ONE);
+    }
+
+    @Override
+    public void setOrderMationByFromId(List<Map<String, Object>> beans, String idKey, String mationKey) {
+        if (CollectionUtil.isEmpty(beans)) {
+            return;
+        }
+        List<String> ids = beans.stream().filter(bean -> !com.skyeye.common.util.MapUtil.checkKeyIsNull(bean, idKey))
+            .map(bean -> bean.get(idKey).toString()).distinct().collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        QueryWrapper<MachinProcedureFarm> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(CommonConstants.ID, ids);
+        List<MachinProcedureFarm> entityList = list(queryWrapper);
+        Map<String, MachinProcedureFarm> entityMap = entityList.stream().collect(Collectors.toMap(MachinProcedureFarm::getId, bean -> bean));
+        for (Map<String, Object> bean : beans) {
+            if (!com.skyeye.common.util.MapUtil.checkKeyIsNull(bean, idKey)) {
+                MachinProcedureFarm entity = entityMap.get(bean.get(idKey).toString());
+                if (ObjectUtil.isEmpty(entity)) {
+                    continue;
+                }
+                bean.put(mationKey, entity);
+            }
+        }
     }
 
 }
