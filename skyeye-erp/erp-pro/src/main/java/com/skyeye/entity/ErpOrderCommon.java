@@ -29,7 +29,7 @@ import java.util.Map;
 @ApiModel("ERP相关订单实体类")
 public class ErpOrderCommon extends SkyeyeFlowable {
 
-    @TableField(value = "type", fill = FieldFill.INSERT)
+    @TableField(value = "type", updateStrategy = FieldStrategy.NEVER)
     @Property(value = "出入库类型，参考#DepotPutOutType")
     private Integer type;
 

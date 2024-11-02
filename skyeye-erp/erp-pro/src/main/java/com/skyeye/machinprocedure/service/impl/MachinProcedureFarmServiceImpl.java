@@ -12,12 +12,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.farm.service.FarmService;
+import com.skyeye.machin.entity.MachinChild;
 import com.skyeye.machin.service.MachinService;
 import com.skyeye.machinprocedure.classenum.MachinProcedureFarmState;
 import com.skyeye.machinprocedure.classenum.MachinProcedureState;
@@ -31,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -201,6 +204,25 @@ public class MachinProcedureFarmServiceImpl extends SkyeyeBusinessServiceImpl<Ma
             machinProcedureFarm.setStateMation(MachinProcedureFarmState.getMation(machinProcedureFarm.getState()));
         });
         return machinProcedureFarmList;
+    }
+
+    @Override
+    public void queryMachinProcedureFarmToInOrOutList(InputObject inputObject, OutputObject outputObject) {
+        String id = inputObject.getParams().get("id").toString();
+        MachinProcedureFarm machinProcedureFarm = selectById(id);
+        // 加工单子单据id
+        String machinChildId = machinProcedureFarm.getMachinProcedureMation().getChildId();
+        // 加工单子单据信息
+        MachinChild machinChild = machinProcedureFarm.getMachinMation().getMachinChildList().stream()
+            .filter(bean -> StrUtil.equals(bean.getId(), machinChildId))
+            .findFirst().orElse(null);
+        if (machinChild == null) {
+            throw new CustomException("该车间任务未关联加工单子单据或该加工单子单据不存在");
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("erpOrderItemList", Arrays.asList(machinChild));
+        outputObject.setBean(result);
+        outputObject.settotal(CommonNumConstants.NUM_ONE);
     }
 
 }

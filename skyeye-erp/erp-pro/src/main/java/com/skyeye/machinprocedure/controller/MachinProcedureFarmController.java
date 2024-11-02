@@ -31,12 +31,6 @@ public class MachinProcedureFarmController {
     @Autowired
     private MachinProcedureFarmService machinProcedureFarmService;
 
-    /**
-     * 获取车间任务信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMachinProcedureFarmList", value = "获取车间任务信息", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/MachinProcedureFarmController/queryMachinProcedureFarmList")
@@ -44,12 +38,6 @@ public class MachinProcedureFarmController {
         machinProcedureFarmService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 车间任务接收
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "receiveMachinProcedureFarm", value = "车间任务接收", method = "POST", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -58,18 +46,20 @@ public class MachinProcedureFarmController {
         machinProcedureFarmService.receiveMachinProcedureFarm(inputObject, outputObject);
     }
 
-    /**
-     * 车间任务反接收
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "receptionReceiveMachinProcedureFarm", value = "车间任务反接收", method = "POST", allUse = "1")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/MachinProcedureFarmController/receptionReceiveMachinProcedureFarm")
     public void receptionReceiveMachinProcedureFarm(InputObject inputObject, OutputObject outputObject) {
         machinProcedureFarmService.receptionReceiveMachinProcedureFarm(inputObject, outputObject);
+    }
+
+    @ApiOperation(id = "queryMachinProcedureFarmToInOrOutList", value = "车间任务转加工入库单时，根据车间任务id查询对应的成品信息", method = "GET", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/MachinProcedureFarmController/queryMachinProcedureFarmToInOrOutList")
+    public void queryMachinProcedureFarmToInOrOutList(InputObject inputObject, OutputObject outputObject) {
+        machinProcedureFarmService.queryMachinProcedureFarmToInOrOutList(inputObject, outputObject);
     }
 
 }

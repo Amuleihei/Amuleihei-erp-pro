@@ -20,6 +20,7 @@ import com.skyeye.depot.classenum.DepotPutState;
 import com.skyeye.depot.entity.DepotPut;
 import com.skyeye.depot.service.DepotPutService;
 import com.skyeye.exception.CustomException;
+import com.skyeye.machin.classenum.MachinPutFromType;
 import com.skyeye.machin.dao.MachinPutDao;
 import com.skyeye.machin.entity.MachinPut;
 import com.skyeye.machin.service.MachinPutService;
@@ -73,6 +74,7 @@ public class MachinPutServiceImpl extends SkyeyeErpOrderServiceImpl<MachinPutDao
     @Override
     public void createPrepose(MachinPut entity) {
         super.createPrepose(entity);
+        entity.setFromTypeId(MachinPutFromType.FARM_TASK.getKey());
         entity.setType(DepotPutOutType.PUT.getKey());
         entity.getErpOrderItemList().forEach(erpOrderItem -> {
             erpOrderItem.setMType(MaterialInOrderType.GENERAL.getKey());

@@ -12,7 +12,6 @@ import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.machin.entity.Machin;
-import com.skyeye.machin.entity.MachinPut;
 import com.skyeye.machin.service.MachinService;
 import com.skyeye.pick.entity.PatchMaterial;
 import com.skyeye.pick.entity.RequisitionMaterial;
@@ -131,35 +130,6 @@ public class MachinController {
     @RequestMapping("/post/MachinController/queryMachinForGanttById")
     public void queryMachinForGanttById(InputObject inputObject, OutputObject outputObject) {
         machinService.queryMachinForGanttById(inputObject, outputObject);
-    }
-
-    /**
-     * 转加工入库单时，根据id查询加工单信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryMachinTransById", value = "转加工入库单时，根据id查询加工单信息", method = "GET", allUse = "2")
-    @ApiImplicitParams({
-        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required"),
-        @ApiImplicitParam(id = "machinChildId", name = "machinChildId", value = "子单据id", required = "required")})
-    @RequestMapping("/post/MachinController/queryMachinTransById")
-    public void queryMachinTransById(InputObject inputObject, OutputObject outputObject) {
-        machinService.queryMachinTransById(inputObject, outputObject);
-    }
-
-    /**
-     * 加工单信息转加工入库单
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "insertMachinToTurnPut", value = "加工单信息转仓库入库单", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = MachinPut.class, value = {
-        @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
-    @RequestMapping("/post/MachinController/insertMachinToTurnPut")
-    public void insertMachinToTurnPut(InputObject inputObject, OutputObject outputObject) {
-        machinService.insertMachinToTurnPut(inputObject, outputObject);
     }
 
     /**

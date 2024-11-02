@@ -33,12 +33,6 @@ public class MachinPutController {
     @Autowired
     private MachinPutService machinPutService;
 
-    /**
-     * 获取加工入库单列表
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMachinPutList", value = "获取加工入库单列表", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/MachinPutController/queryMachinPutList")
@@ -46,12 +40,6 @@ public class MachinPutController {
         machinPutService.queryPageList(inputObject, outputObject);
     }
 
-    /**
-     * 新增/编辑加工入库单
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "writeMachinPut", value = "新增/编辑加工入库单", method = "POST", allUse = "1")
     @ApiImplicitParams(classBean = MachinPut.class)
     @RequestMapping("/post/MachinPutController/writeOtherOutLets")
@@ -59,12 +47,6 @@ public class MachinPutController {
         machinPutService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
-    /**
-     * 转仓库入库单时，根据id查询加工入库单信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "queryMachinPutTransById", value = "转仓库入库单时，根据id查询加工入库单信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
@@ -73,12 +55,6 @@ public class MachinPutController {
         machinPutService.queryMachinPutTransById(inputObject, outputObject);
     }
 
-    /**
-     * 加工入库单信息转仓库入库单
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
     @ApiOperation(id = "insertMachinPutToTurnDepot", value = "加工入库单信息转仓库入库单", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = DepotPut.class, value = {
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})

@@ -32,10 +32,6 @@ public interface MachinService extends SkyeyeFlowableService<Machin> {
 
     void queryMachinForGanttById(InputObject inputObject, OutputObject outputObject);
 
-    void queryMachinTransById(InputObject inputObject, OutputObject outputObject);
-
-    void insertMachinToTurnPut(InputObject inputObject, OutputObject outputObject);
-
     void queryMachinTransRequestById(InputObject inputObject, OutputObject outputObject);
 
     void insertMachinToPickRequest(InputObject inputObject, OutputObject outputObject);

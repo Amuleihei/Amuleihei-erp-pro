@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum MachinPutFromType implements SkyeyeEnumClass {
 
-    MACHIN(1, "加工单", true, false);
+    FARM_TASK(1, "车间任务", true, false);
 
     private Integer key;
 

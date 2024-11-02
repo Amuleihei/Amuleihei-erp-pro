@@ -28,13 +28,10 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.machin.classenum.MachinFromType;
 import com.skyeye.machin.classenum.MachinPickStateEnum;
-import com.skyeye.machin.classenum.MachinPutFromType;
 import com.skyeye.machin.dao.MachinDao;
 import com.skyeye.machin.entity.Machin;
 import com.skyeye.machin.entity.MachinChild;
-import com.skyeye.machin.entity.MachinPut;
 import com.skyeye.machin.service.MachinChildService;
-import com.skyeye.machin.service.MachinPutService;
 import com.skyeye.machin.service.MachinService;
 import com.skyeye.machinprocedure.classenum.MachinProcedureState;
 import com.skyeye.machinprocedure.entity.MachinProcedure;
@@ -107,9 +104,6 @@ public class MachinServiceImpl extends SkyeyeFlowableServiceImpl<MachinDao, Mach
 
     @Autowired
     private MachinProcedureFarmService machinProcedureFarmService;
-
-    @Autowired
-    private MachinPutService machinPutService;
 
     @Autowired
     private RequisitionMaterialService requisitionMaterialService;
@@ -575,63 +569,6 @@ public class MachinServiceImpl extends SkyeyeFlowableServiceImpl<MachinDao, Mach
         retult.put("target", parentId);
         retult.put("type", CommonNumConstants.NUM_ZERO);
         return retult;
-    }
-
-    @Override
-    public void queryMachinTransById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> params = inputObject.getParams();
-        String id = params.get("id").toString();
-        String machinChildId = params.get("machinChildId").toString();
-        Machin machin = selectById(id);
-        // 过滤加工单子单据
-        List<MachinChild> machinChildList = machin.getMachinChildList().stream()
-            .filter(machinChild -> StrUtil.equals(machinChild.getId(), machinChildId)).collect(Collectors.toList());
-        if (CollectionUtil.isEmpty(machinChildList)) {
-            throw new CustomException("该加工单子单据不存在.");
-        }
-        machinChildList = machin.getMachinChildList().stream()
-            .filter(machinChild -> machinChild.getCheckComplateFlag()).collect(Collectors.toList());
-        if (CollectionUtil.isEmpty(machinChildList)) {
-            throw new CustomException("该加工单子单据存在未完成的工序.");
-        }
-        // 该加工单下的已经下达加工入库单(审核通过)的数量
-        Map<String, Integer> machinPutNumMap = machinPutService.calcMaterialNormsNumByFromId(machin.getId());
-        machinChildList.forEach(machinChild -> {
-            // 采购订单数量 - 加工单最后加工完成的数量 - 加工入库单数量
-            Integer surplusNum = machinChild.getLastProcedureNum()
-                - (machinPutNumMap.containsKey(machinChild.getNormsId()) ? machinPutNumMap.get(machinChild.getNormsId()) : 0);
-            if (surplusNum < 0) {
-                throw new CustomException("超出当前加工完成的商品数量.");
-            }
-            // 设置未下达加工入库单的数量
-            machinChild.setLastProcedureNum(surplusNum);
-        });
-        // 过滤掉数量为0的商品信息
-        machin.setMachinChildList(machinChildList.stream()
-            .filter(machinChild -> machinChild.getLastProcedureNum() > 0).collect(Collectors.toList()));
-        outputObject.setBean(machin);
-        outputObject.settotal(CommonNumConstants.NUM_ONE);
-
-    }
-
-    @Override
-    public void insertMachinToTurnPut(InputObject inputObject, OutputObject outputObject) {
-        MachinPut depotPut = inputObject.getParams(MachinPut.class);
-        // 获取加工单状态
-        Machin machin = selectById(depotPut.getId());
-        if (ObjectUtil.isEmpty(machin)) {
-            throw new CustomException("该数据不存在.");
-        }
-        // 审核通过的可以转到加工入库单
-        if (FlowableStateEnum.PASS.getKey().equals(machin.getState())) {
-            String userId = inputObject.getLogParams().get("id").toString();
-            depotPut.setFromId(depotPut.getId());
-            depotPut.setFromTypeId(MachinPutFromType.MACHIN.getKey());
-            depotPut.setId(StrUtil.EMPTY);
-            machinPutService.createEntity(depotPut, userId);
-        } else {
-            outputObject.setreturnMessage("状态错误，无法下达加工入库单.");
-        }
     }
 
     @Override
