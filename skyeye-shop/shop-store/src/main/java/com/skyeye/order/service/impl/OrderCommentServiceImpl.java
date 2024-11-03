@@ -6,9 +6,9 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.erp.service.IMaterialNormsService;
 import com.skyeye.erp.service.IMaterialService;
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @SkyeyeService(name = "商品订单评价管理", groupName = "商品订单评价管理")
@@ -70,7 +70,7 @@ public class OrderCommentServiceImpl extends SkyeyeBusinessServiceImpl<OrderComm
 
     @Override
     public OrderComment selectById(String id) {
-        OrderComment orderComment = super.getDataFromDb(id);
+        OrderComment orderComment = super.selectById(id);
         if (ObjectUtil.isEmpty(orderComment)) {
             throw new CustomException("信息不存在");
         }
@@ -79,33 +79,19 @@ public class OrderCommentServiceImpl extends SkyeyeBusinessServiceImpl<OrderComm
         return orderComment;
     }
 
-    @Override
-    public void queryMyOrderComment(InputObject inputObject, OutputObject outputObject) {
-        QueryWrapper<OrderComment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(OrderComment::getCreateId), inputObject.getLogParams().get("id"));
-        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(OrderComment::getCreateTime));
-        List<OrderComment> list = list(queryWrapper);
-        if (CollectionUtil.isEmpty(list)) {
-            return;
-        }
-        iMaterialService.setDataMation(list, OrderComment::getMaterialId);
-        iMaterialNormsService.setDataMation(list, OrderComment::getNormsId);
-        outputObject.setBean(list);
-        outputObject.settotal(list.size());
+    protected List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
+        List<Map<String, Object>> mapList = super.queryPageDataList(inputObject);
+        iMaterialService.setMationForMap(mapList, "materialId", "materialMation");
+        iMaterialNormsService.setMationForMap(mapList, "normsId", "normsMation");
+        return mapList;
     }
 
     @Override
-    public void queryOrderCommentByMaterialId(InputObject inputObject, OutputObject outputObject) {
-        QueryWrapper<OrderComment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(OrderComment::getMaterialId), inputObject.getParams().get("materialId"));
-        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(OrderComment::getCreateTime));
-        List<OrderComment> list = list(queryWrapper);
-        if (CollectionUtil.isEmpty(list)) {
-            return;
-        }
-        iMaterialService.setDataMation(list, OrderComment::getMaterialId);
-        iMaterialNormsService.setDataMation(list, OrderComment::getNormsId);
-        outputObject.setBean(list);
-        outputObject.settotal(list.size());
+    public QueryWrapper<OrderComment> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        String typeId = commonPageInfo.getTypeId();
+        QueryWrapper<OrderComment> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(OrderComment::getCreateId), typeId)
+            .or().eq(MybatisPlusUtil.toColumns(OrderComment::getMaterialId), typeId);
+        return queryWrapper;
     }
 }

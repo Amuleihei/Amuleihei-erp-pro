@@ -89,11 +89,15 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         iMaterialNormsService.setDataMation(orderItemList, OrderItem::getNormsId);
         iMaterialService.setDataMation(orderItemList, OrderItem::getMaterialId);
         couponUseService.setDataMation(orderItemList, OrderItem::getCouponId);
+        boolean b = orderItemList.stream().anyMatch(orderItem -> orderItem.getCouponMation().get("state").equals(CouponUseState.UNUSED.getKey()));
+        if(b){
+            throw new CustomException("存在不可用优惠券");
+        }
         for (OrderItem orderItem : orderItemList) {
-            Integer couponState = Integer.parseInt(orderItem.getCouponMation().get("state").toString());
-            if (!Objects.equals(CouponUseState.UNUSED.getKey(), couponState)) {
-                throw new CustomException("存在不可用优惠券");
-            }
+//            Integer couponState = Integer.parseInt(orderItem.getCouponMation().get("state").toString());
+//            if (!Objects.equals(CouponUseState.UNUSED.getKey(), couponState)) {
+//                throw new CustomException("存在不可用优惠券");
+//            }
             // 获取子单单价
             String salePrice = orderItem.getNormsMation().get("salePrice").toString();
             // 设置子单总价

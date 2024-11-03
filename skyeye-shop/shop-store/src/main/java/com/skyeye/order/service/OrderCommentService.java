@@ -6,7 +6,4 @@ import com.skyeye.common.object.OutputObject;
 import com.skyeye.order.entity.OrderComment;
 
 public interface OrderCommentService extends SkyeyeBusinessService<OrderComment> {
-    void queryMyOrderComment(InputObject inputObject, OutputObject outputObject);
-
-    void queryOrderCommentByMaterialId(InputObject inputObject, OutputObject outputObject);
 }

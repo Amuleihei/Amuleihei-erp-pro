@@ -4,6 +4,7 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.order.entity.OrderComment;
@@ -61,27 +62,15 @@ public class OrderCommentController {
     }
 
     /**
-     * 查询自己的商品订单评价信息
+     * 分页查询商品订单评价信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryMyOrderComment", value = "查询自己的商品订单评价信息", method = "POST", allUse = "2")
-    @RequestMapping("/post/OrderCommentController/queryMyOrderComment")
-    public void queryMyOrderComment(InputObject inputObject, OutputObject outputObject) {
-        orderCommentService.queryMyOrderComment(inputObject, outputObject);
-    }
-
-    /**
-     * 根据商品id查询商品订单评价信息
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "queryOrderCommentByMaterialId", value = "根据商品id查询商品订单评价信息", method = "POST", allUse = "2")
-    @ApiImplicitParams({@ApiImplicitParam(id = "materialId", name = "materialId", value = "商品信息id", required = "required")})
-    @RequestMapping("/post/OrderCommentController/queryOrderCommentByMaterialId")
-    public void queryOrderCommentByMaterialId(InputObject inputObject, OutputObject outputObject) {
-        orderCommentService.queryOrderCommentByMaterialId(inputObject, outputObject);
+    @ApiOperation(id = "queryOrderCommentPageList", value = "分页查询商品订单评价信息", method = "POST", allUse = "2")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/OrderCommentController/queryOrderCommentPageList")
+    public void queryOrderCommentPageList(InputObject inputObject, OutputObject outputObject) {
+        orderCommentService.queryPageList(inputObject, outputObject);
     }
 }
