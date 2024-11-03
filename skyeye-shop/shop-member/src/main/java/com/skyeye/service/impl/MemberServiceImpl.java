@@ -82,6 +82,12 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         entity.setPwdNumEnc(oldMember.getPwdNumEnc());
         if (StrUtil.isEmpty(entity.getLevelId())) {
             setLevel(entity);
+        } else {
+            ShopMemberLevel shopMemberLevel = shopMemberLevelService.selectById(entity.getLevelId());
+            if (StrUtil.isEmpty(shopMemberLevel.getId())) {
+                shopMemberLevel = shopMemberLevelService.getSimpleLevelByLevel(CommonNumConstants.NUM_ONE);
+                entity.setLevelId(shopMemberLevel.getId());
+            }
         }
     }
 
