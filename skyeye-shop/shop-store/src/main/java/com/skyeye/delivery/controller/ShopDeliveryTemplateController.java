@@ -84,4 +84,12 @@ public class ShopDeliveryTemplateController {
     public void queryShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.queryList(inputObject, outputObject);
     }
+
+    @ApiOperation(id = "selectShopDeliveryTemplateById", value = "根据id查询快递运费模版信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+            @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/ShopDeliveryTemplateController/selectShopDeliveryTemplateById")
+    public void selectShopDeliveryTemplateById(InputObject inputObject, OutputObject outputObject) {
+        shopDeliveryTemplateService.selectById(inputObject, outputObject);
+    }
 }
