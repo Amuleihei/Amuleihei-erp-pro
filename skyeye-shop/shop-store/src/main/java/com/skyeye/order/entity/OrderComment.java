@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
+
+import java.util.Map;
 
 @Data
 @TableName("shop_order_comment")
@@ -25,9 +28,17 @@ public class OrderComment extends OperatorUserInfo {
     @ApiModelProperty(value = "规格id", required = "required")
     private String normsId;
 
+    @TableField(exist = false)
+    @Property(value = "规格信息")
+    private Map<String, Object> normsMation;
+
     @TableField(value = "material_id")
     @ApiModelProperty(value = "商品id", required = "required")
     private String materialId;
+
+    @TableField(exist = false)
+    @Property(value = "商品信息")
+    private Map<String, Object> materialMation;
 
     @TableField(value = "order_id")
     @ApiModelProperty(value = "订单id", required = "required")
@@ -42,6 +53,6 @@ public class OrderComment extends OperatorUserInfo {
     private Integer type;
 
     @TableField(value = "context")
-    @ApiModelProperty(value = "评价内容", required = "required")
+    @ApiModelProperty(value = "评价内容参考#OrderCommentType", required = "required")
     private String context;
 }

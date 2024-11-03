@@ -9,6 +9,7 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CalculationUtil;
@@ -206,6 +207,7 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
     @Override
     public void createPostpose(Order order, String userId) {
         for (OrderItem orderItem : order.getOrderItemList()) {
+            orderItem.setCommentState(WhetherEnum.DISABLE_USING.getKey());
             orderItem.setParentId(order.getId());
         }
         orderItemService.createEntity(order.getOrderItemList(), userId);
@@ -333,6 +335,14 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
             throw new CustomException("该订单当前不可发货。");
         }
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getState), ShopOrderState.DELIVERED.getKey());
+        update(updateWrapper);
+    }
+
+    @Override
+    public void updateCommonState(String id, Integer state) {
+        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(MybatisPlusUtil.toColumns(Order::getId), id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Order::getCommentState), state);
         update(updateWrapper);
     }
 }
