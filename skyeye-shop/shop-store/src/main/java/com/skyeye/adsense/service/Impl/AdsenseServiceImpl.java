@@ -12,8 +12,10 @@ import com.skyeye.adsense.service.AdsenseService;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonCharConstants;
+import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -41,6 +43,7 @@ public class AdsenseServiceImpl extends SkyeyeBusinessServiceImpl<AdsenseDao, Ad
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         QueryWrapper<Adsense> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Adsense::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<Adsense> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }

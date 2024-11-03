@@ -5,8 +5,11 @@
 package com.skyeye.key.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.skyeye.common.enumeration.EnableEnum;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.key.dao.AiApiKeyDao;
 import com.skyeye.key.entity.AiApiKey;
 import com.skyeye.key.service.AiApiKeyService;
@@ -44,17 +47,17 @@ public class AiApiKeyServiceImpl extends SkyeyeBusinessServiceImpl<AiApiKeyDao, 
     public void validatorEntity(AiApiKey aiApiKey) {
         super.validatorEntity(aiApiKey);
         //判断RoleId是否存在
-        if (ObjectUtil.isNotNull(aiApiKey.getRoleId())) {
+        if (StrUtil.isNotEmpty(aiApiKey.getRoleId())) {
             Role role = roleService.selectById(aiApiKey.getRoleId());
             //判断RoleId是否为空，如果为空，则抛出异常
-            if (role.getId() == null) {
+            if (StrUtil.isNotEmpty(role.getId())) {
                 throw new CustomException("角色不存在: " + aiApiKey.getRoleId());
             }
         }
     }
 
     /**
-     * 获取全部API配置
+     * 获取已启用的API配置
      *
      * @param inputObject 入参以及用户信息等获取对象
      * @return
@@ -62,6 +65,7 @@ public class AiApiKeyServiceImpl extends SkyeyeBusinessServiceImpl<AiApiKeyDao, 
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         QueryWrapper<AiApiKey> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(AiApiKey::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<AiApiKey> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }

@@ -4,7 +4,6 @@
 
 package com.skyeye.role.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.role.dao.RoleDao;
@@ -12,7 +11,6 @@ import com.skyeye.role.entity.Role;
 import com.skyeye.role.service.RoleService;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import org.springframework.stereotype.Service;
@@ -31,28 +29,14 @@ import java.util.Map;
 @Service
 @SkyeyeService(name = "AI角色", groupName = "AI角色")
 public class RoleServiceImpl extends SkyeyeBusinessServiceImpl<RoleDao, Role> implements RoleService {
-
-    /**
-     * 分页查询AI角色信息
-     * @param commonPageInfo
-     * @return
-     */
-    @Override
-    public QueryWrapper<Role> getQueryWrapper(CommonPageInfo commonPageInfo) {
-        QueryWrapper<Role> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        String keyword = commonPageInfo.getKeyword();
-        if (StrUtil.isNotEmpty(keyword)) {
-            queryWrapper.like(MybatisPlusUtil.toColumns(Role::getName), keyword);
-        }
-        return queryWrapper;
-    }
-
+    
     /**
      * 获取全部AI角色信息
      *
      * @param inputObject 入参以及用户信息等获取对象
      * @return
      */
+
     @Override
     public List<Map<String, Object>> queryDataList(InputObject inputObject) {
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
@@ -60,10 +44,4 @@ public class RoleServiceImpl extends SkyeyeBusinessServiceImpl<RoleDao, Role> im
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
     }
 
-    @Override
-    public List<Role> queryRoleList(String id){
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Role::getId), id);
-        return list(queryWrapper);
-    }
 }
