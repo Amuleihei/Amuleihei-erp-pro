@@ -145,6 +145,9 @@ public class ShopMaterialServiceImpl extends SkyeyeBusinessServiceImpl<ShopMater
     @Override
     public void queryShopMaterialList(InputObject inputObject, OutputObject outputObject) {
         List<ShopMaterialStore> shopMaterialStoreList = shopMaterialStoreService.queryShopMaterialList(inputObject, outputObject);
+        if (CollectionUtil.isEmpty(shopMaterialStoreList)) {
+            return;
+        }
         List<String> materialIdList = shopMaterialStoreList.stream().map(ShopMaterialStore::getMaterialId).collect(Collectors.toList());
         // 根据商品id查询上架的商品信息
         QueryWrapper<ShopMaterial> queryWrapper = new QueryWrapper<>();
