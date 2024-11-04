@@ -92,7 +92,7 @@ public class RoleController{
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryRoleList", value = "获取AI角色", method = "POST", allUse = "0")
+    @ApiOperation(id = "queryRoleList", value = "获取广告位管理信息", method = "POST", allUse = "0")
     @RequestMapping("/post/roleController/queryRoleList")
     public void queryRoleList(InputObject inputObject, OutputObject outputObject) {
         roleService.queryList(inputObject, outputObject);
