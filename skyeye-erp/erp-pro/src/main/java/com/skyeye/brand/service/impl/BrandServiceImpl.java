@@ -35,6 +35,16 @@ public class BrandServiceImpl extends SkyeyeBusinessServiceImpl<BrandDao, Brand>
 
     @Override
     public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
+        QueryWrapper<Brand> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        wrapper.orderByDesc(MybatisPlusUtil.toColumns(Brand::getCreateTime));
+        List<Brand> brandList = list(wrapper);
+        outputObject.setBeans(brandList);
+        outputObject.settotal(brandList.size());
+    }
+
+    @Override
+    public void queryPageEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
         Page pages = null;
         setCommonPageInfoOtherInfo(commonPageInfo);

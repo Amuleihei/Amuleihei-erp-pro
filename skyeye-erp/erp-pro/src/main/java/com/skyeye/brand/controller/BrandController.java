@@ -52,10 +52,22 @@ public class BrandController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryEnabledBrandList", value = "根据已启用查询品牌列表", method = "POST", allUse = "0")
-    @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/BrandController/queryEnabledBrandList")
     public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
         brandService.queryEnabledBrandList(inputObject, outputObject);
+    }
+
+    /**
+     * 根据已启用查询品牌列表(可分页)
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryPageEnabledBrandList", value = "根据已启用查询品牌列表(可分页)", method = "POST", allUse = "0")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @RequestMapping("/post/BrandController/queryPageEnabledBrandList")
+    public void queryPageEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
+        brandService.queryPageEnabledBrandList(inputObject, outputObject);
     }
 
     /**

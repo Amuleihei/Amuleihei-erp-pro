@@ -19,4 +19,6 @@ import com.skyeye.common.object.OutputObject;
  */
 public interface BrandService extends SkyeyeBusinessService<Brand> {
     void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject);
+
+    void queryPageEnabledBrandList(InputObject inputObject, OutputObject outputObject);
 }
