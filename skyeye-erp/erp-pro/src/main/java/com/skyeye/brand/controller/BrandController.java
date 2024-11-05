@@ -52,6 +52,7 @@ public class BrandController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryEnabledBrandList", value = "根据已启用查询品牌列表", method = "POST", allUse = "0")
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/BrandController/queryEnabledBrandList")
     public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
         brandService.queryEnabledBrandList(inputObject, outputObject);
