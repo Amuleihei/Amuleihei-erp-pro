@@ -67,7 +67,7 @@ public class CustomerServiceImpl extends SkyeyeBusinessServiceImpl<CustomerDao, 
         } else if (StrUtil.equals(commonPageInfo.getType(), "myCharge")) {
             // 我负责的
             List<String> teamTemplateIds = iTeamBusinessService.getMyTeamIds();
-            queryWrapper.eq(MybatisPlusUtil.toColumns(CustomerMation::getTeamTemplateId), teamTemplateIds);
+            queryWrapper.in(MybatisPlusUtil.toColumns(CustomerMation::getTeamTemplateId), teamTemplateIds);
         }
         return queryWrapper;
     }
