@@ -11,6 +11,7 @@ import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.client.ExecuteFeignClient;
 import com.skyeye.common.constans.CommonConstants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -50,6 +51,15 @@ public class ShopStoreServiceImpl extends SkyeyeBusinessServiceImpl<ShopStoreDao
 
     @Autowired
     private IShopMaterialNormsRest iShopMaterialNormsRest;
+
+    @Override
+    public QueryWrapper<ShopStore> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<ShopStore> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        if (commonPageInfo.getEnabled() != null) {
+            queryWrapper.eq(MybatisPlusUtil.toColumns(ShopStore::getEnabled), commonPageInfo.getEnabled());
+        }
+        return queryWrapper;
+    }
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
