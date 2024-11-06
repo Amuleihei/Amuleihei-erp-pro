@@ -50,7 +50,7 @@ public class ChatController {
             @ApiImplicitParam(id = "ids", name = "ids", value = "主键id列表，多个id用逗号分隔", required = "required")})
     @RequestMapping("/post/ChatController/deleteChatMessageByIds")
     public void deleteChatMessageByIds(InputObject inputObject, OutputObject outputObject) {
-        chatService.deleteById(inputObject, outputObject);
+        chatService.deleteByIds(inputObject, outputObject);
     }
 
 
