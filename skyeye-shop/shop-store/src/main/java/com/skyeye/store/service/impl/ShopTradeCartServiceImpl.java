@@ -6,6 +6,7 @@ package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
@@ -31,10 +32,7 @@ import com.skyeye.store.service.ShopTradeCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -115,6 +113,21 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected),
             Objects.equals(one.getSelected(), WhetherEnum.ENABLE_USING.getKey())
                 ? WhetherEnum.DISABLE_USING.getKey() : WhetherEnum.ENABLE_USING.getKey());
+        update(updateWrapper);
+    }
+
+    @Override
+    public void batchChangeSelectedStatus(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
+        String idsStr = params.get("ids").toString();
+        List<String> ids = Arrays.stream(idsStr.split(CommonCharConstants.COMMA_MARK)).filter(StrUtil::isNotEmpty).distinct().collect(Collectors.toList());
+        Integer selected = Integer.parseInt(params.get("selected").toString());
+
+        UpdateWrapper<ShopTradeCart> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in(CommonConstants.ID, ids);
+        updateWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
         update(updateWrapper);
     }
 
