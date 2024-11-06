@@ -102,6 +102,21 @@ public class ShopTradeCartController {
     }
 
     /**
+     * 批量更新购物车商品选中/不选中
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "batchChangeSelectedStatus", value = "批量更新购物车商品选中/不选中", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "ids", name = "ids", value = "主键id，多个id用逗号隔开", required = "required"),
+        @ApiImplicitParam(id = "selected", name = "selected", value = "状态，参考#WhetherEnum", required = "required,num")})
+    @RequestMapping("/post/ShopTradeCartController/batchChangeSelectedStatus")
+    public void batchChangeSelectedStatus(InputObject inputObject, OutputObject outputObject) {
+        shopTradeCartService.batchChangeSelectedStatus(inputObject, outputObject);
+    }
+
+    /**
      * 重置购物车信息
      *
      * @param inputObject  入参以及用户信息等获取对象
