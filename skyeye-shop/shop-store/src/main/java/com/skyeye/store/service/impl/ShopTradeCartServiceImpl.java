@@ -6,6 +6,7 @@ package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
@@ -76,7 +77,9 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         // 查询用户购物车列表
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
-        wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
+        if (StrUtil.isNotEmpty(selected)) {
+            wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
+        }
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
