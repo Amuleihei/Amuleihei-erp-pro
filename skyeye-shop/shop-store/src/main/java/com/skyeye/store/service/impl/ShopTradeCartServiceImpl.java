@@ -71,10 +71,12 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
 
     @Override
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
+        String selected = inputObject.getParams().get("selected").toString();
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         // 查询用户购物车列表
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);

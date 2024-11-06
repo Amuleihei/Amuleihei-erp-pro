@@ -38,6 +38,8 @@ public class ShopTradeCartController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryShopTradeCartList", value = "获取购物车信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+        @ApiImplicitParam(id = "selected", name = "selected", value = "选中状态，0：未选中，1：选中")})
     @RequestMapping("/post/ShopTradeCartController/queryShopTradeCartList")
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.queryShopTradeCartList(inputObject, outputObject);
