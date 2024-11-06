@@ -60,12 +60,4 @@ public class SparkListener extends SparkConsoleListener {
         }
 
     }
-
-    /**
-     * 获取完整版答案
-     * */
-    public StringBuilder getStringBuilder(){
-        return stringBuilder;
-    }
-
 }

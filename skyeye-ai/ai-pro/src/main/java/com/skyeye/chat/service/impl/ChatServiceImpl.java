@@ -3,7 +3,6 @@ package com.skyeye.chat.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.dashscope.aigc.generation.Generation;
@@ -41,12 +40,10 @@ import com.skyeye.role.service.RoleService;
 import com.skyeye.websocket.AiMessageWebSocket;
 import io.github.briqt.spark4j.SparkClient;
 import io.github.briqt.spark4j.constant.SparkApiVersion;
-import io.github.briqt.spark4j.listener.SparkConsoleListener;
 import io.github.briqt.spark4j.model.SparkMessage;
 import io.github.briqt.spark4j.model.request.SparkRequest;
 import io.github.briqt.spark4j.model.response.SparkResponse;
 import io.github.briqt.spark4j.model.response.SparkResponseUsage;
-import io.github.briqt.spark4j.model.response.SparkTextUsage;
 import io.reactivex.Flowable;
 import okhttp3.WebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @ClassName: ChatServiceImpl
@@ -109,19 +104,16 @@ public class ChatServiceImpl extends SkyeyeBusinessServiceImpl<ChatDao, Chat> im
         chat.setMessage(content);
         chat.setPlatform(platform);
         chat.setApiKeyId(apiKeyId);
-        String id ="";
+        String id =createEntity(chat, userId);
         switch (aiModel) {
             case YI_YAN:
-                id = createEntity(chat, userId);
                 QianFanResponse(content, userId, apiKeyId, id);
                 break;
             case XUN_FEI:
-                id = createEntity(chat, userId);
                 XunFeiResponse(content,userId,apiKeyId,id);
                 break;
             case TONG_YI:
                 try {
-                    id = createEntity(chat, userId);
                     TongYiResponse(content,userId,apiKeyId,id);
                     break;
                 } catch (Exception e) {
@@ -360,33 +352,18 @@ public class ChatServiceImpl extends SkyeyeBusinessServiceImpl<ChatDao, Chat> im
             chat.setApiKeyMation(aiApiKey);
         }
         outputObject.setBeans(chatList);
-        outputObject.settotal(page.size());
+        outputObject.settotal(page.getTotal());
     }
 
     @Override
     public void deleteAllByApiKeyId(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> params = inputObject.getParams();
         String apiKeyId = params.get("apiKeyId").toString();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
         QueryWrapper<Chat> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(Chat::getApiKeyId), apiKeyId);
-        List<Chat> chatList = list(queryWrapper);
-        for (Chat chat : chatList) {
-            removeById(chat.getId());
-        }
-    }
-
-
-    @Override
-    public void deleteById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> params = inputObject.getParams();
-        String idsStr = params.get("ids").toString();
-        if (idsStr == null || idsStr.isEmpty()) {
-            throw new CustomException("错误操作");
-        }
-        List<String> ids = Stream.of(idsStr.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
-        deleteById(ids);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(Chat::getCreateId), userId);
+        remove(queryWrapper);
     }
 
 }
