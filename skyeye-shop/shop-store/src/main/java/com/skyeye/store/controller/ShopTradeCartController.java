@@ -39,7 +39,7 @@ public class ShopTradeCartController {
      */
     @ApiOperation(id = "queryShopTradeCartList", value = "根据状态获取购物车信息", method = "POST", allUse = "2")
     @ApiImplicitParams({
-        @ApiImplicitParam(id = "selected", name = "selected", value = "选中状态，0：未选中，1：选中,不传时查询全部类型")})
+        @ApiImplicitParam(id = "selected", name = "selected", value = "选中状态，参考#WhetherEnum")})
     @RequestMapping("/post/ShopTradeCartController/queryShopTradeCartList")
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
         shopTradeCartService.queryShopTradeCartList(inputObject, outputObject);
