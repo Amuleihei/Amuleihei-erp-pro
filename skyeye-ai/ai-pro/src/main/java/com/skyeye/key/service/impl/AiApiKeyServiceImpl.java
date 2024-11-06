@@ -5,6 +5,7 @@
 package com.skyeye.key.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.key.dao.AiApiKeyDao;
@@ -44,7 +45,7 @@ public class AiApiKeyServiceImpl extends SkyeyeBusinessServiceImpl<AiApiKeyDao, 
     public void validatorEntity(AiApiKey aiApiKey) {
         super.validatorEntity(aiApiKey);
         //判断RoleId是否存在
-        if (ObjectUtil.isNotNull(aiApiKey.getRoleId())) {
+        if (StrUtil.isNotEmpty(aiApiKey.getRoleId())) {
             Role role = roleService.selectById(aiApiKey.getRoleId());
             //判断RoleId是否为空，如果为空，则抛出异常
             if (role.getId() == null) {
