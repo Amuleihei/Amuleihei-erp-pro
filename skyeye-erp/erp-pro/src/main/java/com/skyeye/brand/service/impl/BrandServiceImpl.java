@@ -56,6 +56,6 @@ public class BrandServiceImpl extends SkyeyeBusinessServiceImpl<BrandDao, Brand>
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(Brand::getCreateTime));
         List<Brand> brandList = list(wrapper);
         outputObject.setBeans(brandList);
-        outputObject.settotal(pages.size());
+        outputObject.settotal(pages.getTotal());
     }
 }
