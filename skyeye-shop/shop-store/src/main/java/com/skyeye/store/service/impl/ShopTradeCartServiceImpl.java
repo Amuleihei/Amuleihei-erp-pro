@@ -80,6 +80,21 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
+        if (CollectionUtil.isNotEmpty(beans)) {
+            // 收集规格id列表，获得规格信息
+            List<String> normsIdList = beans.stream().map(ShopTradeCart::getNormsId).collect(Collectors.toList());
+            List<Map<String, Object>> normsListMap = iShopMaterialNormsService
+                .queryShopMaterialByNormsIdList(Joiner.on(CommonCharConstants.COMMA_MARK).join(normsIdList));
+            // 设置商城的销售价格
+            Map<String, String> collect = normsListMap.stream()
+                .collect(Collectors.toMap(bean -> bean.get("normsId").toString(), bean -> bean.get("salePrice").toString()));
+            beans.forEach(bean -> {
+                String normsId = bean.getNormsId();
+                String salePrice = collect.get(normsId);
+                bean.getNormsMation().put("salePrice", salePrice);
+            });
+        }
+
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
         Map<String, List<ShopTradeCart>> collect = beans.stream().collect(Collectors.groupingBy(ShopTradeCart::getStoreId));
         // 查询店铺信息
