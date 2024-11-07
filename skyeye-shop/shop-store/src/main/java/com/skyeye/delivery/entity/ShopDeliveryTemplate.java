@@ -40,11 +40,11 @@ public class ShopDeliveryTemplate extends OperatorUserInfo {
     private String remark;
 
     @TableField(value = "`type`")
-    @ApiModelProperty(value = "配送计费方式",required = "required")
+    @ApiModelProperty(value = "配送计费方式，参考#DeliveryExpressType",required = "num")
     private Integer type;
 
     @TableField(value = "`order_by`")
-    @ApiModelProperty(value = "排序",required = "required")
+    @ApiModelProperty(value = "排序",required = "num")
     private Integer orderBy;
 
     @TableField(value = "`store_id`")
