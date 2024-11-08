@@ -16,7 +16,6 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
-import com.skyeye.pay.entity.PayApp;
 import com.skyeye.sms.classenum.SmsChannelEnum;
 import com.skyeye.sms.core.service.SmsClient;
 import com.skyeye.sms.core.service.SmsClientFactory;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +66,10 @@ public class SmsChannelServiceImpl extends SkyeyeBusinessServiceImpl<SmsChannelD
         return JSONUtil.toList(JSONUtil.toJsonStr(list), null);
     }
 
+    @Override
+    public void updatePostpose(SmsChannel entity, String userId) {
+        smsClientFactory.removeSmsClientById(entity.getId());
+    }
 
     @Override
     public SmsClient getSmsClientById(String channelId) {
