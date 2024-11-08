@@ -61,6 +61,11 @@ public class SmsClientFactoryImpl implements SmsClientFactory {
     }
 
     @Override
+    public void removeSmsClientById(String channelId) {
+        channelIdClients.remove(channelId);
+    }
+
+    @Override
     public SmsClient getSmsClient(String channelCode) {
         return channelCodeClients.get(channelCode);
     }

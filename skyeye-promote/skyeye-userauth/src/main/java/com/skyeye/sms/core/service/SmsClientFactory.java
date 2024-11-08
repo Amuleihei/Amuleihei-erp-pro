@@ -25,6 +25,8 @@ public interface SmsClientFactory {
      */
     SmsClient getSmsClientById(String channelId);
 
+    void removeSmsClientById(String channelId);
+
     /**
      * 获得短信 Client
      *
