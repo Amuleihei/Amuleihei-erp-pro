@@ -73,6 +73,10 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
         if (StrUtil.isNotEmpty(shopDeliveryTemplate.getName()) && shopDeliveryTemplate.getName().length() > 100) {
             throw new CustomException("运费模板名称过长");
         }
+        if (shopDeliveryTemplate.getOrderBy() < -128 || shopDeliveryTemplate.getOrderBy() > 127) {
+            throw new CustomException("运费模板排序值超出范围");
+        }
+
         //判断StoreId是否存在
         if (StrUtil.isNotEmpty(shopDeliveryTemplate.getStoreId())) {
             ShopStore shopStore = shopStoreService.selectById(shopDeliveryTemplate.getStoreId());

@@ -4,6 +4,8 @@
 
 package com.skyeye.adsense.service.Impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.adsense.dao.AdsenseDao;
@@ -16,6 +18,9 @@ import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.delivery.entity.ShopDeliveryCompany;
+import com.skyeye.exception.CustomException;
+import com.skyeye.store.entity.ShopStore;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -46,5 +51,19 @@ public class AdsenseServiceImpl extends SkyeyeBusinessServiceImpl<AdsenseDao, Ad
         queryWrapper.eq(MybatisPlusUtil.toColumns(Adsense::getEnabled), EnableEnum.ENABLE_USING.getKey());
         List<Adsense> beans = list(queryWrapper);
         return JSONUtil.toList(JSONUtil.toJsonStr(beans), null);
+    }
+
+    /**
+     * 重写新增编辑前置条件广告位管理
+     */
+    @Override
+    public void validatorEntity(Adsense adsense) {
+        super.validatorEntity(adsense);
+        if (StrUtil.isNotEmpty(adsense.getName()) && adsense.getName().length() > 100) {
+            throw new CustomException("广告位名称过长");
+        }
+        if (adsense.getOrderBy() < -128 || adsense.getOrderBy() > 127) {
+            throw new CustomException("广告位排序值超出范围");
+        }
     }
 }

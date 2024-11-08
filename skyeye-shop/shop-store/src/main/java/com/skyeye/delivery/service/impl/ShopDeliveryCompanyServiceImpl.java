@@ -74,6 +74,15 @@ public class ShopDeliveryCompanyServiceImpl extends SkyeyeBusinessServiceImpl<Sh
     @Override
     public void validatorEntity(ShopDeliveryCompany shopDeliveryCompany) {
         super.validatorEntity(shopDeliveryCompany);
+        if (StrUtil.isNotEmpty(shopDeliveryCompany.getCodeNum()) && shopDeliveryCompany.getCodeNum().length() > 50) {
+            throw new CustomException("快递公司 code过长");
+        }
+        if (StrUtil.isNotEmpty(shopDeliveryCompany.getName()) && shopDeliveryCompany.getName().length() > 50) {
+            throw new CustomException("快递公司名称过长");
+        }
+        if (shopDeliveryCompany.getOrderBy() < -128 || shopDeliveryCompany.getOrderBy() > 127) {
+            throw new CustomException("运费模板排序值超出范围");
+        }
         //判断StoreId是否存在
         if (ObjectUtil.isNotNull(shopDeliveryCompany.getStoreId())) {
             ShopStore shopStore = shopStoreService.selectById(shopDeliveryCompany.getStoreId());
