@@ -12,6 +12,7 @@ import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 
+import com.skyeye.delivery.entity.ShopDeliveryCompany;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 import com.skyeye.delivery.service.ShopDeliveryTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ShopDeliveryTemplateController {
      */
     @ApiOperation(id = "writeShopDeliveryTemplate", value = "添加/修改快递运费模板", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopDeliveryTemplate.class)
-    @RequestMapping("/post/ShopDeliveryTemplateController/writeShopDeliveryTemplate")
+    @RequestMapping("/post/ShopDeliveryCompanyController/writeShopDeliveryTemplate")
     public void writeShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.saveOrUpdateEntity(inputObject, outputObject);
     }

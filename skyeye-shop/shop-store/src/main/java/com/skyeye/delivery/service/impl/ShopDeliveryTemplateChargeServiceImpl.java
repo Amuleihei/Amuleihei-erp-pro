@@ -86,12 +86,12 @@ public class ShopDeliveryTemplateChargeServiceImpl extends SkyeyeBusinessService
         ShopArea shopArea = shopAreaService.selectById(shopDeliveryTemplateCharge.getAreaId());
 
         // 判断shopDeliveryTemplate是否为空，如果为空则抛出异常
-        if (shopDeliveryTemplate.getId() == null) {
+        if (StrUtil.isEmpty(shopDeliveryTemplate.getId())) {
             throw new CustomException("模板不存在: " + shopDeliveryTemplateCharge.getTemplateId());
         }
 
         // 判断shopArea是否为空，如果为空则抛出异常
-        if (shopArea.getId() == null) {
+        if (StrUtil.isEmpty(shopArea.getId())) {
             throw new CustomException("区域不存在: " + shopDeliveryTemplateCharge.getAreaId());
         }
     }

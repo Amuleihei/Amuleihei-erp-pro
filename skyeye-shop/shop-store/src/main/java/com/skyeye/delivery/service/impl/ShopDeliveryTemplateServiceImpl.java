@@ -70,19 +70,15 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
     @Override
     public void validatorEntity(ShopDeliveryTemplate shopDeliveryTemplate) {
         super.validatorEntity(shopDeliveryTemplate);
-
         if (StrUtil.isNotEmpty(shopDeliveryTemplate.getName()) && shopDeliveryTemplate.getName().length() > 100) {
             throw new CustomException("运费模板名称过长");
-        }
-        if (!(shopDeliveryTemplate.getOrderBy() instanceof Integer)){
-            throw new CustomException("排序值类型错误,请输入整数数字");
         }
         //判断StoreId是否存在
         if (StrUtil.isNotEmpty(shopDeliveryTemplate.getStoreId())) {
             ShopStore shopStore = shopStoreService.selectById(shopDeliveryTemplate.getStoreId());
             //判断shopStore是否为空，如果为空，则抛出异常
-            if (StrUtil.isNotEmpty(shopStore.getId())) {
-                throw new CustomException("门店不存在: " + shopStore);
+            if (StrUtil.isEmpty(shopStore.getId())) {
+                throw new CustomException("门店不存在: " + shopStore.getId());
             }
         }
     }
