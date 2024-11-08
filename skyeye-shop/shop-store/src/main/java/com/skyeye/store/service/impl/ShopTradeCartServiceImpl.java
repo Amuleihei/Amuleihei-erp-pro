@@ -91,7 +91,9 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
             beans.forEach(bean -> {
                 String normsId = bean.getNormsId();
                 String salePrice = collect.get(normsId);
-                bean.getNormsMation().put("salePrice", salePrice);
+                if (CollectionUtil.isNotEmpty(bean.getNormsMation())) {
+                    bean.getNormsMation().put("salePrice", salePrice);
+                }
             });
         }
 
