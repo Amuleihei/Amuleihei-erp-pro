@@ -74,11 +74,11 @@ public class Coupon extends BaseGeneralInfo {
     @ApiModelProperty(value = "固定日期 - 生效结束时间")
     private String validEndTime;
 
-    @TableField(value = "fixed_start_term")
+    @TableField(value = "fixed_start_time")
     @ApiModelProperty(value = "领取日期 - 领取几天后可以开始使用")
-    private Integer fixedStartTerm;
+    private Integer fixedStartTime;
 
-    @TableField(value = "fixed_end_term")
+    @TableField(value = "fixed_end_Time")
     @ApiModelProperty(value = "领取日期 - 领取开始使用时几天后结束")
     private Integer fixedEndTerm;
 

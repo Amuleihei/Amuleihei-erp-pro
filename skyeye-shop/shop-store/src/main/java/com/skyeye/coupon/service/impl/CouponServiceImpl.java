@@ -69,7 +69,7 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
                 throw new CustomException("固定日期类型优惠券，有效期不能为空");
             }
         } else {
-            if (coupon.getFixedStartTerm() == null || coupon.getFixedEndTerm() == null) {
+            if (coupon.getFixedStartTime() == null || coupon.getFixedEndTerm() == null) {
                 throw new CustomException("固定周期类型优惠券，有效期不能为空");
             }
         }
@@ -183,10 +183,10 @@ public class CouponServiceImpl extends SkyeyeBusinessServiceImpl<CouponDao, Coup
         String typeKey = MybatisPlusUtil.toColumns(Coupon::getTemplateId);
         MPJLambdaWrapper<Coupon> wrapper = new MPJLambdaWrapper<Coupon>()
             .innerJoin(CouponMaterial.class, CouponMaterial::getCouponId, Coupon::getId)
-            .eq(MybatisPlusUtil.toColumns(CouponMaterial::getMaterialId), materialId)
+            .eq(CouponMaterial::getMaterialId, materialId)
             .eq(MybatisPlusUtil.toColumns(Coupon::getEnabled), EnableEnum.ENABLE_USING.getKey())
             .isNotNull(typeKey).ne(typeKey, StrUtil.EMPTY);
-        List<Coupon> list = list(wrapper);
+        List<Coupon> list = skyeyeBaseMapper.selectJoinList(Coupon.class, wrapper);
         outputObject.setBean(list);
         outputObject.settotal(list.size());
     }
