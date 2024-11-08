@@ -36,6 +36,10 @@ public class MachinProcedureFarm extends OperatorUserInfo {
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
+    @TableField(value = "odd_number", updateStrategy = FieldStrategy.NEVER)
+    @Property(value = "单据编号", fuzzyLike = true)
+    private String oddNumber;
+
     @TableField(value = "machin_id", updateStrategy = FieldStrategy.NEVER)
     @ApiModelProperty(value = "加工单id")
     private String machinId;

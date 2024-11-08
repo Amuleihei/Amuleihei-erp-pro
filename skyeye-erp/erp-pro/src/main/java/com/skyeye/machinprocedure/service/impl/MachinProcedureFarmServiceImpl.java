@@ -4,6 +4,7 @@
 
 package com.skyeye.machinprocedure.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -95,6 +96,13 @@ public class MachinProcedureFarmServiceImpl extends SkyeyeBusinessServiceImpl<Ma
         farmService.setMationForMap(beans, "farmId", "farmMation");
         machinProcedureService.setMationForMap(beans, "machinProcedureId", "machinProcedureMation");
         return beans;
+    }
+
+    @Override
+    public void createPrepose(MachinProcedureFarm entity) {
+        Map<String, Object> business = BeanUtil.beanToMap(entity);
+        String oddNumber = iCodeRuleService.getNextCodeByClassName(this.getClass().getName(), business);
+        entity.setOddNumber(oddNumber);
     }
 
     @Override
