@@ -106,6 +106,16 @@ public class MachinProcedureFarmServiceImpl extends SkyeyeBusinessServiceImpl<Ma
     }
 
     @Override
+    public void createPrepose(List<MachinProcedureFarm> entity) {
+        String serviceClassName = getServiceClassName();
+        entity.forEach(bean -> {
+            Map<String, Object> business = BeanUtil.beanToMap(bean);
+            String oddNumber = iCodeRuleService.getNextCodeByClassName(serviceClassName, business);
+            bean.setOddNumber(oddNumber);
+        });
+    }
+
+    @Override
     public MachinProcedureFarm selectById(String id) {
         MachinProcedureFarm machinProcedureFarm = super.selectById(id);
         farmService.setDataMation(machinProcedureFarm, MachinProcedureFarm::getFarmId);
