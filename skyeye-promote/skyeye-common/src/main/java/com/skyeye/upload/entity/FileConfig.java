@@ -4,6 +4,7 @@
 
 package com.skyeye.upload.entity;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -20,6 +21,8 @@ import com.skyeye.framework.file.core.client.local.LocalFileClientConfig;
 import com.skyeye.framework.file.core.client.s3.S3FileClientConfig;
 import com.skyeye.framework.file.core.client.sftp.SftpFileClientConfig;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * @ClassName: FileConfig
@@ -51,12 +54,12 @@ public class FileConfig extends BaseGeneralInfo {
 
         @Override
         public Object parse(String json) {
-            FileClientConfig config = JSONUtil.toBean(json, FileClientConfig.class);
-            if (config != null) {
-                return config;
+            Map<String, Object> config = JSONUtil.toBean(json, null);
+            if (CollectionUtil.isEmpty(config)) {
+                return null;
             }
             // 兼容老版本的包路径
-            String className = StrUtil.subAfter(config.getClass().getName(), ".", true);
+            String className = StrUtil.subAfter(config.get("@class").toString(), ".", true);
             switch (className) {
                 case "DBFileClientConfig":
                     return JSONUtil.toBean(json, DBFileClientConfig.class);
