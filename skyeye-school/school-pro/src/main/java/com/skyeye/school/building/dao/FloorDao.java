@@ -1,7 +1,8 @@
-package com.skyeye.school.location.dao;
+package com.skyeye.school.building.dao;
 
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
-import com.skyeye.school.location.entity.Floor;
+import com.skyeye.school.building.entity.Floor;
+
 
 /**
  * @ClassName: FloorDao

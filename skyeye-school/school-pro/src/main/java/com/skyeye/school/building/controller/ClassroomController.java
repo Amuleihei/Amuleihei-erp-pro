@@ -8,6 +8,7 @@ import com.skyeye.annotation.api.Api;
 import com.skyeye.annotation.api.ApiImplicitParam;
 import com.skyeye.annotation.api.ApiImplicitParams;
 import com.skyeye.annotation.api.ApiOperation;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.school.building.entity.Classroom;
@@ -38,7 +39,7 @@ public class ClassroomController {
      * @param outputObject 出参以及提示信息的返回值对象
      */
     @ApiOperation(id = "queryClassroomList", value = "获取教室信息", method = "POST", allUse = "1")
-//    @ApiImplicitParams(classBean = CommonPageInfo.class)
+    @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/ClassroomController/queryClassroomList")
     public void queryClassroomList(InputObject inputObject, OutputObject outputObject) {
         classroomService.queryPageList(inputObject, outputObject);

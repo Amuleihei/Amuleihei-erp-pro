@@ -1,4 +1,4 @@
-package com.skyeye.school.location.entity;
+package com.skyeye.school.building.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

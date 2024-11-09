@@ -5,13 +5,18 @@
 package com.skyeye.school.building.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.eve.service.SchoolService;
+import com.skyeye.exception.CustomException;
 import com.skyeye.school.building.dao.TeachBuildingDao;
 import com.skyeye.school.building.entity.TeachBuilding;
 import com.skyeye.school.building.service.TeachBuildingService;
@@ -23,14 +28,14 @@ import java.util.Map;
 
 /**
  * @ClassName: TeachBuildingServiceImpl
- * @Description: 教学楼管理服务层
- * @author: skyeye云系列--卫志强
+ * @Description: 地点教学楼管理服务层
+ * @author: skyeye云系列--lqy
  * @date: 2021/8/7 20:48
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Service
-@SkyeyeService(name = "教学楼管理", groupName = "教学楼管理")
+@SkyeyeService(name = "地点教学楼管理", groupName = "地点教学楼管理")
 public class TeachBuildingServiceImpl extends SkyeyeBusinessServiceImpl<TeachBuildingDao, TeachBuilding> implements TeachBuildingService {
 
     @Autowired
@@ -75,6 +80,22 @@ public class TeachBuildingServiceImpl extends SkyeyeBusinessServiceImpl<TeachBui
         List<TeachBuilding> teachBuildingList = list(queryWrapper);
         outputObject.setBeans(teachBuildingList);
         outputObject.settotal(teachBuildingList.size());
+    }
+
+    @Override
+    public void queryTeachBuildingByHolderId(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        String typeId = commonPageInfo.getHolderId();
+        if(StringUtils.isEmpty(typeId)){
+            throw new CustomException("地点分类id不能为空");
+        }
+        Page page = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
+        QueryWrapper<TeachBuilding> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(TeachBuilding::getTypeId), typeId);
+        List<TeachBuilding> teachBuildingList = list(queryWrapper);
+        schoolService.setDataMation(teachBuildingList,TeachBuilding::getSchoolId);
+        outputObject.setBeans(teachBuildingList);
+        outputObject.settotal(page.getTotal());
     }
 
 }

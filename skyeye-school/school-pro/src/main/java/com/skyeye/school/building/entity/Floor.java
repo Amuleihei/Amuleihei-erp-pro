@@ -1,4 +1,4 @@
-package com.skyeye.school.location.entity;
+package com.skyeye.school.building.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -37,8 +37,4 @@ public class Floor extends OperatorUserInfo {
     @TableField("class_num")
     @ApiModelProperty(value = "教室号",required = "required")
     private String classNum;
-
-    @TableField(exist = false)
-    @Property("地点信息")
-    private Location locationMation;
 }

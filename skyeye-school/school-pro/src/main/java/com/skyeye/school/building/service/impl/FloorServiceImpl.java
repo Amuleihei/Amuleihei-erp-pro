@@ -1,4 +1,4 @@
-package com.skyeye.school.location.service.impl;
+package com.skyeye.school.building.service.impl;
 
 
 import cn.hutool.core.text.CharSequenceUtil;
@@ -14,11 +14,11 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
-import com.skyeye.school.location.dao.FloorDao;
-import com.skyeye.school.location.entity.Floor;
-import com.skyeye.school.location.entity.LocationServe;
-import com.skyeye.school.location.service.FloorService;
-import com.skyeye.school.location.service.LocationServeService;
+import com.skyeye.school.building.dao.FloorDao;
+import com.skyeye.school.building.entity.Floor;
+import com.skyeye.school.building.entity.LocationServe;
+import com.skyeye.school.building.service.FloorService;
+import com.skyeye.school.building.service.LocationServeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

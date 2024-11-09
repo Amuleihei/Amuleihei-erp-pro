@@ -1,4 +1,4 @@
-package com.skyeye.school.location.service.impl;
+package com.skyeye.school.building.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,14 +10,12 @@ import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
-import com.skyeye.school.location.dao.LocationServeDao;
-import com.skyeye.school.location.entity.Floor;
-import com.skyeye.school.location.entity.Location;
-import com.skyeye.school.location.entity.LocationServe;
-import com.skyeye.school.location.service.FloorService;
-import com.skyeye.school.location.service.LocationServeService;
-import com.skyeye.school.location.service.LocationService;
-import org.checkerframework.checker.units.qual.A;
+
+import com.skyeye.school.building.dao.LocationServeDao;
+import com.skyeye.school.building.entity.Floor;
+import com.skyeye.school.building.entity.LocationServe;
+import com.skyeye.school.building.service.FloorService;
+import com.skyeye.school.building.service.LocationServeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,16 +37,15 @@ public class LocationServeServiceImpl extends SkyeyeBusinessServiceImpl<Location
     @Autowired
     private FloorService floorService;
 
-    @Autowired
-    private LocationService locationService;
+
 
     @Override
     public void queryFloorServeListByHolderId(InputObject inputObject, OutputObject outputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
         String floorId = commonPageInfo.getHolderId();
         Floor floor = floorService.selectById(floorId);
-        Location location = locationService.selectById(floor.getLocationId());
-        floor.setLocationMation(location);
+
+
         Page page= PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
         QueryWrapper<LocationServe> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(LocationServe::getFloorId), floorId);
