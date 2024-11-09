@@ -22,11 +22,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum ShopOrderState implements SkyeyeEnumClass {
 
-    UNPAID(0, "待支付", true, false),
-    UNDELIVERED(1, "待发货", true, false),
-    DELIVERED(2, "已发货", true, false),
-    COMPLETED(3, "已完成", true, false),
-    CANCELED(4, "已取消", true, false);
+    UNSUBMIT(0, "未提交", true, false),
+    SUBMIT(1, "已提交", true, false),
+    UNPAID(2, "待支付", true, false),
+    FAIRPAID(3, "支付失败", true, false),
+    CANCELED(4, "已取消", true, false),
+    UNDELIVERED(5, "待发货", true, false),
+    DELIVERED(6, "已发货", true, false),
+    TRANSPORTING(7, "运输中", true, false),
+    SIGN(8, "已签收", true, false),
+    COMPLETED(9, "已完成", true, false),
+    UNEVALUATE(10, "待评价", true, false),
+    EVALUATED(11, "已评价", true, false),
+    REFUNDING(12, "退款中", true, false),
+    REFUND(13, "已退款", true, false),
+    SALESRETURNING(14, "退货中", true, false),
+    SALESRETURNED(15, "已退货", true, false),
+    EXCHANGEING(16, "换货中", true, false),
+    EXCHANGED(17, "已换货", true, false);
 
     private Integer key;
 
