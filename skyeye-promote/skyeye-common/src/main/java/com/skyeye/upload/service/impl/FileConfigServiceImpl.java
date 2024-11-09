@@ -4,6 +4,8 @@
 
 package com.skyeye.upload.service.impl;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
@@ -14,12 +16,16 @@ import com.skyeye.common.enumeration.IsDefaultEnum;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.exception.CustomException;
 import com.skyeye.framework.file.core.client.FileClient;
+import com.skyeye.framework.file.core.client.FileClientConfig;
 import com.skyeye.framework.file.core.client.FileClientFactory;
 import com.skyeye.upload.dao.FileConfigDao;
 import com.skyeye.upload.entity.FileConfig;
+import com.skyeye.upload.enums.FileStorageEnum;
 import com.skyeye.upload.service.FileConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.validation.Validator;
 
 /**
  * @ClassName: FileConfigServiceImpl
@@ -39,7 +45,23 @@ public class FileConfigServiceImpl extends SkyeyeBusinessServiceImpl<FileConfigD
     @Autowired
     private FileClientFactory fileClientFactory;
 
+    @Autowired
+    private Validator validator;
+
     private static final String FILE_CONFIG_IS_DEFAULT_CACHE_KEY = "skyeye:fileConfig:isDefault";
+
+    @Override
+    public void validatorEntity(FileConfig entity) {
+        super.validatorEntity(entity);
+        // 解析配置
+        Class<? extends FileClientConfig> configClass = FileStorageEnum.getByStorage(entity.getStorage()).getConfigClass();
+        if (ObjectUtil.isNull(configClass)) {
+            throw new CustomException("文件存储类型的配置不存在");
+        }
+        Assert.notNull(entity.getConfig());
+        // 验证参数
+        entity.getConfig().validate(validator);
+    }
 
     @Override
     public void createPrepose(FileConfig entity) {
@@ -48,6 +70,12 @@ public class FileConfigServiceImpl extends SkyeyeBusinessServiceImpl<FileConfigD
             updateWrapper.set(MybatisPlusUtil.toColumns(FileConfig::getIsDefault), IsDefaultEnum.NOT_DEFAULT.getKey());
             update(updateWrapper);
         }
+    }
+
+    @Override
+    public void updatePostpose(FileConfig entity, String userId) {
+        // 移除文件客户端
+        fileClientFactory.removeFileClient(entity.getId());
     }
 
     @Override

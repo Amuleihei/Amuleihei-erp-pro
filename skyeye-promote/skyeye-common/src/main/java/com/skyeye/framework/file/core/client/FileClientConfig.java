@@ -4,6 +4,8 @@
 
 package com.skyeye.framework.file.core.client;
 
+import javax.validation.Validator;
+
 /**
  * @ClassName: FileClientConfig
  * @Description: 文件客户端的配置，不同实现的客户端，需要不同的配置，通过子类来定义
@@ -13,5 +15,12 @@ package com.skyeye.framework.file.core.client;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface FileClientConfig {
+
+    /**
+     * 参数校验
+     *
+     * @param validator 校验对象
+     */
+    void validate(Validator validator);
 
 }
