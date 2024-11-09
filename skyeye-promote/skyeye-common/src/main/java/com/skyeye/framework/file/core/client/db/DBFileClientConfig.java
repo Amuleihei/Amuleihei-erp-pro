@@ -5,9 +5,11 @@
 package com.skyeye.framework.file.core.client.db;
 
 import com.skyeye.annotation.api.ApiModel;
-import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.framework.file.core.client.FileClientConfig;
 import lombok.Data;
+
+import javax.validation.Validator;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName: DBFileClientConfig
@@ -21,7 +23,14 @@ import lombok.Data;
 @ApiModel("基于 DB 存储的文件客户端的配置类")
 public class DBFileClientConfig implements FileClientConfig {
 
-    @ApiModelProperty(value = "自定义域名", required = "required")
+    @NotBlank(message = "自定义域名", groups = {Config.class})
     private String domain;
 
+    public interface Config {
+    }
+
+    @Override
+    public void validate(Validator validator) {
+        validator.validate(this, Config.class);
+    }
 }

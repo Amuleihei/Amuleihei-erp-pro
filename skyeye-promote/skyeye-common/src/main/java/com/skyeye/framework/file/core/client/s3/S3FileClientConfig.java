@@ -7,11 +7,12 @@ package com.skyeye.framework.file.core.client.s3;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.skyeye.annotation.api.ApiModel;
-import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.framework.file.core.client.FileClientConfig;
 import lombok.Data;
 
+import javax.validation.Validator;
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName: S3FileClientConfig
@@ -41,7 +42,7 @@ public class S3FileClientConfig implements FileClientConfig {
      * 4. 七牛云：https://developer.qiniu.com/kodo/4088/s3-access-domainname
      * 5. 华为云：https://developer.huaweicloud.com/endpoint?OBS
      */
-    @ApiModelProperty(value = "节点地址", required = "required")
+    @NotBlank(message = "节点地址", groups = {Config.class})
     private String endpoint;
 
     /**
@@ -52,10 +53,10 @@ public class S3FileClientConfig implements FileClientConfig {
      * 4. 七牛云：https://developer.qiniu.com/kodo/8556/set-the-custom-source-domain-name
      * 5. 华为云：https://support.huaweicloud.com/usermanual-obs/obs_03_0032.html
      */
-    @ApiModelProperty(value = "自定义域名", required = "required")
+    @NotBlank(message = "自定义域名", groups = {Config.class})
     private String domain;
 
-    @ApiModelProperty(value = "存储 Bucket", required = "required")
+    @NotBlank(message = "存储 Bucket", groups = {Config.class})
     private String bucket;
 
     /**
@@ -66,10 +67,10 @@ public class S3FileClientConfig implements FileClientConfig {
      * 4. 七牛云：https://portal.qiniu.com/user/key
      * 5. 华为云：https://support.huaweicloud.com/qs-obs/obs_qs_0005.html
      */
-    @ApiModelProperty(value = "访问 Key", required = "required")
+    @NotBlank(message = "访问 Key", groups = {Config.class})
     private String accessKey;
 
-    @ApiModelProperty(value = "访问 Secret", required = "required")
+    @NotBlank(message = "访问 Secret", groups = {Config.class})
     private String accessSecret;
 
     /**
@@ -88,4 +89,11 @@ public class S3FileClientConfig implements FileClientConfig {
         return true;
     }
 
+    public interface Config {
+    }
+
+    @Override
+    public void validate(Validator validator) {
+        validator.validate(this, Config.class);
+    }
 }

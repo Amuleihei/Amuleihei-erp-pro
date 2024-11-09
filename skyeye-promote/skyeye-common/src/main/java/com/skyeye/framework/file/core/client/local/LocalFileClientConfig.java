@@ -5,9 +5,11 @@
 package com.skyeye.framework.file.core.client.local;
 
 import com.skyeye.annotation.api.ApiModel;
-import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.framework.file.core.client.FileClientConfig;
 import lombok.Data;
+
+import javax.validation.Validator;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName: LocalFileClientConfig
@@ -21,10 +23,17 @@ import lombok.Data;
 @ApiModel("本地文件客户端的配置类")
 public class LocalFileClientConfig implements FileClientConfig {
 
-    @ApiModelProperty(value = "基础路径", required = "required")
+    @NotBlank(message = "基础路径", groups = {Config.class})
     private String basePath;
 
-    @ApiModelProperty(value = "自定义域名", required = "required")
+    @NotBlank(message = "自定义域名", groups = {Config.class})
     private String domain;
 
+    public interface Config {
+    }
+
+    @Override
+    public void validate(Validator validator) {
+        validator.validate(this, Config.class);
+    }
 }

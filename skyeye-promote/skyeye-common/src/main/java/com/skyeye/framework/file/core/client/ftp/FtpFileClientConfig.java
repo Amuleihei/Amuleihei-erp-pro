@@ -5,9 +5,11 @@
 package com.skyeye.framework.file.core.client.ftp;
 
 import com.skyeye.annotation.api.ApiModel;
-import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.framework.file.core.client.FileClientConfig;
 import lombok.Data;
+
+import javax.validation.Validator;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName: FtpFileClientConfig
@@ -21,22 +23,22 @@ import lombok.Data;
 @ApiModel("Ftp 文件客户端的配置类")
 public class FtpFileClientConfig implements FileClientConfig {
 
-    @ApiModelProperty(value = "基础路径", required = "required")
+    @NotBlank(message = "基础路径", groups = {Config.class})
     private String basePath;
 
-    @ApiModelProperty(value = "自定义域名", required = "required")
+    @NotBlank(message = "自定义域名", groups = {Config.class})
     private String domain;
 
-    @ApiModelProperty(value = "主机地址", required = "required")
+    @NotBlank(message = "主机地址", groups = {Config.class})
     private String host;
 
-    @ApiModelProperty(value = "主机端口", required = "required")
+    @NotBlank(message = "主机端口", groups = {Config.class})
     private Integer port;
 
-    @ApiModelProperty(value = "用户名", required = "required")
+    @NotBlank(message = "用户名", groups = {Config.class})
     private String username;
 
-    @ApiModelProperty(value = "密码", required = "required")
+    @NotBlank(message = "密码", groups = {Config.class})
     private String password;
 
     /**
@@ -44,7 +46,15 @@ public class FtpFileClientConfig implements FileClientConfig {
      * <p>
      * 使用 {@link  cn.hutool.extra.ftp.FtpMode} 对应的字符串
      */
-    @ApiModelProperty(value = "连接模式", required = "required")
+    @NotBlank(message = "连接模式", groups = {Config.class})
     private String mode;
+
+    public interface Config {
+    }
+
+    @Override
+    public void validate(Validator validator) {
+        validator.validate(this, Config.class);
+    }
 
 }
