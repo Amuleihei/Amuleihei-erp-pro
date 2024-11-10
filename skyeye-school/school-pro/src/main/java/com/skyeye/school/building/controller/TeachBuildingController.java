@@ -19,26 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @ClassName: TeachBuildingController
- * @Description: 教学楼管理控制层
+ * @Description: 地点管理控制层
  * @author: skyeye云系列--lqy
  * @date: 2023/8/8 14:55
  * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @RestController
-@Api(value = "地点教学楼管理", tags = "地点教学楼管理", modelName = "地点教学楼管理")
+@Api(value = "地点管理", tags = "地点管理", modelName = "地点管理")
 public class TeachBuildingController {
 
     @Autowired
     private TeachBuildingService teachBuildingService;
 
     /**
-     * 获取教学楼信息列表
+     * 获取地点信息列表
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryTeachBuildingList", value = "获取教学楼信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "queryTeachBuildingList", value = "获取地点信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = CommonPageInfo.class)
     @RequestMapping("/post/TeachBuildingController/queryTeachBuildingList")
     public void queryTeachBuildingList(InputObject inputObject, OutputObject outputObject) {
@@ -46,12 +46,12 @@ public class TeachBuildingController {
     }
 
     /**
-     * 添加或修改地点教学楼
+     * 添加或修改地点
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "writeTeachBuilding", value = "新增/编辑地点教学楼信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "writeTeachBuilding", value = "新增/编辑地点信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = TeachBuilding.class)
     @RequestMapping("/post/TeachBuildingController/writeTeachBuilding")
     public void writeTeachBuilding(InputObject inputObject, OutputObject outputObject) {
@@ -59,12 +59,12 @@ public class TeachBuildingController {
     }
 
     /**
-     * 删除地点教学楼信息
+     * 删除地点信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "deleteTeachBuildingById", value = "根据ID删除地点教学楼信息", method = "DELETE", allUse = "2")
+    @ApiOperation(id = "deleteTeachBuildingById", value = "根据ID删除地点信息", method = "DELETE", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
     @RequestMapping("/post/TeachBuildingController/deleteTeachBuildingById")
@@ -73,12 +73,12 @@ public class TeachBuildingController {
     }
 
     /**
-     * 根据学校id获取教学楼信息
+     * 根据学校id获取地点信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "queryTeachBuildingBySchoolId", value = "根据学校id获取教学楼信息", method = "GET", allUse = "2")
+    @ApiOperation(id = "queryTeachBuildingBySchoolId", value = "根据学校id获取地点信息", method = "GET", allUse = "2")
     @ApiImplicitParams({
         @ApiImplicitParam(id = "schoolId", name = "schoolId", value = "学校id", required = "required")})
     @RequestMapping("/post/TeachBuildingController/queryTeachBuildingBySchoolId")
