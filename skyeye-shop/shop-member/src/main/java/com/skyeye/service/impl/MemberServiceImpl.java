@@ -28,6 +28,7 @@ import com.skyeye.eve.service.IAreaService;
 import com.skyeye.level.entity.ShopMemberLevel;
 import com.skyeye.level.service.ShopMemberLevelService;
 import com.skyeye.service.MemberService;
+import com.skyeye.store.service.ShopStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,9 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
 
     @Autowired
     private ShopMemberLevelService shopMemberLevelService;
+
+    @Autowired
+    private ShopStoreService shopStoreService;
 
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
@@ -105,6 +109,7 @@ public class MemberServiceImpl extends SkyeyeBusinessServiceImpl<MemberDao, Memb
         iAreaService.setDataMation(member, Member::getCityId);
         iAreaService.setDataMation(member, Member::getAreaId);
         iAreaService.setDataMation(member, Member::getTownshipId);
+        shopStoreService.setDataMation(member, Member::getStoreId);
         return member;
     }
 

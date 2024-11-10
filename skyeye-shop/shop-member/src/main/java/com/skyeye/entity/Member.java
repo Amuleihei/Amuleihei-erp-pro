@@ -17,7 +17,10 @@ import com.skyeye.common.base.handler.enclosure.bean.EnclosureFace;
 import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.AreaInfo;
 import com.skyeye.level.entity.ShopMemberLevel;
+import com.skyeye.store.entity.ShopStore;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * @ClassName: Member
@@ -85,6 +88,10 @@ public class Member extends AreaInfo implements EnclosureFace {
     @TableField(value = "store_id")
     @ApiModelProperty(value = "如果是门店工作人员录入，则为门店id")
     private String storeId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "门店信息")
+    private ShopStore storeMation;
 
     @TableField(value = "delete_flag")
     private Integer deleteFlag;

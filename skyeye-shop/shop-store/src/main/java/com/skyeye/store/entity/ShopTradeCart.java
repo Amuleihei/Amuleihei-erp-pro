@@ -23,7 +23,7 @@ import java.util.Map;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
-@TableName(value = "Shop_trade_cart")
+@TableName(value = "shop_trade_cart")
 @ApiModel("购物车管理实体类")
 public class ShopTradeCart extends OperatorUserInfo {
 
