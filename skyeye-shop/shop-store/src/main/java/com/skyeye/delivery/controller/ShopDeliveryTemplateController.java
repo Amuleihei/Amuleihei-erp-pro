@@ -12,6 +12,7 @@ import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 
+import com.skyeye.delivery.entity.ShopDeliveryCompany;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 import com.skyeye.delivery.service.ShopDeliveryTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class ShopDeliveryTemplateController {
      */
     @ApiOperation(id = "writeShopDeliveryTemplate", value = "添加/修改快递运费模板", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ShopDeliveryTemplate.class)
-    @RequestMapping("/post/ShopDeliveryTemplateController/writeShopDeliveryTemplate")
+    @RequestMapping("/post/ShopDeliveryCompanyController/writeShopDeliveryTemplate")
     public void writeShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.saveOrUpdateEntity(inputObject, outputObject);
     }
@@ -83,5 +84,19 @@ public class ShopDeliveryTemplateController {
     @RequestMapping("/post/ShopDeliveryTemplateController/queryShopDeliveryTemplate")
     public void queryShopDeliveryTemplate(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateService.queryList(inputObject, outputObject);
+    }
+
+    /**
+     * 根据id获取快递运费模版信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "selectShopDeliveryTemplateById", value = "根据id获取快递运费模版信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({
+            @ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/ShopDeliveryTemplateController/selectShopDeliveryTemplateById")
+    public void selectShopDeliveryTemplateById(InputObject inputObject, OutputObject outputObject) {
+        shopDeliveryTemplateService.selectById(inputObject, outputObject);
     }
 }

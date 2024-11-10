@@ -52,7 +52,7 @@ public class SmsTemplate extends BaseGeneralInfo {
     private List<String> params;
 
     @TableField("api_template_id")
-    @ApiModelProperty(value = "短信 API 的模板编号", required = "required")
+    @ApiModelProperty(value = "短信 API 的模板编号")
     private String apiTemplateId;
 
     @TableField(value = "channel_id")

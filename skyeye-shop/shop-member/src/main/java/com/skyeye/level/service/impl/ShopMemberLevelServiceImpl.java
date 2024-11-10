@@ -50,4 +50,13 @@ public class ShopMemberLevelServiceImpl extends SkyeyeBusinessServiceImpl<ShopMe
         List<ShopMemberLevel> beans = queryAllEnabledMemberLevel();
         return beans.stream().findFirst().orElse(null);
     }
+
+    @Override
+    public ShopMemberLevel getSimpleLevelByLevel(Integer level) {
+        QueryWrapper<ShopMemberLevel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        queryWrapper.eq(MybatisPlusUtil.toColumns(ShopMemberLevel::getLevel), level);
+        ShopMemberLevel bean = getOne(queryWrapper, false);
+        return bean;
+    }
 }

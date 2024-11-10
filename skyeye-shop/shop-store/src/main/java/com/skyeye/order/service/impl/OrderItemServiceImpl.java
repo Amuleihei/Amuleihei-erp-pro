@@ -1,5 +1,6 @@
 package com.skyeye.order.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
@@ -20,6 +21,7 @@ import com.skyeye.order.service.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,5 +41,14 @@ public class OrderItemServiceImpl extends SkyeyeBusinessServiceImpl<OrderItemDao
         QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(MybatisPlusUtil.toColumns(OrderItem::getParentId), parentId);
         return list(queryWrapper);
+    }
+
+    @Override
+    public List<OrderItem> queryListByStateAndOrderId(String orderId, Integer state) {
+        QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(MybatisPlusUtil.toColumns(OrderItem::getParentId), orderId);
+        queryWrapper.eq(MybatisPlusUtil.toColumns(OrderItem::getCommentState), state);
+        List<OrderItem> list = list(queryWrapper);
+        return CollectionUtil.isEmpty(list) ? new ArrayList<>() : list;
     }
 }

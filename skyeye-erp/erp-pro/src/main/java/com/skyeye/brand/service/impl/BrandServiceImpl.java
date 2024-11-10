@@ -4,13 +4,15 @@
 
 package com.skyeye.brand.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.brand.dao.BrandDao;
 import com.skyeye.brand.entity.Brand;
 import com.skyeye.brand.service.BrandService;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.EnableEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -18,7 +20,6 @@ import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: BrandServiceImpl
@@ -34,10 +35,27 @@ public class BrandServiceImpl extends SkyeyeBusinessServiceImpl<BrandDao, Brand>
 
     @Override
     public void queryEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
-        QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), EnableEnum.ENABLE_USING.getKey());
-        List<Brand> brandList = list(queryWrapper);
+        QueryWrapper<Brand> wrapper = new QueryWrapper<>();
+        wrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        wrapper.orderByDesc(MybatisPlusUtil.toColumns(Brand::getCreateTime));
+        List<Brand> brandList = list(wrapper);
         outputObject.setBeans(brandList);
         outputObject.settotal(brandList.size());
+    }
+
+    @Override
+    public void queryPageEnabledBrandList(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page pages = null;
+        setCommonPageInfoOtherInfo(commonPageInfo);
+        if (commonPageInfo.getIsPaging() == null || commonPageInfo.getIsPaging()) {
+            pages = PageHelper.startPage(commonPageInfo.getPage(), commonPageInfo.getLimit());
+        }
+        QueryWrapper<Brand> wrapper = getQueryWrapper(commonPageInfo);
+        wrapper.eq(MybatisPlusUtil.toColumns(Brand::getEnabled), EnableEnum.ENABLE_USING.getKey());
+        wrapper.orderByDesc(MybatisPlusUtil.toColumns(Brand::getCreateTime));
+        List<Brand> brandList = list(wrapper);
+        outputObject.setBeans(brandList);
+        outputObject.settotal(pages.getTotal());
     }
 }

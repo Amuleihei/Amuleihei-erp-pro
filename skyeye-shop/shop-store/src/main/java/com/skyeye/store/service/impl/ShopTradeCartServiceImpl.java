@@ -6,6 +6,7 @@ package com.skyeye.store.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Joiner;
@@ -31,10 +32,7 @@ import com.skyeye.store.service.ShopTradeCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,13 +69,34 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
 
     @Override
     public void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject) {
+        String selected = inputObject.getParams().get("selected").toString();
         String userId = InputObject.getLogParamsStatic().get("id").toString();
         // 查询用户购物车列表
         QueryWrapper<ShopTradeCart> wrapper = new QueryWrapper<>();
         wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        if (StrUtil.isNotEmpty(selected)) {
+            wrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
+        }
         wrapper.orderByDesc(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateTime));
         List<ShopTradeCart> beans = list(wrapper);
         iMaterialNormsService.setDataMation(beans, ShopTradeCart::getNormsId);
+        if (CollectionUtil.isNotEmpty(beans)) {
+            // 收集规格id列表，获得规格信息
+            List<String> normsIdList = beans.stream().map(ShopTradeCart::getNormsId).collect(Collectors.toList());
+            List<Map<String, Object>> normsListMap = iShopMaterialNormsService
+                .queryShopMaterialByNormsIdList(Joiner.on(CommonCharConstants.COMMA_MARK).join(normsIdList));
+            // 设置商城的销售价格
+            Map<String, String> collect = normsListMap.stream()
+                .collect(Collectors.toMap(bean -> bean.get("normsId").toString(), bean -> bean.get("salePrice").toString()));
+            beans.forEach(bean -> {
+                String normsId = bean.getNormsId();
+                String salePrice = collect.get(normsId);
+                if (CollectionUtil.isNotEmpty(bean.getNormsMation())) {
+                    bean.getNormsMation().put("salePrice", salePrice);
+                }
+            });
+        }
+
         iMaterialService.setDataMation(beans, ShopTradeCart::getMaterialId);
         Map<String, List<ShopTradeCart>> collect = beans.stream().collect(Collectors.groupingBy(ShopTradeCart::getStoreId));
         // 查询店铺信息
@@ -115,6 +134,21 @@ public class ShopTradeCartServiceImpl extends SkyeyeBusinessServiceImpl<ShopTrad
         updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected),
             Objects.equals(one.getSelected(), WhetherEnum.ENABLE_USING.getKey())
                 ? WhetherEnum.DISABLE_USING.getKey() : WhetherEnum.ENABLE_USING.getKey());
+        update(updateWrapper);
+    }
+
+    @Override
+    public void batchChangeSelectedStatus(InputObject inputObject, OutputObject outputObject) {
+        Map<String, Object> params = inputObject.getParams();
+        String userId = InputObject.getLogParamsStatic().get("id").toString();
+        String idsStr = params.get("ids").toString();
+        List<String> ids = Arrays.stream(idsStr.split(CommonCharConstants.COMMA_MARK)).filter(StrUtil::isNotEmpty).distinct().collect(Collectors.toList());
+        Integer selected = Integer.parseInt(params.get("selected").toString());
+
+        UpdateWrapper<ShopTradeCart> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in(CommonConstants.ID, ids);
+        updateWrapper.eq(MybatisPlusUtil.toColumns(ShopTradeCart::getCreateId), userId);
+        updateWrapper.set(MybatisPlusUtil.toColumns(ShopTradeCart::getSelected), selected);
         update(updateWrapper);
     }
 

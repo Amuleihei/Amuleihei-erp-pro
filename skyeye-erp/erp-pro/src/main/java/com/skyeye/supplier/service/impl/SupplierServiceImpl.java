@@ -52,7 +52,7 @@ public class SupplierServiceImpl extends SkyeyeBusinessServiceImpl<SupplierDao, 
         } else if (StrUtil.equals(commonPageInfo.getType(), "myCharge")) {
             // 我负责的
             List<String> teamTemplateIds = iTeamBusinessService.getMyTeamIds();
-            queryWrapper.eq(MybatisPlusUtil.toColumns(Supplier::getTeamTemplateId), teamTemplateIds);
+            queryWrapper.in(MybatisPlusUtil.toColumns(Supplier::getTeamTemplateId), teamTemplateIds);
         }
         return queryWrapper;
     }

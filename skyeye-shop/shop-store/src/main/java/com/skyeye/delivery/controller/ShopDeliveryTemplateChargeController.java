@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShopDeliveryTemplateChargeController {
 
     @Autowired
-    private ShopDeliveryTemplateChargeService   shopDeliveryTemplateChargeService;
+    private ShopDeliveryTemplateChargeService shopDeliveryTemplateChargeService;
 
     /**
      * 新增/编辑快递运费费用模版信息
@@ -82,5 +82,18 @@ public class ShopDeliveryTemplateChargeController {
     @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateCharge")
     public void queryShopDeliveryTemplateCharge(InputObject inputObject, OutputObject outputObject) {
         shopDeliveryTemplateChargeService.queryList(inputObject, outputObject);
+    }
+
+    /**
+     * 根据id获取快递运费模版信息
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryShopDeliveryTemplateChargeById", value = "根据id获取快递运费模版信息", method = "POST", allUse = "2")
+    @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/shopDeliveryTemplateChargeController/queryShopDeliveryTemplateChargeById")
+    public void queryShopDeliveryTemplateChargeById(InputObject inputObject, OutputObject outputObject) {
+        shopDeliveryTemplateChargeService.selectById(inputObject, outputObject);
     }
 }

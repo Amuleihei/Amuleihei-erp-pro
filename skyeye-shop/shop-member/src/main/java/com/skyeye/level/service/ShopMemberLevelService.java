@@ -19,4 +19,6 @@ public interface ShopMemberLevelService extends SkyeyeBusinessService<ShopMember
 
     ShopMemberLevel getMinLevel();
 
+    ShopMemberLevel getSimpleLevelByLevel(Integer level);
+
 }

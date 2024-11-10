@@ -176,4 +176,17 @@ public class VideoServiceImpl extends SkyeyeBusinessServiceImpl<VideoDao, Video>
         video.setVisitNum(visitNum);
         updateById(video);
     }
+
+    @Override
+    public void queryAllVideoList(InputObject inputObject, OutputObject outputObject) {
+        CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
+        Page page = PageHelper.startPage(commonPageInfo.getPage(),commonPageInfo.getLimit());
+        QueryWrapper<Video> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(Video::getVisitNum));
+        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(Video::getTasnNum));
+        queryWrapper.orderByDesc(MybatisPlusUtil.toColumns(Video::getCollectionNum));
+        List<Video> bean = list(queryWrapper);
+        outputObject.setBeans(bean);
+        outputObject.settotal(page.getTotal());
+    }
 }

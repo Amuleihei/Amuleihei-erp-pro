@@ -5,6 +5,7 @@
 package com.skyeye.school.building.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
@@ -12,6 +13,7 @@ import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.annotation.unique.UniqueField;
 import com.skyeye.common.entity.features.BaseGeneralInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import com.skyeye.eve.entity.School;
 import lombok.Data;
 
@@ -28,11 +30,35 @@ import lombok.Data;
 @RedisCacheField(name = "school:teachBuilding")
 @TableName(value = "school_teach_building")
 @ApiModel(value = "教学楼信息实体类")
-public class TeachBuilding extends BaseGeneralInfo {
+public class TeachBuilding extends OperatorUserInfo {
+
+    @TableId("id")
+    @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
+    private String id;
+
+    @TableField("type_id")
+    @ApiModelProperty(value = "地点类型id",required = "required")
+    private String typeId;
 
     @TableField("school_id")
     @ApiModelProperty(value = "所属学校id", required = "required")
     private String schoolId;
+
+    @TableField("name")
+    @ApiModelProperty(value = "地点名称",required = "required")
+    private String name;
+
+    @TableField("longitude")
+    @ApiModelProperty(value = "经度",required = "required")
+    private Float longitude;
+
+    @TableField("latitude")
+    @ApiModelProperty(value = "纬度",required = "required")
+    private Float latitude;
+
+    @TableField("logo")
+    @ApiModelProperty(value = "地点logo" ,required = "required")
+    private String logo;
 
     @TableField(exist = false)
     @Property(value = "所属学校信息")

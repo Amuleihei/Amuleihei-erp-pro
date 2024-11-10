@@ -22,7 +22,6 @@ import lombok.Data;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
-@UniqueField
 @TableName(value = "shop_delivery_template")
 @ApiModel("快递运费模版")
 public class ShopDeliveryTemplate extends OperatorUserInfo {
@@ -40,11 +39,11 @@ public class ShopDeliveryTemplate extends OperatorUserInfo {
     private String remark;
 
     @TableField(value = "`type`")
-    @ApiModelProperty(value = "配送计费方式",required = "required")
+    @ApiModelProperty(value = "配送计费方式，参考#DeliveryExpressType",required = "num")
     private Integer type;
 
     @TableField(value = "`order_by`")
-    @ApiModelProperty(value = "排序",required = "required")
+    @ApiModelProperty(value = "排序",required = "num")
     private Integer orderBy;
 
     @TableField(value = "`store_id`")

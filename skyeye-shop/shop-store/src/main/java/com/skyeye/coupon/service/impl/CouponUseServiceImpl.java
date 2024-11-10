@@ -99,7 +99,7 @@ public class CouponUseServiceImpl extends SkyeyeBusinessServiceImpl<CouponUseDao
                 couponUse.setValidStartTime(coupon.getValidStartTime());
                 couponUse.setValidEndTime(coupon.getValidEndTime());
             } else {
-                couponUse.setValidStartTime(DateUtil.getAfDate(LocalDate.now().toDate(), coupon.getFixedStartTerm(), "d").toString());
+                couponUse.setValidStartTime(DateUtil.getAfDate(LocalDate.now().toDate(), coupon.getFixedStartTime(), "d").toString());
                 couponUse.setValidEndTime(DateUtil.getAfDate(LocalDate.now().toDate(), coupon.getFixedEndTerm(), "d").toString());
             }
             //折扣类型

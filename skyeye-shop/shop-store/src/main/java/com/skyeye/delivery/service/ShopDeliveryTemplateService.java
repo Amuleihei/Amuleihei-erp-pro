@@ -5,8 +5,6 @@
 package com.skyeye.delivery.service;
 
 import com.skyeye.base.business.service.SkyeyeBusinessService;
-import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
 import com.skyeye.delivery.entity.ShopDeliveryTemplate;
 
 /**
@@ -18,5 +16,4 @@ import com.skyeye.delivery.entity.ShopDeliveryTemplate;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface ShopDeliveryTemplateService extends SkyeyeBusinessService<ShopDeliveryTemplate> {
-    void deleteByIds(InputObject inputObject, OutputObject outputObject);
 }

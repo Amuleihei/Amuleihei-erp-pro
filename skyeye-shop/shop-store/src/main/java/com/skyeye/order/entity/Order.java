@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.api.Property;
+import com.skyeye.annotation.cache.RedisCacheField;
+import com.skyeye.common.constans.CacheConstants;
 import com.skyeye.common.entity.features.AreaInfo;
 import lombok.Data;
 
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@RedisCacheField(name = "shop:order")
 @TableName("shop_order")
 @ApiModel("商品订单管理实体类")
 public class Order extends AreaInfo {

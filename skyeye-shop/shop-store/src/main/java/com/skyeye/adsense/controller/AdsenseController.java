@@ -85,4 +85,17 @@ public class AdsenseController {
     public void queryAdsense(InputObject inputObject, OutputObject outputObject) {
         adsenseService.queryList(inputObject, outputObject);
     }
+
+    /**
+     * 根据id获取广告位
+     *
+     * @param inputObject  入参以及用户信息等获取对象
+     * @param outputObject 出参以及提示信息的返回值对象
+     */
+    @ApiOperation(id = "queryAdsenseById", value = "根据id获取广告位", method = "POST", allUse = "2")
+    @ApiImplicitParams({@ApiImplicitParam(id = "id", name = "id", value = "主键id", required = "required")})
+    @RequestMapping("/post/AdsenseController/queryAdsenseById")
+    public void queryAdsenseById(InputObject inputObject, OutputObject outputObject) {
+        adsenseService.selectById(inputObject, outputObject);
+    }
 }

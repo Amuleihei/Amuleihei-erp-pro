@@ -27,4 +27,6 @@ public interface ShopTradeCartService extends SkyeyeBusinessService<ShopTradeCar
     void calculateTotalPrices(InputObject inputObject, OutputObject outputObject);
 
     void queryShopTradeCartList(InputObject inputObject, OutputObject outputObject);
+
+    void batchChangeSelectedStatus(InputObject inputObject, OutputObject outputObject);
 }

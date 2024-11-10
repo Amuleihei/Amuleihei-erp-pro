@@ -1,5 +1,6 @@
 package com.skyeye.order.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,11 +10,11 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.entity.search.CommonPageInfo;
+import com.skyeye.common.enumeration.WhetherEnum;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.common.util.CalculationUtil;
 import com.skyeye.common.util.DateUtil;
-import com.skyeye.common.util.StringUtil;
 import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
 import com.skyeye.coupon.enums.CouponUseState;
 import com.skyeye.coupon.enums.PromotionDiscountType;
@@ -30,13 +31,10 @@ import com.skyeye.order.enums.ShopOrderState;
 import com.skyeye.order.service.OrderItemService;
 import com.skyeye.order.service.OrderService;
 import com.xxl.job.core.util.IpUtil;
-import javafx.scene.control.Tab;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,11 +86,11 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         iMaterialNormsService.setDataMation(orderItemList, OrderItem::getNormsId);
         iMaterialService.setDataMation(orderItemList, OrderItem::getMaterialId);
         couponUseService.setDataMation(orderItemList, OrderItem::getCouponId);
+        boolean b = orderItemList.stream().allMatch(orderItem -> orderItem.getCouponMation().get("state").equals(CouponUseState.UNUSED.getKey()));
+        if (!b) {
+            throw new CustomException("存在不可用优惠券");
+        }
         for (OrderItem orderItem : orderItemList) {
-            Integer couponState = Integer.parseInt(orderItem.getCouponMation().get("state").toString());
-            if (!Objects.equals(CouponUseState.UNUSED.getKey(), couponState)) {
-                throw new CustomException("存在不可用优惠券");
-            }
             // 获取子单单价
             String salePrice = orderItem.getNormsMation().get("salePrice").toString();
             // 设置子单总价
@@ -111,25 +109,24 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
                 String afterPrice = CalculationUtil.subtract(orderItem.getPrice(), discountPrice, CommonNumConstants.NUM_SIX);
                 orderItem.setPayPrice(afterPrice);
                 orderItem.setDiscountPrice(discountPrice);
-//                order.setDiscountPrice(CalculationUtil.add(order.getDiscountPrice(), discountPrice, CommonNumConstants.NUM_SIX));
             } else {//百分比折扣
                 // 取出折扣
-                String discountPercentInt =  orderItem.getCouponMation().get("discountPercent").toString();
+                String discountPercentInt = orderItem.getCouponMation().get("discountPercent").toString();
                 // 百分比的折后价
-                String percentPrice = CalculationUtil.multiply(orderItem.getPrice(),discountPercentInt, CommonNumConstants.NUM_SIX);
+                String percentPrice = CalculationUtil.multiply(orderItem.getPrice(), discountPercentInt, CommonNumConstants.NUM_SIX);
                 // 百分比折扣的优惠价格
                 String percentDiscountPrice = CalculationUtil.subtract(orderItem.getPrice(), percentPrice, CommonNumConstants.NUM_SIX);
                 // 折扣上限
                 String discountLimitPrice = orderItem.getCouponMation().get("discountLimitPrice").toString();
                 // 折扣上限的折后价
-                String limitPrice = CalculationUtil.multiply(orderItem.getPrice(),discountLimitPrice, CommonNumConstants.NUM_SIX);
+                String limitPrice = CalculationUtil.multiply(orderItem.getPrice(), discountLimitPrice, CommonNumConstants.NUM_SIX);
                 // 是否超过折扣上限
                 boolean priceCompare = CalculationUtil.getMax(percentDiscountPrice, discountLimitPrice, CommonNumConstants.NUM_SIX).equals(percentDiscountPrice);
                 // 设置应支付价格和优惠价格
                 if (priceCompare) { // 未超过优惠价
                     orderItem.setPayPrice(percentPrice);
                     orderItem.setDiscountPrice(percentDiscountPrice);
-                }else {// 超过优惠价
+                } else {// 超过优惠价
                     orderItem.setPayPrice(limitPrice);
                     orderItem.setDiscountPrice(discountLimitPrice);
                 }
@@ -141,12 +138,12 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         }
     }
 
-    private void checkAndSetOrderCouponUse(Order order){
+    private void checkAndSetOrderCouponUse(Order order) {
         if (StrUtil.isEmpty(order.getCouponId())) {
             return;
         }
         couponUseService.setDataMation(order, Order::getCouponId);
-        Integer couponState = (Integer)(order.getCouponMation().get("state"));
+        Integer couponState = (Integer) (order.getCouponMation().get("state"));
         if (!Objects.equals(CouponUseState.UNUSED.getKey(), couponState)) {
             throw new CustomException("存在不可用优惠券");
         }
@@ -169,22 +166,22 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
             order.setDiscountPrice(CalculationUtil.add(order.getDiscountPrice(), discountPrice, CommonNumConstants.NUM_SIX));
         } else {//百分比折扣
             // 取出折扣
-            String discountPercent=  order.getCouponMation().get("discountPercent").toString();
+            String discountPercent = order.getCouponMation().get("discountPercent").toString();
             // 百分比的折后价
-            String percentPrice = CalculationUtil.multiply(totalPrice,discountPercent, CommonNumConstants.NUM_SIX);
+            String percentPrice = CalculationUtil.multiply(totalPrice, discountPercent, CommonNumConstants.NUM_SIX);
             // 百分比折扣的优惠价格
             String percentDiscountPrice = CalculationUtil.subtract(totalPrice, percentPrice, CommonNumConstants.NUM_SIX);
             // 折扣上限
             String discountLimitPrice = order.getCouponMation().get("discountLimitPrice").toString();
             // 折扣上限的折后价
-            String limitPrice = CalculationUtil.multiply(totalPrice,discountLimitPrice, CommonNumConstants.NUM_SIX);
+            String limitPrice = CalculationUtil.multiply(totalPrice, discountLimitPrice, CommonNumConstants.NUM_SIX);
             // 是否超过折扣上限
             boolean priceCompare = CalculationUtil.getMax(percentDiscountPrice, discountLimitPrice, CommonNumConstants.NUM_SIX).equals(percentDiscountPrice);
             // 设置应支付价格和优惠价格
             if (priceCompare) { // 未超过优惠价
                 order.setPayPrice(CalculationUtil.subtract(order.getPayPrice(), percentPrice, CommonNumConstants.NUM_SIX));
                 order.setDiscountPrice(CalculationUtil.subtract(order.getDiscountPrice(), percentDiscountPrice, CommonNumConstants.NUM_SIX));
-            }else {// 超过优惠价
+            } else {// 超过优惠价
                 order.setPayPrice(CalculationUtil.subtract(order.getPayPrice(), limitPrice, CommonNumConstants.NUM_SIX));
                 order.setDiscountPrice(CalculationUtil.subtract(order.getDiscountPrice(), discountLimitPrice, CommonNumConstants.NUM_SIX));
             }
@@ -193,6 +190,7 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         order.setDiscountPrice(CalculationUtil.divide(order.getDiscountPrice(), "100", CommonNumConstants.NUM_SIX));
         order.setTotalPrice(CalculationUtil.divide(order.getTotalPrice(), "100", CommonNumConstants.NUM_SIX));
     }
+
     private void checkAndSetDeliveryPrice(Order order) {
         order.setDeliveryPrice(StrUtil.isEmpty(order.getDeliveryPrice()) ? "0" : order.getDeliveryPrice());
     }
@@ -206,6 +204,7 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
     @Override
     public void createPostpose(Order order, String userId) {
         for (OrderItem orderItem : order.getOrderItemList()) {
+            orderItem.setCommentState(WhetherEnum.DISABLE_USING.getKey());
             orderItem.setParentId(order.getId());
         }
         orderItemService.createEntity(order.getOrderItemList(), userId);
@@ -214,9 +213,50 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
     @Override
     public List<Map<String, Object>> queryPageDataList(InputObject inputObject) {
         CommonPageInfo commonPageInfo = inputObject.getParams(CommonPageInfo.class);
-        QueryWrapper<Order> wrapper = getQueryWrapper(commonPageInfo);
-        getQueryWrapper(inputObject, wrapper);
+        List<Integer> stateList = new ArrayList<>();
+        switch (commonPageInfo.getType()) {
+            case "1": // 未支付
+                stateList = Arrays.asList(new Integer[]{ShopOrderState.UNPAID.getKey()});
+                break;
+            case "2": // 待收货
+                stateList = Arrays.asList(new Integer[]{
+                    ShopOrderState.UNDELIVERED.getKey(),// 待发货
+                    ShopOrderState.DELIVERED.getKey(), //  已发货
+                    ShopOrderState.TRANSPORTING.getKey()});//运输中
+                break;
+            case "3":// 已完成
+                stateList = Arrays.asList(new Integer[]{
+                    ShopOrderState.SIGN.getKey(),       // 已签收
+                    ShopOrderState.COMPLETED.getKey(),  // 已完成
+                    ShopOrderState.UNEVALUATE.getKey(), // 待评价
+                    ShopOrderState.EVALUATED.getKey()});// 已评价
+                break;
+            case "4":// 已取消
+                stateList = Arrays.asList(new Integer[]{ShopOrderState.CANCELED.getKey()});
+                break;
+            case "5":// 处理中
+                stateList = Arrays.asList(new Integer[]{
+                    ShopOrderState.REFUNDING.getKey(),  // 退款中
+
+                    ShopOrderState.SALESRETURNING.getKey(),//退货中
+
+                    ShopOrderState.EXCHANGEING.getKey()});//换货中
+                break;
+            case "6": // 申请记录
+                stateList = Arrays.asList(new Integer[]{
+                    ShopOrderState.REFUND.getKey(),     // 已退款
+                    ShopOrderState.SALESRETURNED.getKey(),//已退货
+                    ShopOrderState.EXCHANGED.getKey()});//已换货
+        }
+        QueryWrapper<Order> wrapper = super.getQueryWrapper(commonPageInfo);
+        if (CollectionUtil.isNotEmpty(stateList)) { // 状态列表为空时，则查询全部订单
+            wrapper.in(MybatisPlusUtil.toColumns(Order::getState), stateList);
+        }
+        wrapper.orderByDesc(MybatisPlusUtil.toColumns(Order::getCreateTime));
         List<Map<String, Object>> list = listMaps(wrapper);
+        if (CollectionUtil.isEmpty(list)) {
+            return CollectionUtil.newArrayList();
+        }
         List<String> idList = list.stream().map(map -> map.get("id").toString()).collect(Collectors.toList());
         Map<String, Map<String, Object>> mapByIds = orderItemService.selectValIsMapByIds(idList);
         for (Map<String, Object> map : list) {
@@ -228,14 +268,6 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         iAreaService.setMationForMap(list, "townshipId", "townshipMation");
         // 分页查询时获取数据
         return list;
-    }
-
-    @Override
-    public QueryWrapper<Order> getQueryWrapper(CommonPageInfo commonPageInfo) {
-        String state = commonPageInfo.getState();
-        QueryWrapper<Order> queryWrapper = super.getQueryWrapper(commonPageInfo);
-        queryWrapper.eq(MybatisPlusUtil.toColumns(Order::getState), state);
-        return queryWrapper;
     }
 
     @Override
@@ -264,11 +296,9 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         if (ObjectUtil.isEmpty(one)) {
             throw new CustomException("订单不存在");
         }
-        if (Objects.equals(one.getState(), ShopOrderState.COMPLETED.getKey())) {
-            throw new CustomException("订单已完成。不可取消");
-        }
-        if (Objects.equals(one.getState(), ShopOrderState.CANCELED.getKey())) {
-            throw new CustomException("不可重复取消订单");
+        //  大于1和小于8
+        if (!(one.getState() >= ShopOrderState.SIGN.getKey() && one.getState() <= ShopOrderState.SUBMIT.getKey())) {
+            throw new CustomException("订单不可取消");
         }
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getState), ShopOrderState.CANCELED.getKey());
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getCancelType), params.get("cancelType"));
@@ -284,17 +314,8 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
         if (ObjectUtil.isEmpty(one)) {
             throw new CustomException("订单不存在");
         }
-        if (Objects.equals(one.getState(), ShopOrderState.UNPAID.getKey())) {
-            throw new CustomException("订单处于未支付状态。不可完成订单.");
-        }
-        if (Objects.equals(one.getState(), ShopOrderState.UNDELIVERED.getKey())) {
-            throw new CustomException("订单处于未发货状态.不可完成订单.");
-        }
-        if (Objects.equals(one.getState(), ShopOrderState.COMPLETED.getKey())) {
-            throw new CustomException("订单已完成。不可重复更改.");
-        }
-        if (Objects.equals(one.getState(), ShopOrderState.CANCELED.getKey())) {
-            throw new CustomException("订单已被取消，不可完成订单");
+        if (one.getState() < ShopOrderState.SIGN.getKey() && one.getState() > ShopOrderState.REFUNDING.getKey()) {
+            throw new CustomException("不可完成订单。");
         }
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getState), ShopOrderState.COMPLETED.getKey());
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getFinishTime), DateUtil.getTimeAndToString());
@@ -333,6 +354,14 @@ public class OrderServiceImpl extends SkyeyeBusinessServiceImpl<OrderDao, Order>
             throw new CustomException("该订单当前不可发货。");
         }
         updateWrapper.set(MybatisPlusUtil.toColumns(Order::getState), ShopOrderState.DELIVERED.getKey());
+        update(updateWrapper);
+    }
+
+    @Override
+    public void updateCommonState(String id, Integer state) {
+        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq(MybatisPlusUtil.toColumns(Order::getId), id);
+        updateWrapper.set(MybatisPlusUtil.toColumns(Order::getCommentState), state);
         update(updateWrapper);
     }
 }

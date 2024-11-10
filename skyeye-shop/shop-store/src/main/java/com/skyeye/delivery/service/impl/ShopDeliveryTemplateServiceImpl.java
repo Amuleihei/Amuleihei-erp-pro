@@ -4,7 +4,7 @@
 
 package com.skyeye.delivery.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
@@ -70,12 +70,19 @@ public class ShopDeliveryTemplateServiceImpl extends SkyeyeBusinessServiceImpl<S
     @Override
     public void validatorEntity(ShopDeliveryTemplate shopDeliveryTemplate) {
         super.validatorEntity(shopDeliveryTemplate);
+        if (StrUtil.isNotEmpty(shopDeliveryTemplate.getName()) && shopDeliveryTemplate.getName().length() > 100) {
+            throw new CustomException("运费模板名称过长");
+        }
+        if (shopDeliveryTemplate.getOrderBy() < -128 || shopDeliveryTemplate.getOrderBy() > 127) {
+            throw new CustomException("运费模板排序值超出范围");
+        }
+
         //判断StoreId是否存在
-        if (ObjectUtil.isNotNull(shopDeliveryTemplate.getStoreId())) {
+        if (StrUtil.isNotEmpty(shopDeliveryTemplate.getStoreId())) {
             ShopStore shopStore = shopStoreService.selectById(shopDeliveryTemplate.getStoreId());
             //判断shopStore是否为空，如果为空，则抛出异常
-            if (shopStore.getId() == null) {
-                throw new CustomException("门店不存在: " + shopDeliveryTemplate.getStoreId());
+            if (StrUtil.isEmpty(shopStore.getId())) {
+                throw new CustomException("门店不存在: " + shopStore.getId());
             }
         }
     }

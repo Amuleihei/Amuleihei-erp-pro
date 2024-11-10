@@ -11,7 +11,7 @@ import com.skyeye.school.building.entity.TeachBuilding;
 
 /**
  * @ClassName: TeachBuildingService
- * @Description: 教学楼管理服务接口层
+ * @Description: 地点管理服务接口层
  * @author: xqz
  * @date: 2023/8/9 9:52
  * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
@@ -21,4 +21,5 @@ public interface TeachBuildingService extends SkyeyeBusinessService<TeachBuildin
 
     void queryTeachBuildingBySchoolId(InputObject inputObject, OutputObject outputObject);
 
+    void queryTeachBuildingByHolderId(InputObject inputObject, OutputObject outputObject);
 }

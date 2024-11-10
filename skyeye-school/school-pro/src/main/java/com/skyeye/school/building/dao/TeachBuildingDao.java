@@ -9,7 +9,7 @@ import com.skyeye.school.building.entity.TeachBuilding;
 
 /**
  * @ClassName: TeachBuildingDao
- * @Description: 教学楼管理数据层
+ * @Description: 地点管理数据层
  * @author: skyeye云系列--卫志强
  * @date: 2021/8/7 20:48
  * @Copyright: 2021 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
