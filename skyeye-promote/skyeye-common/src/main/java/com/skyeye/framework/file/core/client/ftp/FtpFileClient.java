@@ -9,8 +9,8 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.ftp.Ftp;
 import cn.hutool.extra.ftp.FtpException;
-import cn.hutool.extra.ftp.FtpMode;
 import com.skyeye.framework.file.core.client.AbstractFileClient;
+import com.skyeye.upload.enums.FileFtpMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +42,7 @@ public class FtpFileClient extends AbstractFileClient<FtpFileClientConfig> {
 
         // 初始化 Ftp 对象
         this.ftp = new Ftp(config.getHost(), config.getPort(), config.getUsername(), config.getPassword(),
-            CharsetUtil.CHARSET_UTF_8, null, null, FtpMode.valueOf(config.getMode()));
+            CharsetUtil.CHARSET_UTF_8, null, null, FileFtpMode.getFtpModeByKey(config.getMode()));
     }
 
     @Override
