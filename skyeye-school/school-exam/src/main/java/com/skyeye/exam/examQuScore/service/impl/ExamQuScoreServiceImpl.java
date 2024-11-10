@@ -1,20 +1,25 @@
 package com.skyeye.exam.examQuScore.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.DateUtil;
+import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.question.CheckType;
+import com.skyeye.common.util.question.QuType;
+import com.skyeye.eve.question.entity.Question;
+import com.skyeye.eve.question.service.QuestionService;
+import com.skyeye.exam.examQuRadio.entity.ExamQuRadio;
 import com.skyeye.exam.examQuScore.dao.ExamQuScoreDao;
 import com.skyeye.exam.examQuScore.entity.ExamQuScore;
 import com.skyeye.exam.examQuScore.service.ExamQuScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName: ExamQuScoreServiceImpl
@@ -29,29 +34,56 @@ import java.util.stream.Collectors;
 public class ExamQuScoreServiceImpl extends SkyeyeBusinessServiceImpl<ExamQuScoreDao, ExamQuScore> implements ExamQuScoreService {
 
     @Autowired
-    private ExamQuScoreService examQuScoreService;
+    private QuestionService questionService;
+
+//    @Override
+//    protected void createPrepose(ExamQuScore entity) {
+//        String userId = InputObject.getLogParamsStatic().get("id").toString();
+//        entity.setQuType(QuType.SCORE.getIndex());
+//        Question question = JSONUtil.toBean(JSONUtil.toJsonPrettyStr(entity), Question.class);
+//        String quId = questionService.saveQuestion(question, StrUtil.EMPTY, userId);
+//        System.out.println(quId);
+//        entity.setQuId(quId);
+//        List<ExamQuScore> score = entity.getScoreTd();
+//        saveList(score, quId, userId);
+//    }
+//
+//    @Override
+//    protected void updatePrepose(ExamQuScore entity) {
+//        String userId = InputObject.getLogParamsStatic().get("id").toString();
+//        Question question = JSONUtil.toBean(JSONUtil.toJsonPrettyStr(entity), Question.class);
+//        String quId = questionService.saveQuestion(question, entity.getQuId(), userId);
+//        List<ExamQuScore> score = entity.getScoreTd();
+//        saveList(score, quId, userId);
+//    }
 
     @Override
-    public void deleteQuScoreById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String id = map.get("id").toString();
-        ExamQuScore examQuScore = selectById(id);
-        examQuScore.setVisibility(CommonNumConstants.NUM_ZERO);
-        updateById(examQuScore);
-        refreshCache(id);
-    }
-
-    @Override
-    public void queryQuScoreListByQuId(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String quId = map.get("quId").toString();
-        LambdaQueryWrapper<ExamQuScore> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ExamQuScore::getQuId, quId);
-        List<ExamQuScore> list = examQuScoreService.list(queryWrapper);
-        List<ExamQuScore> bean = list.stream()
-                .filter(visibility -> visibility.getVisibility() == CommonNumConstants.NUM_ONE)
-                .collect(Collectors.toList());
-        outputObject.setBeans(bean);
-        outputObject.settotal(bean.size());
+    public void saveList(List<ExamQuScore> score, String quId, String userId) {
+        List<ExamQuScore> quScore = new ArrayList<>();
+        List<ExamQuScore> editquScore = new ArrayList<>();
+        for (int i = 0; i < score.size(); i++) {
+            ExamQuScore object = score.get(i);
+            ExamQuScore bean = new ExamQuScore();
+            bean.setOrderById(object.getOrderById());
+            bean.setOptionName(object.getOptionName());
+            if (ToolUtil.isBlank(object.getOptionId())) {
+                bean.setQuId(quId);
+                bean.setVisibility(1);
+                bean.setId(ToolUtil.getSurFaceId());
+                bean.setCreateId(userId);
+                bean.setCreateTime(DateUtil.getTimeAndToString());
+                quScore.add(bean);
+            } else {
+                bean.setId(object.getOptionId());
+                editquScore.add(bean);
+            }
+        }
+        if (!quScore.isEmpty()) {
+            createEntity(quScore, userId);
+        }
+        if (!editquScore.isEmpty()) {
+            updateEntity(editquScore, userId);
+        }
+        quScore.addAll(editquScore);
     }
 }

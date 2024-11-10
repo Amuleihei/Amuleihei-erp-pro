@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
+import com.skyeye.annotation.api.Property;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.CommonInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:radio")
+@RedisCacheField(name = "Exam:radio")
 @TableName(value = "exam_an_radio")
 @ApiModel("单选题保存表实体类")
 public class ExamAnRadio extends CommonInfo {
@@ -42,4 +43,8 @@ public class ExamAnRadio extends CommonInfo {
     @TableField("visibility")
     @ApiModelProperty(value = "是否显示  0不显示  1显示")
     private Integer visibility;
+
+    @TableField("qu_type")
+    @Property(value = "问题类型，参考#QuType")
+    private Integer quType;
 }

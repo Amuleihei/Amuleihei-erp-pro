@@ -18,5 +18,4 @@ import com.skyeye.eve.radio.entity.Radio;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface RadioService extends SkyeyeBusinessService<Radio> {
-    void writeRadio(InputObject inputObject, OutputObject outputObject);
 }

@@ -17,16 +17,6 @@ public class SchoolTeacherController {
     @Autowired
     private SchoolTeacherService schoolTeacherService;
 
-    /**
-     * 获取教师列表
-     *
-     * @param inputObject 入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @RequestMapping("/post/SchoolTeacherController/querySchoolTeacherList")
-    public void querySchoolTeacherList(InputObject inputObject, OutputObject outputObject) {
-        schoolTeacherService.querySchoolTeacherList(inputObject, outputObject);
-    }
 
     /**
      * 获取教师列表供table表格选择

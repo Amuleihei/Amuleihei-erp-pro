@@ -31,17 +31,5 @@ public class RadioController {
     @Autowired
     private RadioService radioService;
 
-    /**
-     * 新增/编辑单选题
-     *
-     * @param inputObject  入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @ApiOperation(id = "writeRadio", value = "新增/编辑单选题", method = "POST", allUse = "1")
-    @ApiImplicitParams(classBean = RadioBox.class)
-    @RequestMapping("/post/RadioController/writeRadio")
-    public void writeRadio(InputObject inputObject, OutputObject outputObject) {
-        radioService.writeRadio(inputObject, outputObject);
-    }
 
 }

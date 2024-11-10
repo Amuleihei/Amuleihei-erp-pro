@@ -10,7 +10,7 @@ import com.skyeye.common.entity.CommonInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:mailinviteinbox")
+@RedisCacheField(name = "Exam:mailinviteinbox")
 @TableName(value = "exam_mail_invite_inbox")
 @ApiModel("是非题结果保存表实体类")
 public class ExamMailInviteInbox extends CommonInfo {

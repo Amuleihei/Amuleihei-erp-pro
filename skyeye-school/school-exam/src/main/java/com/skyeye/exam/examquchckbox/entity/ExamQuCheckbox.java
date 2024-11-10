@@ -7,29 +7,34 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.CommonInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:checkbox")
+@RedisCacheField(name = "Exam:checkbox")
 @TableName(value = "exam_qu_checkbox")
 @ApiModel("多选题选项表实体类")
-public class ExamQuCheckbox extends CommonInfo {
+public class ExamQuCheckbox extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
     @TableField("qu_id")
-    @ApiModelProperty(value = "所属题", required = "required")
+    @ApiModelProperty(value = "所属题")
     private String quId;
 
     @TableField("option_name")
     @ApiModelProperty(value = "选项内容", required = "required")
-    private Long optionName;
+    private String optionName;
 
     @TableField("option_title")
     @ApiModelProperty(value = "所属题")
     private String optionTitle;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "选项id")
+    private String optionId;
 
     @TableField("check_type")
     @ApiModelProperty(value = "说明的验证方式")
@@ -54,20 +59,4 @@ public class ExamQuCheckbox extends CommonInfo {
     @TableField("is_default_answer")
     @ApiModelProperty(value = "是否是默认答案  1.是  2.否", required = "required")
     private Integer isDefaultAnswer;
-
-    @TableField("create_id")
-    @ApiModelProperty(value = "创建人", required = "required")
-    private String createId;
-
-    @TableField("create_time")
-    @ApiModelProperty(value = "创建时间", required = "required")
-    private Data createTime;
-
-    @TableField("last_update_id")
-    @ApiModelProperty(value = "最后更新人", required = "required")
-    private String lastUpdateId;
-
-    @TableField("last_update_time")
-    @ApiModelProperty(value = "最后更新时间", required = "required")
-    private Data lastUpdateTime;
 }

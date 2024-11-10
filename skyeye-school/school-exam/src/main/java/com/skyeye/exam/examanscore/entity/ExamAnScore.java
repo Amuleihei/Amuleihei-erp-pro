@@ -10,7 +10,7 @@ import com.skyeye.common.entity.CommonInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:score")
+@RedisCacheField(name = "Exam:score")
 @TableName(value = "exam_an_score")
 @ApiModel("评分题实体类")
 public class ExamAnScore extends CommonInfo {

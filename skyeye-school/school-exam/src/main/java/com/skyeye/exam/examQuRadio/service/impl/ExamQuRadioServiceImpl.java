@@ -1,20 +1,20 @@
 package com.skyeye.exam.examQuRadio.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.DateUtil;
+import com.skyeye.common.util.ToolUtil;
+import com.skyeye.common.util.mybatisplus.MybatisPlusUtil;
+import com.skyeye.eve.question.service.QuestionService;
 import com.skyeye.exam.examQuRadio.dao.ExamQuRadioDao;
 import com.skyeye.exam.examQuRadio.entity.ExamQuRadio;
 import com.skyeye.exam.examQuRadio.service.ExamQuRadioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName: ExamQuRadioServiceImpl
@@ -29,29 +29,69 @@ import java.util.stream.Collectors;
 public class ExamQuRadioServiceImpl extends SkyeyeBusinessServiceImpl<ExamQuRadioDao, ExamQuRadio> implements ExamQuRadioService {
 
     @Autowired
-    private ExamQuRadioService examQuRadioService;
+    private QuestionService questionService;
+
+//    @Override
+//    public void createPrepose(ExamQuRadio entity) {
+//        String userId = InputObject.getLogParamsStatic().get("id").toString();
+//        entity.setQuType(QuType.RADIO.getIndex());
+//        Question question = JSONUtil.toBean(JSONUtil.toJsonPrettyStr(entity), Question.class);
+//        String quId = questionService.saveQuestion(question, StrUtil.EMPTY, userId);
+//        entity.setQuId(quId);
+//        List<ExamQuRadio> list = entity.getRadioTd();
+//        if (list.isEmpty()){
+//            saveList(list, quId, userId);
+//        }
+//    }
+
+//    @Override
+//    public void updatePrepose(ExamQuRadio entity) {
+//        String userId = InputObject.getLogParamsStatic().get("id").toString();
+//        Question question = JSONUtil.toBean(JSONUtil.toJsonPrettyStr(entity), Question.class);
+//        String quId = questionService.saveQuestion(question, entity.getQuId(), userId);
+//        List<ExamQuRadio> list = entity.getRadioTd();
+//        if (list.isEmpty()) {
+//            saveList(list, quId, userId);
+//        }
+//    }
 
     @Override
-    public void deleteQuRadioById(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String id = map.get("id").toString();
-        ExamQuRadio examQuRadio = selectById(id);
-        examQuRadio.setVisibility(CommonNumConstants.NUM_ZERO);
-        updateById(examQuRadio);
-        refreshCache(id);
+    public void saveList(List<ExamQuRadio> list, String quId, String userId) {
+        List<ExamQuRadio> quRadio = new ArrayList<>();
+        List<ExamQuRadio> editquRadio = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            ExamQuRadio object = list.get(i);
+            ExamQuRadio bean = new ExamQuRadio();
+            bean.setOrderById(object.getOrderById());
+            bean.setOptionName(object.getOptionName());
+            bean.setIsNote(object.getIsNote());
+            bean.setOptionTitle(object.getOptionTitle());
+            bean.setIsDefaultAnswer(object.getIsDefaultAnswer());
+            if (!ToolUtil.isBlank(object.getCheckType().toString())) {
+                bean.setCheckType(object.getCheckType());
+            } else {
+                bean.setCheckType(object.getCheckType());
+            }
+            bean.setIsRequiredFill(object.getIsRequiredFill());
+            if (ToolUtil.isBlank(object.getOptionId())) {
+                bean.setQuId(object.getQuId());
+                bean.setVisibility(1);
+                bean.setId(ToolUtil.getSurFaceId());
+                bean.setCreateId(userId);
+                bean.setCreateTime(DateUtil.getTimeAndToString());
+                quRadio.add(bean);
+            } else {
+                bean.setId(object.getOptionId());
+                editquRadio.add(bean);
+            }
+        }
+        if (!quRadio.isEmpty()) {
+            createEntity(quRadio, userId);
+        }
+        if (!editquRadio.isEmpty()) {
+            updateEntity(editquRadio, userId);
+        }
     }
 
-    @Override
-    public void queryQuRadioListByQuId(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        String quId = map.get("quId").toString();
-        LambdaQueryWrapper<ExamQuRadio> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ExamQuRadio::getQuId, quId);
-        List<ExamQuRadio> list = examQuRadioService.list(queryWrapper);
-        List<ExamQuRadio> bean = list.stream()
-            .filter(visibility -> visibility.getVisibility() == CommonNumConstants.NUM_ONE)
-            .collect(Collectors.toList());
-        outputObject.setBeans(bean);
-        outputObject.settotal(bean.size());
-    }
+
 }

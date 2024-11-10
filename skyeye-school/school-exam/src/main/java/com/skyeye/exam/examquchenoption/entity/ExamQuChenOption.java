@@ -7,13 +7,14 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.CommonInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:chenoption")
+@RedisCacheField(name = "Exam:chenoption")
 @TableName(value = "exam_qu_chen_option")
 @ApiModel("矩陈题-题选项实体类")
-public class ExamQuChenOption extends CommonInfo {
+public class ExamQuChenOption extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
@@ -31,19 +32,7 @@ public class ExamQuChenOption extends CommonInfo {
     @ApiModelProperty(value = "排序ID", required = "required")
     private Integer orderById;
 
-    @TableField("create_id")
-    @ApiModelProperty(value = "创建人", required = "required")
-    private String createId;
-
-    @TableField("create_time")
-    @ApiModelProperty(value = "创建时间", required = "required")
-    private Data createTime;
-
-    @TableField("last_update_id")
-    @ApiModelProperty(value = "最后更新人", required = "required")
-    private String lastUpdateId;
-
-    @TableField("last_update_time")
-    @ApiModelProperty(value = "最后更新时间", required = "required")
-    private Data lastUpdateTime;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "选项id")
+    private String optionId;
 }

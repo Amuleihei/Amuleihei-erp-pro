@@ -7,25 +7,26 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.CommonInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:multifillblank")
+@RedisCacheField(name = "Exam:multifillblank")
 @TableName(value = "exam_qu_multi_fillblank")
 @ApiModel("多行填空题实体类")
-public class ExamQuMultiFillblank extends CommonInfo {
+public class ExamQuMultiFillblank extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
     @TableField("qu_id")
-    @ApiModelProperty(value = "所属题", required = "required")
+    @ApiModelProperty(value = "所属题")
     private String quId;
 
     @TableField("option_name")
     @ApiModelProperty(value = "选项内容", required = "required")
-    private Long optionName;
+    private String optionName;
 
     @TableField("option_title")
     @ApiModelProperty(value = "选项标题")
@@ -43,23 +44,11 @@ public class ExamQuMultiFillblank extends CommonInfo {
     @ApiModelProperty(value = "是否显示  0不显示  1显示", required = "required")
     private Integer visibility;
 
-    @TableField("create_id")
-    @ApiModelProperty(value = "创建人", required = "required")
-    private String createId;
-
-    @TableField("create_time")
-    @ApiModelProperty(value = "创建时间", required = "required")
-    private Data createTime;
-
-    @TableField("last_update_id")
-    @ApiModelProperty(value = "最后更新人", required = "required")
-    private String lastUpdateId;
-
-    @TableField("last_update_time")
-    @ApiModelProperty(value = "最后更新时间", required = "required")
-    private Data lastUpdateTime;
-
     @TableField("is_default_answer")
     @ApiModelProperty(value = "是否是默认答案  1.是  2.否")
     private Long isDefaultAnswer;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "选项id")
+    private String optionId;
 }

@@ -32,22 +32,6 @@ public class SchoolTeacherServiceImpl implements SchoolTeacherService {
     @Autowired
     private SchoolTeacherDao schoolTeacherDao;
 
-    /**
-     * 查出所有教师列表
-     *
-     * @param inputObject 入参以及用户信息等获取对象
-     * @param outputObject 出参以及提示信息的返回值对象
-     */
-    @Override
-    public void querySchoolTeacherList(InputObject inputObject, OutputObject outputObject) {
-        Map<String, Object> map = inputObject.getParams();
-        //获取当前用户拥有的学校的数据权限
-        map.put("schoolPowerId", inputObject.getLogParams().get("schoolPowerId"));
-        Page pages = PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
-        List<Map<String, Object>> beans = schoolTeacherDao.querySchoolTeacherList(map);
-        outputObject.setBeans(beans);
-        outputObject.settotal(pages.getTotal());
-    }
 
     /**
      * 获取教师列表供table表格选择

@@ -19,7 +19,7 @@ import lombok.Data;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
-@RedisCacheField(name = "exam:questionlogic")
+@RedisCacheField(name = "Exam:questionlogic")
 @TableName(value = "exam_question_logic")
 @ApiModel("题目逻辑设置实体类")
 public class ExamQuestionLogic extends CommonInfo {

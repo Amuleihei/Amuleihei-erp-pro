@@ -5,6 +5,8 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.exam.examQuScore.entity.ExamQuScore;
 
+import java.util.List;
+
 /**
  * @ClassName: ExamQuScoreService
  * @Description: 评分题行选项管理服务接口层
@@ -14,7 +16,6 @@ import com.skyeye.exam.examQuScore.entity.ExamQuScore;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 public interface ExamQuScoreService extends SkyeyeBusinessService<ExamQuScore> {
-    void deleteQuScoreById(InputObject inputObject, OutputObject outputObject);
-
-    void queryQuScoreListByQuId(InputObject inputObject, OutputObject outputObject);
+    void saveList(List<ExamQuScore> list, String quId, String userId);
 }
+

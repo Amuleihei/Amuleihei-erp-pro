@@ -6,26 +6,26 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
-import com.skyeye.common.entity.CommonInfo;
+import com.skyeye.common.entity.features.OperatorUserInfo;
 import lombok.Data;
 
 @Data
-@RedisCacheField(name = "exam:chenrow")
+@RedisCacheField(name = "Exam:chenrow")
 @TableName(value = "exam_qu_chen_row")
-@ApiModel("矩陈题-行选项实体类")
-public class ExamQuChenRow extends CommonInfo {
+@ApiModel("矩阵题-行选项实体类")
+public class ExamQuChenRow extends OperatorUserInfo {
 
     @TableId("id")
     @ApiModelProperty(value = "主键id。为空时新增，不为空时编辑")
     private String id;
 
     @TableField("qu_id")
-    @ApiModelProperty(value = "所属题", required = "required")
+    @ApiModelProperty(value = "所属题")
     private String quId;
 
     @TableField("option_name")
     @ApiModelProperty(value = "选项内容", required = "required")
-    private Long optionName;
+    private String optionName;
 
     @TableField("order_by_id")
     @ApiModelProperty(value = "排序ID", required = "required")
@@ -35,20 +35,8 @@ public class ExamQuChenRow extends CommonInfo {
     @ApiModelProperty(value = "是否显示  0不显示  1显示", required = "required")
     private Integer visibility;
 
-    @TableField("create_id")
-    @ApiModelProperty(value = "创建人", required = "required")
-    private String createId;
-
-    @TableField("create_time")
-    @ApiModelProperty(value = "创建时间", required = "required")
-    private Data createTime;
-
-    @TableField("last_update_id")
-    @ApiModelProperty(value = "最后更新人", required = "required")
-    private String lastUpdateId;
-
-    @TableField("last_update_time")
-    @ApiModelProperty(value = "最后更新时间", required = "required")
-    private Data lastUpdateTime;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "选项id")
+    private String optionId;
 
 }

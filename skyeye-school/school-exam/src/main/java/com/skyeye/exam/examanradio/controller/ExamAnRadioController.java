@@ -23,17 +23,18 @@ public class ExamAnRadioController {
 
     @Autowired
     private ExamService examService;
+
     /**
-     * 添加或修改单选题保存表信息
+     * 添加单选题保存表信息
      *
      * @param inputObject  入参以及用户信息等获取对象
      * @param outputObject 出参以及提示信息的返回值对象
      */
-    @ApiOperation(id = "writeExamAnRadio", value = "新增/编辑单选题保存表信息", method = "POST", allUse = "2")
+    @ApiOperation(id = "writeExamAnRadio", value = "新增单选题保存表信息", method = "POST", allUse = "2")
     @ApiImplicitParams(classBean = ExamAnRadio.class)
     @RequestMapping("/post/ExamAnRadioController/writeExamAnRadio")
     public void writeExamAnRadio(InputObject inputObject, OutputObject outputObject) {
-        examService.addQuRadioMation(inputObject, outputObject);
+        examAnRadioService.saveOrUpdateEntity(inputObject, outputObject);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.skyeye.annotation.api.ApiModel;
 import com.skyeye.annotation.api.ApiModelProperty;
 import com.skyeye.annotation.cache.RedisCacheField;
 import com.skyeye.common.entity.features.OperatorUserInfo;
+import com.skyeye.exam.box.Exam;
 import lombok.Data;
 
 import javax.xml.soap.Text;
@@ -20,7 +21,7 @@ import javax.xml.soap.Text;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
-@RedisCacheField(name = "exam:question")
+@RedisCacheField(name = "Exam:question")
 @TableName(value = "exam_question")
 @ApiModel("问题表实体类")
 public class ExamQuestion extends OperatorUserInfo {
@@ -30,7 +31,7 @@ public class ExamQuestion extends OperatorUserInfo {
     private String id;
 
     @TableField("qu_title")
-    @ApiModelProperty(value = "题目名称", required = "required")
+    @ApiModelProperty(value = "题目名称")
     private String quTitle;
 
     @TableField("qu_tag")
@@ -94,7 +95,7 @@ public class ExamQuestion extends OperatorUserInfo {
     private String parentQuId;
 
     @TableField("rand_order")
-    @ApiModelProperty(value = "选项随机排列  1随机排列 0不随机排列", required = "required")
+    @ApiModelProperty(value = "选项随机排列  1随机排列 0不随机排列")
     private Integer randOrder;
 
     @TableField("tag")
@@ -131,7 +132,7 @@ public class ExamQuestion extends OperatorUserInfo {
 
     @TableField("is_default_answer")
     @ApiModelProperty(value = "填空题默认答案")
-    private String isDefaultAnswer;
+    private Integer isDefaultAnswer;
 
     @TableField("is_delete")
     @ApiModelProperty(value = "0表示问题已经删除，1.表示未删除，默认为1")

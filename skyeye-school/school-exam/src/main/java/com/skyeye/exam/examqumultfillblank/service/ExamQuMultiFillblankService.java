@@ -5,7 +5,9 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.exam.examqumultfillblank.entity.ExamQuMultiFillblank;
 
+import java.util.List;
+
 public interface ExamQuMultiFillblankService extends SkyeyeBusinessService<ExamQuMultiFillblank> {
 
-    void queryExamQuMultiFillblankListById(InputObject inputObject, OutputObject outputObject);
+    void saveList(List<ExamQuMultiFillblank> list, String quId, String userId);
 }

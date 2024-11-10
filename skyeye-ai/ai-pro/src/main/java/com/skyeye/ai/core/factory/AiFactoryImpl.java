@@ -8,6 +8,7 @@ import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.func.Func0;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.baidubce.qianfan.Qianfan;
 import com.baidubce.qianfan.core.auth.Auth;
@@ -95,7 +96,7 @@ public class AiFactoryImpl implements AiFactory {
     public Object getDefaultImageModel(AiPlatformEnum platform) {
         switch (platform) {
             case YI_YAN:
-//                return SpringUtil.getBean(Qianfan.class);
+//               return SpringUtil.getBean(Qianfan.class);
             default:
                 throw new CustomException(StrUtil.format("未知平台({})", platform));
         }

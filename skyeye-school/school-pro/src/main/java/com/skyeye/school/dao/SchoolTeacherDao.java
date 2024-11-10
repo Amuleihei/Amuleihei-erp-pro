@@ -19,8 +19,6 @@ import java.util.Map;
  */
 public interface SchoolTeacherDao {
 
-    List<Map<String, Object>> querySchoolTeacherList(Map<String, Object> map);
-
     List<Map<String, Object>> querySchoolTeacherToTableList(Map<String, Object> map);
 
     List<Map<String, Object>> querySchoolTeacherListByStaffIds(@Param("idsList") List<String> idsList);

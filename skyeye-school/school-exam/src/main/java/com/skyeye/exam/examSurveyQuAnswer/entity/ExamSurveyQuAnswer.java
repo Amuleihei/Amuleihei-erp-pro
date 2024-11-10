@@ -17,7 +17,7 @@ import lombok.Data;
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目的
  */
 @Data
-@RedisCacheField(name = "exam:quanswer")
+@RedisCacheField(name = "Exam:quanswer")
 @TableName(value = "exam_survey_qu_answer")
 @ApiModel("答卷 题目和所得分数的关联表实体类")
 public class ExamSurveyQuAnswer extends CommonInfo {

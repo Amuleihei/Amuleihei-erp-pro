@@ -6,6 +6,7 @@ package com.skyeye.personnel.dao;
 
 import com.skyeye.eve.dao.SkyeyeBaseMapper;
 import com.skyeye.personnel.entity.SysEveUserStaffTeacher;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @ClassName: SysEveUserStaffTeacherDao
@@ -15,6 +16,7 @@ import com.skyeye.personnel.entity.SysEveUserStaffTeacher;
  * @Copyright: 2023 https://gitee.com/doc_wei01/skyeye Inc. All rights reserved.
  * 注意：本内容仅限购买后使用.禁止私自外泄以及用于其他的商业目
  */
+
 public interface SysEveUserStaffTeacherDao extends SkyeyeBaseMapper<SysEveUserStaffTeacher> {
 
 }

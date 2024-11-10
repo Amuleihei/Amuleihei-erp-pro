@@ -17,6 +17,6 @@ import com.skyeye.eve.question.entity.Question;
  */
 public interface QuestionService extends SkyeyeBusinessService<Question> {
 
-    String saveQuestion(Question question, String id, String userId);
+//    String saveQuestion(Question question, String id, String userId);
 
 }

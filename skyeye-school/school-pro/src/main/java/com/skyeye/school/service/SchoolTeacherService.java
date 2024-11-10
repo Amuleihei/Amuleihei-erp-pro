@@ -9,8 +9,6 @@ import com.skyeye.common.object.OutputObject;
 
 public interface SchoolTeacherService {
 
-    void querySchoolTeacherList(InputObject inputObject, OutputObject outputObject);
-
     void querySchoolTeacherToTableList(InputObject inputObject, OutputObject outputObject);
 
     void querySchoolTeacherListByStaffIds(InputObject inputObject, OutputObject outputObject);

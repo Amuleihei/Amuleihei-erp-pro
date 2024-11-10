@@ -16,6 +16,7 @@ import com.skyeye.eve.radio.dao.RadioDao;
 import com.skyeye.eve.radio.entity.Radio;
 import com.skyeye.eve.radio.entity.RadioBox;
 import com.skyeye.eve.radio.service.RadioService;
+import com.skyeye.exam.box.Exam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,21 +33,5 @@ import org.springframework.stereotype.Service;
 @SkyeyeService(name = "单选题", groupName = "题库管理")
 public class RadioServiceImpl extends SkyeyeBusinessServiceImpl<RadioDao, Radio> implements RadioService {
 
-    @Autowired
-    private QuestionService questionService;
 
-    @Override
-    public void writeRadio(InputObject inputObject, OutputObject outputObject) {
-        RadioBox radioBox = inputObject.getParams(RadioBox.class);
-        String userId = InputObject.getLogParamsStatic().get("id").toString();
-
-        // 保存题目信息获取题目id
-        Question question = JSONUtil.toBean(JSONUtil.toJsonPrettyStr(radioBox), Question.class);
-        question.setQuType(QuType.RADIO.getIndex());
-        String quId = questionService.saveQuestion(question, StringUtils.EMPTY, userId);
-        radioBox.getRadioList().forEach(radio -> {
-            radio.setQuId(quId);
-        });
-        createEntity(radioBox.getRadioList(), userId);
-    }
 }

@@ -5,7 +5,10 @@ import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
 import com.skyeye.exam.examquchckbox.entity.ExamQuCheckbox;
 
-public interface ExamQuCheckboxService extends SkyeyeBusinessService<ExamQuCheckbox> {
+import java.util.List;
 
-    void queryExamQuCheckboxListById(InputObject inputObject, OutputObject outputObject);
+public interface ExamQuCheckboxService extends SkyeyeBusinessService<ExamQuCheckbox> {
+    void saveList(List<ExamQuCheckbox> list, String quId, String userId);
+
+//    void queryExamQuCheckboxListById(InputObject inputObject, OutputObject outputObject);
 }

@@ -53,7 +53,7 @@ public class ExamServiceImpl implements ExamService {
     public void queryExamList(InputObject inputObject, OutputObject outputObject) {
         Map<String, Object> map = inputObject.getParams();
         // 获取当前用户拥有的学校的数据权限
-        map.put("schoolPowerId", inputObject.getLogParams().get("schoolPowerId"));
+        map.put("schoolPowerId", inputObject.getLogParams().get("schoolPowerId"));//获取当前用户拥有的学校的数据权限
         Page pages = PageHelper.startPage(Integer.parseInt(map.get("page").toString()), Integer.parseInt(map.get("limit").toString()));
         List<Map<String, Object>> beans = examDao.queryExamList(map);
         outputObject.setBeans(beans);

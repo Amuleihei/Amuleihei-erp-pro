@@ -1,20 +1,14 @@
 package com.skyeye.exam.examQuestion.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import cn.hutool.core.util.StrUtil;
 import com.skyeye.annotation.service.SkyeyeService;
 import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
-import com.skyeye.common.constans.CommonNumConstants;
-import com.skyeye.common.object.InputObject;
-import com.skyeye.common.object.OutputObject;
+import com.skyeye.common.util.DateUtil;
+import com.skyeye.common.util.ToolUtil;
 import com.skyeye.exam.examQuestion.dao.ExamQuestionDao;
 import com.skyeye.exam.examQuestion.entity.ExamQuestion;
 import com.skyeye.exam.examQuestion.service.ExamQuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName: ExamQuestionServiceImpl
@@ -28,27 +22,31 @@ import java.util.stream.Collectors;
 @SkyeyeService(name = "问题表管理", groupName = "问题表管理")
 public class ExamQuestionServiceImpl extends SkyeyeBusinessServiceImpl<ExamQuestionDao, ExamQuestion> implements ExamQuestionService {
 
-    @Autowired
-    private ExamQuestionService examQuestionService;
-
     @Override
-    public void deleteQuestionById(InputObject inputObject, OutputObject outputObject) {
-        Map<String,Object> map = inputObject.getParams();
-        String questionId = map.get("id").toString();
-        LambdaQueryWrapper<ExamQuestion> queryWrapper = new LambdaQueryWrapper<ExamQuestion>();
-        queryWrapper.eq(ExamQuestion::getId,questionId);
-        ExamQuestion examQuestion = examQuestionService.getOne(queryWrapper);
-        // 设置问题isDelete = 0 表示已经删除
-        examQuestion.setIsDelete(CommonNumConstants.NUM_ZERO);
-        examQuestionService.updateById(examQuestion);
-        refreshCache(questionId);
+    public void createPrepose(ExamQuestion entity) {
+        String quId = "";
+        quId = ToolUtil.getSurFaceId();
+        entity.setId(quId);
+        entity.setQuTag(1);
+        entity.setVisibility(1);
+        Integer fileType = entity.getFileType() != null ? entity.getFileType() : 0;
+        entity.setFileType(fileType);
+        Integer whetherUpload = entity.getWhetherUpload() != null ? entity.getWhetherUpload() : 2;
+        entity.setWhetherUpload(whetherUpload);
+        entity.setCreateTime(DateUtil.getTimeAndToString());
     }
 
     @Override
-    public void queryQuestionsList(InputObject inputObject, OutputObject outputObject) {
-        List<ExamQuestion> examQuestionList = queryAllData();
-        List<ExamQuestion> bean = examQuestionList.stream().filter(isDelete -> isDelete.getIsDelete() == CommonNumConstants.NUM_ONE).collect(Collectors.toList());
-        outputObject.setBeans(bean);
-        outputObject.settotal(bean.size());
+    public String saveQuestion(ExamQuestion question, String id, String userId) {
+        if (StrUtil.isBlank(id)) {
+            createEntity(question, userId);
+        } else {
+            question.getId();
+            updateEntity(question, userId);
+        }
+        return question.getId();
     }
 }
+
+
+

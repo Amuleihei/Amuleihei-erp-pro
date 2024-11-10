@@ -14,6 +14,7 @@ import com.skyeye.base.business.service.impl.SkyeyeBusinessServiceImpl;
 import com.skyeye.common.constans.CommonConstants;
 import com.skyeye.common.constans.CommonNumConstants;
 import com.skyeye.common.constans.Constants;
+import com.skyeye.common.entity.search.CommonPageInfo;
 import com.skyeye.common.enumeration.UserStaffState;
 import com.skyeye.common.object.InputObject;
 import com.skyeye.common.object.OutputObject;
@@ -42,6 +43,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.skyeye.personnel.classenum.UserStaffType.SIMPLE_STAFF;
+import static com.skyeye.personnel.classenum.UserStaffType.TEACHER;
 
 /**
  * @ClassName: SysEveUserStaffServiceImpl
@@ -85,6 +89,24 @@ public class SysEveUserStaffServiceImpl extends SkyeyeBusinessServiceImpl<SysEve
         if (sysEveUserStaffQuery.getDesignWages() != null) {
             wrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getDesignWages), sysEveUserStaffQuery.getDesignWages());
         }
+    }
+
+    @Override
+    public QueryWrapper<SysEveUserStaff> getQueryWrapper(CommonPageInfo commonPageInfo) {
+        QueryWrapper<SysEveUserStaff> queryWrapper = super.getQueryWrapper(commonPageInfo);
+        // 我创建的
+        queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getCreateId), InputObject.getLogParamsStatic().get("id").toString());
+        String type = commonPageInfo.getType();
+        if (StrUtil.isEmpty(type)||type==null){
+            return null;
+        }
+        if(Integer.valueOf(type).equals(SIMPLE_STAFF.getKey())){
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), SIMPLE_STAFF.getKey());
+        }
+        else if (Integer.valueOf(type).equals(TEACHER.getKey())){
+            queryWrapper.eq(MybatisPlusUtil.toColumns(SysEveUserStaff::getType), TEACHER.getKey());
+        }
+        return queryWrapper;
     }
 
     @Override
